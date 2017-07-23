@@ -1,6 +1,7 @@
 import express from 'express';
 import mysql from 'mysql2';
 import models from '../models';
+import redis from '../redis';
 
 const router = express.Router();
 
@@ -31,6 +32,13 @@ router.get('/mysql', (req, res, next) => {
 router.get('/orm', (req, res, next) => {
   models.User.findOne().then((user) => {
     console.log(user.get());
+  });
+  res.json({ a: 1 });
+});
+
+router.get('/cache', (req, res, next) => {
+  redis.get('foo').execAsync().then((r) => {
+    console.log(r); // => 'bar'
   });
   res.json({ a: 1 });
 });
