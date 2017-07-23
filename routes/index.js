@@ -1,5 +1,6 @@
 import express from 'express';
-import mysql from 'mysql';
+import mysql from 'mysql2';
+import models from '../models';
 
 const router = express.Router();
 
@@ -25,6 +26,13 @@ router.get('/mysql', (req, res, next) => {
   connection.end();
 
   res.json({ mysql: 's' });
+});
+
+router.get('/orm', (req, res, next) => {
+  models.User.findOne().then((user) => {
+    console.log(user.get());
+  });
+  res.json({ a: 1 });
 });
 
 export default router;

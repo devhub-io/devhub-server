@@ -11,7 +11,7 @@ import index from './routes/index';
 import graphQLSchema from './schema';
 
 // env
-require('dotenv').config()
+require('dotenv').config();
 
 const app = express();
 const debug = Debug('develophub-server:app');
