@@ -5,8 +5,10 @@ import express from 'express';
 import logger from 'morgan';
 // import favicon from 'serve-favicon';
 import path from 'path';
+import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
 
 import index from './routes/index';
+import graphQLSchema from './schema'
 
 const app = express();
 const debug = Debug('develophub-server:app');
@@ -19,11 +21,13 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema: graphQLSchema }));
+app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
