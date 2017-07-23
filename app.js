@@ -10,6 +10,9 @@ import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import index from './routes/index';
 import graphQLSchema from './schema';
 
+// env
+require('dotenv').config()
+
 const app = express();
 const debug = Debug('develophub-server:app');
 
