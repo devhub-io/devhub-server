@@ -5,10 +5,10 @@ import express from 'express';
 import logger from 'morgan';
 // import favicon from 'serve-favicon';
 import path from 'path';
-import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
+import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 
 import index from './routes/index';
-import graphQLSchema from './schema'
+import graphQLSchema from './schema';
 
 const app = express();
 const debug = Debug('develophub-server:app');
