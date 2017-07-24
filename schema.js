@@ -1,13 +1,14 @@
 import {
-    GraphQLSchema,
-    GraphQLObjectType,
-    GraphQLString,
-    GraphQLNonNull,
-    GraphQLInt,
-    GraphQLList
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLNonNull,
+  GraphQLInt,
+  GraphQLList,
 } from 'graphql'
 import { resolver } from 'graphql-sequelize'
 import models from './models'
+import { search } from './sphinx'
 
 const repoType = new GraphQLObjectType({
   name: 'Repo',
@@ -107,13 +108,6 @@ const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-      hello: {
-        type: GraphQLString,
-        resolve () {
-          return 'world'
-        }
-      },
-
       repo: {
         type: repoType,
         args: {
@@ -126,14 +120,11 @@ const schema = new GraphQLSchema({
       },
 
       repos: {
-        // The resolver will use `findOne` or `findAll` depending on whether the field it's used in is a `GraphQLList` or not.
         type: new GraphQLList(repoType),
         args: {
-          // An arg with the key limit will automatically be converted to a limit on the target
           limit: {
             type: GraphQLInt
           },
-          // An arg with the key order will automatically be converted to a order on the target
           order: {
             type: GraphQLString
           }
@@ -141,35 +132,30 @@ const schema = new GraphQLSchema({
         resolve: resolver(models.Repo)
       },
 
-      // Field for searching for a user by name
-      repoSearch: {
+      search: {
         type: new GraphQLList(repoType),
         args: {
           query: {
-            description: 'Fuzzy-matched name of repo',
+            description: 'keyword',
             type: new GraphQLNonNull(GraphQLString),
-          }
-        },
-        resolve: resolver(models.Repo, {
-          // Custom `where` clause that fuzzy-matches user's name and
-          // alphabetical sort by username
-          before: (findOptions, args) => {
-            findOptions.where = {
-              slug: { $like: `%${args.query}%` },
-            }
-            findOptions.order = [['slug', 'ASC']]
-            return findOptions
           },
-          // Custom sort override for exact matches first
-          after: (results, args) => results.sort((a, b) => {
-            if (a.slug === args.query) {
-              return 1
-            } else if (b.slug === args.query) {
-              return -1
-            }
-            return 0
+          page: {
+            description: 'page',
+            type: GraphQLInt,
+          },
+        },
+        resolve (source, args) {
+          return search(args.query, 'repos', args.page, 10).then(res => {
+            let id = res.matches.map(i => {
+              return i.id
+            })
+            return models.Repo.findAll({
+              where: {
+                id: id
+              }
+            })
           })
-        })
+        }
       },
 
       developer: {

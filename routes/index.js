@@ -2,6 +2,9 @@ import express from 'express'
 import mysql from 'mysql2'
 import models from '../models'
 import redis from '../redis'
+import sphinx from '../sphinx'
+let util = require('util')
+let assert = require('assert')
 
 const router = express.Router()
 
@@ -41,6 +44,18 @@ router.get('/cache', (req, res, next) => {
   redis.get('key', (err, reply) => {
     res.json({ key: reply })
   })
+})
+
+router.get('/search', (req, res, next) => {
+  let perPage = 10
+  let page = 1
+  sphinx.SetLimits((page - 1) * perPage, perPage)
+  sphinx.SetFilter('status', 1)
+  sphinx.Query('js', 'repos', '', (err, result) => {
+    assert.ifError(err)
+    console.log(util.inspect(result, false, null, true))
+  })
+  res.json({ key: 'search' })
 })
 
 export default router
