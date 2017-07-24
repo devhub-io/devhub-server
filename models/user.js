@@ -6,10 +6,10 @@ module.exports = function (sequelize, DataTypes) {
   }, {
     tableName: 'users',
     classMethods: {
-      associate(models) {
+      associate (models) {
                 // associations can be defined here
       }
     }
-  });
-  return User;
-};
+  })
+  return User
+}

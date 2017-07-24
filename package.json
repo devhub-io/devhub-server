@@ -32,11 +32,14 @@
   "devDependencies": {
     "babel-eslint": "^7.2.3",
     "eslint": "^3.19.0",
-    "eslint-config-airbnb": "^14.1.0",
+    "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-mocha": "^4.11.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^6.10.3",
+    "eslint-plugin-standard": "^3.0.1",
     "locate-path": "^2.0.0"
   }
 }

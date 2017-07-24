@@ -6,9 +6,9 @@ import {
     GraphQLNonNull,
     GraphQLInt,
     GraphQLList
-} from 'graphql';
-import { resolver } from 'graphql-sequelize';
-import models from './models';
+} from 'graphql'
+import { resolver } from 'graphql-sequelize'
+import models from './models'
 
 const userType = new GraphQLObjectType({
   name: 'User',
@@ -23,7 +23,7 @@ const userType = new GraphQLObjectType({
       description: 'Then name of the user.'
     }
   }
-});
+})
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -31,8 +31,8 @@ const schema = new GraphQLSchema({
     fields: {
       hello: {
         type: GraphQLString,
-        resolve() {
-          return 'world';
+        resolve () {
+          return 'world'
         }
       },
       user: {
@@ -77,25 +77,25 @@ const schema = new GraphQLSchema({
           before: (findOptions, args) => {
             findOptions.where = {
               name: { $like: `%${args.query}%` },
-            };
-            findOptions.order = [['name', 'ASC']];
-            return findOptions;
+            }
+            findOptions.order = [['name', 'ASC']]
+            return findOptions
           },
                     // Custom sort override for exact matches first
           after: (results, args) => results.sort((a, b) => {
             if (a.name === args.query) {
-              return 1;
+              return 1
             } else if (b.name === args.query) {
-              return -1;
+              return -1
             }
 
-            return 0;
+            return 0
           })
         })
       }
 
     }
   })
-});
+})
 
-export default schema;
+export default schema

@@ -1,14 +1,14 @@
-import express from 'express';
-import mysql from 'mysql2';
-import models from '../models';
-import redis from '../redis';
+import express from 'express'
+import mysql from 'mysql2'
+import models from '../models'
+import redis from '../redis'
 
-const router = express.Router();
+const router = express.Router()
 
 /* GET index page. */
 router.get('/', (req, res, next) => {
-  res.json({ title: process.env.APP_URL });
-});
+  res.json({ title: process.env.APP_URL })
+})
 
 router.get('/mysql', (req, res, next) => {
   const connection = mysql.createConnection({
@@ -16,31 +16,31 @@ router.get('/mysql', (req, res, next) => {
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE
-  });
+  })
 
-  connection.connect();
+  connection.connect()
 
   connection.query('SELECT 1 + 1 AS solution', (err, rows, fields) => {
-    console.log('The solution is: ', rows[0].solution);
-  });
+    console.log('The solution is: ', rows[0].solution)
+  })
 
-  connection.end();
+  connection.end()
 
-  res.json({ mysql: 's' });
-});
+  res.json({ mysql: 's' })
+})
 
 router.get('/orm', (req, res, next) => {
   models.User.findOne().then((user) => {
-    console.log(user.get());
-  });
-  res.json({ a: 1 });
-});
+    console.log(user.get())
+  })
+  res.json({ a: 1 })
+})
 
 router.get('/cache', (req, res, next) => {
-  redis.get('foo').execAsync().then((r) => {
-    console.log(r); // => 'bar'
-  });
-  res.json({ a: 1 });
-});
+  redis.set('key', '1')
+  redis.get('key', (err, reply) => {
+    res.json({ key: reply })
+  })
+})
 
-export default router;
+export default router
