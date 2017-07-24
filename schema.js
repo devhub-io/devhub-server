@@ -1,5 +1,4 @@
 import {
-    graphql,
     GraphQLSchema,
     GraphQLObjectType,
     GraphQLString,
@@ -10,18 +9,97 @@ import {
 import { resolver } from 'graphql-sequelize'
 import models from './models'
 
-const userType = new GraphQLObjectType({
-  name: 'User',
-  description: 'A user',
+const repoType = new GraphQLObjectType({
+  name: 'Repo',
+  description: 'A repo',
   fields: {
-    id: {
-      type: new GraphQLNonNull(GraphQLInt),
-      description: 'The id of the user.',
+    slug: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'slug'
+    },
+    title: {
+      type: GraphQLString,
+      description: 'title'
+    },
+    description: {
+      type: GraphQLString,
+      description: 'description'
+    },
+    language: {
+      type: GraphQLString,
+      description: 'language'
+    },
+    readme: {
+      type: GraphQLString,
+      description: 'readme'
+    },
+    homepage: {
+      type: GraphQLString,
+      description: 'homepage'
+    },
+    github: {
+      type: GraphQLString,
+      description: 'github'
+    },
+    stargazers_count: {
+      type: GraphQLInt,
+      description: 'stargazers_count'
+    },
+    trends: {
+      type: GraphQLString,
+      description: 'trends'
+    },
+    owner: {
+      type: GraphQLString,
+      description: 'owner'
+    },
+    repo: {
+      type: GraphQLString,
+      description: 'repo'
+    },
+    cover: {
+      type: GraphQLString,
+      description: 'cover'
+    },
+    document_url: {
+      type: GraphQLString,
+      description: 'document_url'
+    },
+  }
+})
+
+const developerType = new GraphQLObjectType({
+  name: 'Developer',
+  description: 'A developer',
+  fields: {
+    login: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'login'
     },
     name: {
       type: GraphQLString,
-      description: 'Then name of the user.'
-    }
+      description: 'name'
+    },
+    avatar_url: {
+      type: GraphQLString,
+      description: 'avatar_url'
+    },
+    public_repos: {
+      type: GraphQLInt,
+      description: 'public_repos'
+    },
+    public_gists: {
+      type: GraphQLInt,
+      description: 'public_gists'
+    },
+    followers: {
+      type: GraphQLInt,
+      description: 'followers'
+    },
+    following: {
+      type: GraphQLInt,
+      description: 'following'
+    },
   }
 })
 
@@ -35,20 +113,21 @@ const schema = new GraphQLSchema({
           return 'world'
         }
       },
-      user: {
-        type: userType,
+
+      repo: {
+        type: repoType,
         args: {
-          id: {
-            description: 'id of the user',
-            type: new GraphQLNonNull(GraphQLInt)
+          slug: {
+            description: 'slug of the repo',
+            type: new GraphQLNonNull(GraphQLString)
           }
         },
-        resolve: resolver(models.User)
+        resolve: resolver(models.Repo)
       },
 
-      users: {
+      repos: {
         // The resolver will use `findOne` or `findAll` depending on whether the field it's used in is a `GraphQLList` or not.
-        type: new GraphQLList(userType),
+        type: new GraphQLList(repoType),
         args: {
           // An arg with the key limit will automatically be converted to a limit on the target
           limit: {
@@ -59,41 +138,63 @@ const schema = new GraphQLSchema({
             type: GraphQLString
           }
         },
-        resolve: resolver(models.User)
+        resolve: resolver(models.Repo)
       },
 
-            // Field for searching for a user by name
-      userSearch: {
-        type: new GraphQLList(userType),
+      // Field for searching for a user by name
+      repoSearch: {
+        type: new GraphQLList(repoType),
         args: {
           query: {
-            description: 'Fuzzy-matched name of user',
+            description: 'Fuzzy-matched name of repo',
             type: new GraphQLNonNull(GraphQLString),
           }
         },
-        resolve: resolver(models.User, {
-                    // Custom `where` clause that fuzzy-matches user's name and
-                    // alphabetical sort by username
+        resolve: resolver(models.Repo, {
+          // Custom `where` clause that fuzzy-matches user's name and
+          // alphabetical sort by username
           before: (findOptions, args) => {
             findOptions.where = {
-              name: { $like: `%${args.query}%` },
+              slug: { $like: `%${args.query}%` },
             }
-            findOptions.order = [['name', 'ASC']]
+            findOptions.order = [['slug', 'ASC']]
             return findOptions
           },
-                    // Custom sort override for exact matches first
+          // Custom sort override for exact matches first
           after: (results, args) => results.sort((a, b) => {
-            if (a.name === args.query) {
+            if (a.slug === args.query) {
               return 1
-            } else if (b.name === args.query) {
+            } else if (b.slug === args.query) {
               return -1
             }
-
             return 0
           })
         })
-      }
+      },
 
+      developer: {
+        type: developerType,
+        args: {
+          login: {
+            description: 'login',
+            type: new GraphQLNonNull(GraphQLString)
+          }
+        },
+        resolve: resolver(models.Developer)
+      },
+
+      developers: {
+        type: new GraphQLList(developerType),
+        args: {
+          limit: {
+            type: GraphQLInt
+          },
+          order: {
+            type: GraphQLString
+          }
+        },
+        resolve: resolver(models.Developer)
+      },
     }
   })
 })
