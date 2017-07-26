@@ -257,10 +257,13 @@ const schema = new GraphQLSchema({
           order: {
             type: GraphQLString,
           },
+          type: {
+            type: new GraphQLNonNull(GraphQLString),
+          },
         },
         resolve: resolver(models.Developer, {
           before: (findOptions, args, context) => {
-            findOptions.where = {status: 1}
+            findOptions.where = {status: 1, type: args.type}
             if (args.order) {
               findOptions.order = [[args.order, 'DESC']]
             }
