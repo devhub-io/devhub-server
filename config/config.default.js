@@ -35,5 +35,23 @@ module.exports = appInfo => {
     agent: false,
   };
 
+  // log
+  exports.logrotator = {
+    // list of files that will be rotated by hour
+    filesRotateByHour: [],
+    // rotate the file by hour use specified delimiter
+    hourDelimiter: '-',
+    // list of files that will be rotated by size
+    filesRotateBySize: [],
+    // Max file size to judge if any file need rotate
+    maxFileSize: 50 * 1024 * 1024,
+    // pieces rotate by size
+    maxFiles: 10,
+    // time interval to judge if any file need rotate
+    rotateDuration: 60000,
+    // keep max days log files, default is `31`. Set `0` to keep all logs
+    maxDays: 0,
+  };
+
   return config;
 };
