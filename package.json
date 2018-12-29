@@ -6,8 +6,9 @@
   "dependencies": {
     "egg": "^2.2.1",
     "egg-logrotator": "^3.0.5",
-    "egg-mysql": "^3.0.0",
-    "egg-scripts": "^2.5.0"
+    "egg-scripts": "^2.5.0",
+    "egg-sequelize": "^4.2.0",
+    "mysql2": "^1.6.4"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -17,6 +18,8 @@
     "egg-mock": "^3.14.0",
     "eslint": "^4.11.0",
     "eslint-config-egg": "^6.0.0",
+    "factory-girl": "^5.0.4",
+    "sequelize-cli": "^5.4.0",
     "webstorm-disable-index": "^1.2.0"
   },
   "engines": {
@@ -28,8 +31,8 @@
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
-    "test-local": "egg-bin test",
-    "cov": "egg-bin cov",
+    "test-local": "NODE_ENV=test npx sequelize db:migrate && egg-bin test",
+    "cov": "NODE_ENV=test npx sequelize db:migrate && egg-bin cov",
     "lint": "eslint .",
     "ci": "npm run lint && npm run cov",
     "autod": "autod"
