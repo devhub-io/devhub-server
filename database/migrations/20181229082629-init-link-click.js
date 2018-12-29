@@ -39,6 +39,7 @@ module.exports = {
       {
         engine: 'InnoDB',
         charset: 'utf8',
+        collate: 'utf8_general_ci',
       }
     );
   },

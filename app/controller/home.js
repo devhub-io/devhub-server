@@ -4,8 +4,8 @@ const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
   async index() {
-    const query = { limit: 1, offset: 0 };
-    this.ctx.body = await this.ctx.model.ArticleUrl.findAll(query);
+    // this.ctx.body = await this.ctx.service.repos.listPaginate({ page: 11, limit: 2, order: 'stargazers_count' });
+    this.ctx.body = await this.ctx.service.repos.count();
   }
 }
 

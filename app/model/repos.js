@@ -3,7 +3,7 @@
 module.exports = app => {
   const { INTEGER, STRING, TEXT, DATE, literal } = app.Sequelize;
 
-  return app.model.define('repos', {
+  const Repos = app.model.define('repos', {
     id: {
       type: INTEGER(10).UNSIGNED,
       allowNull: false,
@@ -148,4 +148,18 @@ module.exports = app => {
   }, {
     tableName: 'repos',
   });
+
+  Repos.associate = function() {
+    // Repos.belongsTo(app.model.Category);
+    // Repos.belongsTo(app.model.User);
+    app.model.Repos.hasMany(app.model.ReposTag, { as: 'tags', foreignKey: 'repos_id', sourceKey: 'id' });
+    // Repos.hasMany(app.model.ReposContributor);
+    // Repos.hasMany(app.model.ReposLanguage);
+    // Repos.hasMany(app.model.ReposBadge);
+    // Repos.hasOne(app.model.ReposLicense);
+    // Repos.hasMany(app.model.ReposQuestion);
+    // Repos.hasMany(app.model.ReposNews);
+  };
+
+  return Repos;
 };
