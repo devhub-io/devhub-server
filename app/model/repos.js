@@ -17,6 +17,7 @@ module.exports = app => {
     category_id: {
       type: INTEGER(6),
       allowNull: false,
+      defaultValue: 0,
     },
     slug: {
       type: STRING(255),
@@ -26,7 +27,7 @@ module.exports = app => {
     image: {
       type: INTEGER(11),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     description: {
       type: STRING(255),
@@ -75,7 +76,7 @@ module.exports = app => {
     status: {
       type: INTEGER(4),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     repos_created_at: {
       type: DATE,
@@ -111,7 +112,7 @@ module.exports = app => {
     view_number: {
       type: INTEGER(11),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     trends: {
       type: STRING(255),
@@ -139,7 +140,7 @@ module.exports = app => {
     have_questions: {
       type: INTEGER(1),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     document_url: {
       type: STRING(255),

@@ -21,7 +21,7 @@ module.exports = app => {
     github_id: {
       type: INTEGER(11),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     avatar_url: {
       type: STRING(255),

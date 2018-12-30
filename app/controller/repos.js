@@ -9,51 +9,41 @@ function toInt(str) {
 }
 
 class ReposController extends Controller {
-  async index() {
+
+  async hottest() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit), offset: toInt(ctx.query.offset) };
-    ctx.body = await ctx.model.Repos.findAll(query);
+    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };
+    query.order = 'stargazers_count';
+    ctx.body = await ctx.service.repos.list(query);
   }
 
-  async show() {
+  async newest() {
     const ctx = this.ctx;
-    ctx.body = await ctx.model.Repos.findByPk(toInt(ctx.params.id));
+    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };
+    query.order = 'repos_created_at';
+    ctx.body = await ctx.service.repos.list(query);
   }
 
-  async create() {
+  async trend() {
     const ctx = this.ctx;
-    const { title, readme } = ctx.request.body;
-    const repos = await ctx.model.Repos.create({ title, readme });
-    ctx.status = 201;
-    ctx.body = repos;
+    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };
+    query.order = 'repos_updated_at';
+    ctx.body = await ctx.service.repos.list(query);
   }
 
-  async update() {
+  async recommend() {
     const ctx = this.ctx;
-    const id = toInt(ctx.params.id);
-    const repos = await ctx.model.Repos.findByPk(id);
-    if (!repos) {
-      ctx.status = 404;
-      return;
-    }
-
-    const { title, readme } = ctx.request.body;
-    await repos.update({ title, readme });
-    ctx.body = repos;
+    const query = { limit: toInt(ctx.query.limit) };
+    ctx.body = await ctx.service.repos.findRecommend(query);
   }
 
-  async destroy() {
+  async count() {
     const ctx = this.ctx;
-    const id = toInt(ctx.params.id);
-    const repos = await ctx.model.Repos.findByPk(id);
-    if (!repos) {
-      ctx.status = 404;
-      return;
-    }
-
-    await repos.destroy();
-    ctx.status = 200;
+    const repos = await ctx.service.repos.count();
+    const developers = await ctx.service.developer.count();
+    ctx.body = { repos, developers };
   }
+
 }
 
 module.exports = ReposController;

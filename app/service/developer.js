@@ -4,7 +4,7 @@ const Service = require('egg').Service;
 
 const ENABLE = 1;
 
-class ReposService extends Service {
+class DeveloperService extends Service {
   async findBySlug(slug) {
     const repos = await this.ctx.model.Repos.find({
       where: {
@@ -62,7 +62,7 @@ class ReposService extends Service {
   }
 
   async count() {
-    return await this.ctx.model.Repos.count();
+    return await this.ctx.model.Developer.count();
   }
 
   async search({ keyword = '', limit = 10 }) {
@@ -93,4 +93,4 @@ class ReposService extends Service {
 
 }
 
-module.exports = ReposService;
+module.exports = DeveloperService;
