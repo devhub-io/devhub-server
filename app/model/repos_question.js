@@ -46,5 +46,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos_questions',
+    timestamps: false,
   });
 };

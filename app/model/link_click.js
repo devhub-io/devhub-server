@@ -34,5 +34,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'link_click',
+    timestamps: false,
   });
 };

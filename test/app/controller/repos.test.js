@@ -104,4 +104,15 @@ describe('test/app/service/repos.test.js', () => {
     });
   });
 
+  describe('GET /topics', () => {
+    it('should work', async () => {
+      await app.factory.createMany('repos_topic', 3);
+      const res = await app.httpRequest().get('/topics');
+      assert(res.status === 200);
+      assert(res.body.length === 1);
+      assert(res.body[0].number);
+      assert(res.body[0].topic);
+    });
+  });
+
 });

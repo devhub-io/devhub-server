@@ -18,5 +18,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'developer_languages',
+    timestamps: false,
   });
 };

@@ -26,5 +26,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos_tags',
+    timestamps: false,
   });
 };

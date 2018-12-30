@@ -34,5 +34,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos_trees',
+    timestamps: false,
   });
 };

@@ -28,5 +28,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos_trends',
+    timestamps: false,
   });
 };

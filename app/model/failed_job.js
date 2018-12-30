@@ -33,5 +33,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'failed_jobs',
+    timestamps: false,
   });
 };

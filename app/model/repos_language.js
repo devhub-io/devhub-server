@@ -18,5 +18,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos_languages',
+    timestamps: false,
   });
 };

@@ -47,7 +47,7 @@ module.exports = app => {
     github_id: faker.random.number(),
     avatar_url: faker.image.avatar(),
     html_url: faker.internet.url(),
-    type: 'type',
+    type: 'Organization',
     site_admin: 1,
     company: faker.company.companyName(),
     blog: faker.internet.url(),
@@ -86,5 +86,11 @@ module.exports = app => {
     parent_id: 0,
     created_at: new Date(),
     updated_at: new Date(),
+  });
+
+  // repos_topics
+  factory.define('repos_topic', app.model.ReposTopic, {
+    repos_id: factory.sequence('ReposTopic.repos_id', n => n),
+    topic: 'a',
   });
 };

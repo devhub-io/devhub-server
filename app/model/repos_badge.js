@@ -22,5 +22,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos_badges',
+    timestamps: false,
   });
 };

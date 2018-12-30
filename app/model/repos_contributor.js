@@ -35,5 +35,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos_contributors',
+    timestamps: false,
   });
 };

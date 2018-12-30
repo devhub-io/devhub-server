@@ -26,5 +26,6 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos_licenses',
+    timestamps: false,
   });
 };

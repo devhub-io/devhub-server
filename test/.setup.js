@@ -11,5 +11,6 @@ afterEach(async () => {
     app.model.Developer.destroy({ truncate: true, force: true }),
     app.model.Collection.destroy({ truncate: true, force: true }),
     app.model.Category.destroy({ truncate: true, force: true }),
+    app.model.ReposTopic.destroy({ truncate: true, force: true }),
   ]);
 });

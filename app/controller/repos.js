@@ -50,6 +50,11 @@ class ReposController extends Controller {
     ctx.body = { repos, developers };
   }
 
+  async topics() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.repos.topics();
+  }
+
 }
 
 module.exports = ReposController;

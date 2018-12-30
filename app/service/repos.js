@@ -109,6 +109,26 @@ class ReposService extends Service {
     });
   }
 
+  async topColumn() {
+    return await this.ctx.model.Category.findAll({
+      where: {
+        parent_id: 0,
+      },
+    });
+  }
+
+  async topics() {
+    const sequelize = this.app.Sequelize;
+    return await this.ctx.model.ReposTopic.findAll({
+      attributes: [[ sequelize.fn('COUNT', sequelize.col('*')), 'number' ], 'topic' ],
+      limit: 1000,
+      order: [
+        [ sequelize.col('number'), 'DESC' ],
+      ],
+      group: [ 'topic' ],
+    });
+  }
+
 }
 
 module.exports = ReposService;
