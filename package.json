@@ -8,10 +8,11 @@
     "egg-logrotator": "^3.0.5",
     "egg-scripts": "^2.5.0",
     "egg-sequelize": "^4.2.0",
-    "faker": "^4.1.0",
+    "moment": "^2.23.0",
     "mysql2": "^1.6.4"
   },
   "devDependencies": {
+    "faker": "^4.1.0",
     "autod": "^3.0.1",
     "autod-egg": "^1.0.0",
     "egg-bin": "^4.3.5",

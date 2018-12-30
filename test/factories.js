@@ -2,6 +2,7 @@
 
 const { factory } = require('factory-girl');
 const faker = require('faker');
+const moment = require('moment');
 
 module.exports = app => {
   // 可以通过 app.factory 访问 factory 实例
@@ -98,6 +99,19 @@ module.exports = app => {
   factory.define('topic_explain', app.model.TopicExplain, {
     topic: 'a',
     explain: 'abc',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // repos_news
+  factory.define('repos_news', app.model.ReposNews, {
+    url: faker.internet.url(),
+    title: faker.random.word(),
+    repos_id: 1,
+    score: faker.random.number(),
+    time: faker.random.number(),
+    item_id: faker.random.number(),
+    post_date: moment(new Date()).format('YYYY-MM-DD'),
     created_at: new Date(),
     updated_at: new Date(),
   });

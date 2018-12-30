@@ -13,6 +13,7 @@ module.exports = app => {
   router.get('/repos/recommend', controller.repos.recommend);
   router.get('/repos/collections', controller.repos.collections);
   router.get('/count', controller.repos.count);
+  router.get('/news', controller.repos.news);
   router.get('/topics', controller.repos.topics);
   router.get('/topic/:topic', controller.repos.topicInPaginate);
   // Category

@@ -3,7 +3,7 @@
 module.exports = app => {
   const { INTEGER, STRING, DATE, DATEONLY } = app.Sequelize;
 
-  return app.model.define('repos_news', {
+  const ReposNews = app.model.define('repos_news', {
     id: {
       type: INTEGER(10).UNSIGNED,
       allowNull: false,
@@ -49,4 +49,10 @@ module.exports = app => {
   }, {
     tableName: 'repos_news',
   });
+
+  ReposNews.associate = function() {
+    app.model.ReposNews.hasOne(app.model.Repos, { as: 'repos', foreignKey: 'id', sourceKey: 'repos_id' });
+  };
+
+  return ReposNews;
 };

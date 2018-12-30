@@ -1,6 +1,7 @@
 'use strict';
 
 const { assert, app } = require('egg-mock/bootstrap');
+const moment = require('moment');
 
 describe('test/app/service/repos.test.js', () => {
   describe('GET /repos/hottest', () => {
@@ -141,6 +142,46 @@ describe('test/app/service/repos.test.js', () => {
       assert(res.body.rows[0].trends);
       assert(res.body.rows[0].topic.name);
       assert(res.body.explain.text);
+    });
+  });
+
+  describe('GET /news', () => {
+    it('should work', async () => {
+      const repos = await app.factory.createMany('repos', 3);
+      const id = [];
+      repos.forEach(i => {
+        id.push(i.id);
+        return true;
+      });
+      for (let i = 0; i < id.length; i++) {
+        await app.factory.create('repos_news',
+          {
+            url: 'http://demo.local',
+            title: `title_${i}`,
+            repos_id: id[i],
+            score: (i + 1) * 10,
+            time: (i + 1) * 10,
+            item_id: (i + 1) * 10,
+            post_date: moment().subtract(i, 'd').format('YYYY-MM-DD'),
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+      }
+      const res = await app.httpRequest().get('/news');
+      assert(res.status === 200);
+      assert(res.body.count === 1);
+      assert(res.body.rows.length === 1);
+      assert(res.body.rows[0].url);
+      assert(res.body.rows[0].title);
+      assert(res.body.rows[0].score);
+      assert(res.body.rows[0].post_date === moment().format('YYYY-MM-DD'));
+      assert(res.body.rows[0].repos.title);
+      assert(res.body.rows[0].repos.slug);
+      assert(res.body.rows[0].repos.cover);
+      assert(res.body.rows[0].repos.description);
+      assert(res.body.rows[0].repos.stargazers_count);
+      assert(res.body.next === null);
+      assert(res.body.prev.post_date === moment().subtract(1, 'd').format('YYYY-MM-DD'));
     });
   });
 

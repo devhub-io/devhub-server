@@ -1,8 +1,13 @@
 'use strict';
 
 const Service = require('egg').Service;
+const moment = require('moment');
 
 const ENABLE = 1;
+
+function toDate(date) {
+  return moment(date).format('YYYY-MM-DD');
+}
 
 class ReposService extends Service {
   async findBySlug(slug) {
@@ -159,6 +164,55 @@ class ReposService extends Service {
     result.last_page = Math.ceil(result.count / limit);
     result.page = page;
     result.explain = topicExplan;
+    return result;
+  }
+
+  async news({ date = '' }) {
+    const Op = this.app.Sequelize.Op;
+    date = date || toDate(new Date());
+    const result = await this.ctx.model.ReposNews.findAndCountAll({
+      attributes: [ 'url', 'title', 'score', 'post_date' ],
+      include: [{
+        model: this.ctx.model.Repos,
+        as: 'repos',
+        attributes: [ 'title', 'slug', 'cover', 'description', 'stargazers_count' ],
+        where: {
+          status: ENABLE,
+        },
+      }],
+      where: {
+        post_date: date,
+      },
+      order: [
+        [ 'score', 'DESC' ],
+      ],
+    });
+
+    const next = await this.ctx.model.ReposNews.findOne({
+      attributes: [ 'post_date' ],
+      where: {
+        post_date: {
+          [Op.gt]: date,
+        },
+      },
+      order: [
+        [ 'post_date', 'ASC' ],
+      ],
+    });
+    const prev = await this.ctx.model.ReposNews.findOne({
+      attributes: [ 'post_date' ],
+      where: {
+        post_date: {
+          [Op.lt]: date,
+        },
+      },
+      order: [
+        [ 'post_date', 'DESC' ],
+      ],
+    });
+    result.next = next;
+    result.prev = prev;
+
     return result;
   }
 
