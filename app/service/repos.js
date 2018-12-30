@@ -39,6 +39,7 @@ class ReposService extends Service {
         [ order, 'DESC' ],
       ],
     });
+    result.last_page = Math.ceil(result.count / limit);
     result.page = page;
     return result;
   }
@@ -70,6 +71,7 @@ class ReposService extends Service {
     console.log(limit);
   }
 
+  // TODO
   async findWhereInPaginate({ limit = 5, page = 1, order = 'stargazers_count' }) {
     const Op = this.app.Sequelize.Op;
     const offset = (page - 1) * limit;
@@ -87,8 +89,24 @@ class ReposService extends Service {
         [ order, 'DESC' ],
       ],
     });
+    result.last_page = Math.ceil(result.count / limit);
     result.page = page;
     return result;
+  }
+
+  async collections({ limit = 3, page = 1 }) {
+    const offset = (page - 1) * limit;
+    return await this.ctx.model.Collection.findAndCountAll({
+      attributes: [ 'id', 'slug', 'title', 'image' ],
+      where: {
+        is_enable: ENABLE,
+      },
+      limit,
+      offset,
+      order: [
+        [ 'sort', 'ASC' ],
+      ],
+    });
   }
 
 }

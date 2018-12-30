@@ -67,4 +67,24 @@ module.exports = app => {
     analytics_at: new Date(),
     rating: 0,
   });
+
+  // collections
+  factory.define('collection', app.model.Collection, {
+    title: factory.sequence('Collection.title', n => `collection_${n}`),
+    image: faker.image.imageUrl(),
+    slug: factory.sequence('Collection.slug', n => `${n}_${faker.random.uuid()}`),
+    sort: faker.random.number(),
+    is_enable: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // categories
+  factory.define('category', app.model.Category, {
+    title: factory.sequence('Category.title', n => `category_${n}`),
+    slug: factory.sequence('Category.slug', n => `${n}_${faker.random.uuid()}`),
+    parent_id: 0,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
 };

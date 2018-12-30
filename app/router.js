@@ -11,5 +11,8 @@ module.exports = app => {
   router.get('/repos/newest', controller.repos.newest);
   router.get('/repos/trend', controller.repos.trend);
   router.get('/repos/recommend', controller.repos.recommend);
+  router.get('/repos/collections', controller.repos.collections);
   router.get('/count', controller.repos.count);
+  // Category
+  router.get('/category/top', controller.category.topColumn);
 };

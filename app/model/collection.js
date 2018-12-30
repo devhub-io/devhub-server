@@ -30,7 +30,7 @@ module.exports = app => {
     is_enable: {
       type: INTEGER(1),
       allowNull: false,
-      defaultValue: '1',
+      defaultValue: 1,
     },
     created_at: {
       type: DATE,
@@ -43,6 +43,7 @@ module.exports = app => {
     user_id: {
       type: INTEGER(11),
       allowNull: false,
+      defaultValue: 0,
     },
   }, {
     tableName: 'collection',

@@ -37,6 +37,12 @@ class ReposController extends Controller {
     ctx.body = await ctx.service.repos.findRecommend(query);
   }
 
+  async collections() {
+    const ctx = this.ctx;
+    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };
+    ctx.body = await ctx.service.repos.collections(query);
+  }
+
   async count() {
     const ctx = this.ctx;
     const repos = await ctx.service.repos.count();
