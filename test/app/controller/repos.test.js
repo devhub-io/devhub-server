@@ -115,4 +115,33 @@ describe('test/app/service/repos.test.js', () => {
     });
   });
 
+  describe('GET /topics/:topic', () => {
+    it('should work', async () => {
+      const repos = await app.factory.createMany('repos', 3);
+      const id = [];
+      repos.forEach(i => {
+        id.push(i.id);
+        return true;
+      });
+      for (let i = 0; i < id.length; i++) {
+        await app.factory.create('repos_topic', { repos_id: id[i], topic: 'a' });
+      }
+      await app.factory.createMany('topic_explain', 1);
+      const res = await app.httpRequest().get('/topic/a?limit=2&page=2');
+      assert(res.status === 200);
+      assert(res.body.page === 2);
+      assert(res.body.count === 3);
+      assert(res.body.last_page === 2);
+      assert(res.body.rows.length === 1);
+      assert(res.body.rows[0].title);
+      assert(res.body.rows[0].slug);
+      assert(res.body.rows[0].description);
+      assert(res.body.rows[0].cover);
+      assert(res.body.rows[0].stargazers_count);
+      assert(res.body.rows[0].trends);
+      assert(res.body.rows[0].topic.name);
+      assert(res.body.explain.text);
+    });
+  });
+
 });

@@ -2,7 +2,6 @@
 
 const Service = require('egg').Service;
 const env = require('../../.env.js');
-console.log(env.BEARYCHAT_WEBHOOK);
 
 class MessageService extends Service {
   async send(text) {

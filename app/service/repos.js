@@ -129,6 +129,39 @@ class ReposService extends Service {
     });
   }
 
+  async topicInPaginate({ limit = 5, page = 1, topic }) {
+    const topicExplan = await this.ctx.model.TopicExplain.findOne({
+      attributes: [[ 'explain', 'text' ]],
+      where: {
+        topic,
+      },
+    });
+    const offset = (page - 1) * limit;
+    const result = await this.ctx.model.Repos.findAndCountAll({
+      attributes: [ 'slug', 'title', 'description', 'cover', 'stargazers_count', 'trends' ],
+      include: [{
+        model: this.ctx.model.ReposTopic,
+        as: 'topic',
+        attributes: [[ 'topic', 'name' ]],
+        where: {
+          topic,
+        },
+      }],
+      where: {
+        status: ENABLE,
+      },
+      order: [
+        [ 'stargazers_count', 'DESC' ],
+      ],
+      limit,
+      offset,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    result.explain = topicExplan;
+    return result;
+  }
+
 }
 
 module.exports = ReposService;

@@ -14,6 +14,7 @@ module.exports = app => {
   router.get('/repos/collections', controller.repos.collections);
   router.get('/count', controller.repos.count);
   router.get('/topics', controller.repos.topics);
+  router.get('/topic/:topic', controller.repos.topicInPaginate);
   // Category
   router.get('/category/top', controller.category.topColumn);
   // Developer

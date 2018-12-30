@@ -55,6 +55,12 @@ class ReposController extends Controller {
     ctx.body = await ctx.service.repos.topics();
   }
 
+  async topicInPaginate() {
+    const ctx = this.ctx;
+    const query = { limit: toInt(ctx.query.limit) || 5, page: toInt(ctx.query.page) || 1, topic: ctx.params.topic };
+    ctx.body = await ctx.service.repos.topicInPaginate(query);
+  }
+
 }
 
 module.exports = ReposController;

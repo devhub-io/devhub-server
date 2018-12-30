@@ -153,7 +153,8 @@ module.exports = app => {
   Repos.associate = function() {
     // Repos.belongsTo(app.model.Category);
     // Repos.belongsTo(app.model.User);
-    app.model.Repos.hasMany(app.model.ReposTag, { as: 'tags', foreignKey: 'repos_id', sourceKey: 'id' });
+    // app.model.Repos.hasMany(app.model.ReposTag, { as: 'tags', foreignKey: 'repos_id', sourceKey: 'id' });
+    app.model.Repos.hasOne(app.model.ReposTopic, { as: 'topic', foreignKey: 'repos_id', sourceKey: 'id' });
     // Repos.hasMany(app.model.ReposContributor);
     // Repos.hasMany(app.model.ReposLanguage);
     // Repos.hasMany(app.model.ReposBadge);

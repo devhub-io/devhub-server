@@ -93,4 +93,12 @@ module.exports = app => {
     repos_id: factory.sequence('ReposTopic.repos_id', n => n),
     topic: 'a',
   });
+
+  // topic_explain
+  factory.define('topic_explain', app.model.TopicExplain, {
+    topic: 'a',
+    explain: 'abc',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
 };

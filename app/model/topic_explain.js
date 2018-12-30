@@ -7,6 +7,7 @@ module.exports = app => {
     topic: {
       type: STRING(50),
       allowNull: false,
+      primaryKey: true,
     },
     explain: {
       type: STRING(1000),
