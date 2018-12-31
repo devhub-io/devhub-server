@@ -10,6 +10,12 @@ function toInt(str) {
 
 class ReposController extends Controller {
 
+  async find() {
+    const ctx = this.ctx;
+    const slug = ctx.params.slug;
+    this.ctx.body = await ctx.service.repos.findBySlug(slug);
+  }
+
   async hottest() {
     const ctx = this.ctx;
     const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };

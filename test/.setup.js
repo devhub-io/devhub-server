@@ -16,5 +16,12 @@ afterEach(async () => {
     app.model.ReposNews.destroy({ truncate: true, force: true }),
     app.model.Site.destroy({ truncate: true, force: true }),
     app.model.DeveloperLanguage.destroy({ truncate: true, force: true }),
+    app.model.ReposContributor.destroy({ truncate: true, force: true }),
+    app.model.ReposTag.destroy({ truncate: true, force: true }),
+    app.model.ReposBadge.destroy({ truncate: true, force: true }),
+    app.model.ReposQuestion.destroy({ truncate: true, force: true }),
+    app.model.Package.destroy({ truncate: true, force: true }),
+    app.model.ReposDependency.destroy({ truncate: true, force: true }),
+    app.model.ReposLanguage.destroy({ truncate: true, force: true }),
   ]);
 });

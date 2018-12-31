@@ -132,14 +132,14 @@ module.exports = app => {
 
   // developer_languages
   factory.define('developer_language', app.model.DeveloperLanguage, {
-    developer_id: factory.sequence('DeveloperLanguage.title', n => n),
+    developer_id: factory.sequence('DeveloperLanguage.developer_id', n => n),
     language: factory.sequence('DeveloperLanguage.language', n => `lang_${n}`),
-    bytes: factory.sequence('DeveloperLanguage.language', n => n),
+    bytes: factory.sequence('DeveloperLanguage.bytes', n => n),
   });
 
   // repos_contributors
   factory.define('repos_contributor', app.model.ReposContributor, {
-    repos_id: factory.sequence('ReposContributor.developer_id', n => n),
+    repos_id: factory.sequence('ReposContributor.repos_id', n => n),
     login: 'abc',
     avatar_url: faker.image.avatar(),
     html_url: faker.internet.url(),
@@ -150,4 +150,66 @@ module.exports = app => {
     updated_at: new Date(),
   });
 
+  // repos_tags
+  factory.define('repos_tag', app.model.ReposTag, {
+    repos_id: factory.sequence('ReposTag.repos_id', n => n),
+    name: factory.sequence('ReposTag.name', n => `tag_${n}`),
+    zipball_url: faker.internet.url(),
+    tarball_url: faker.internet.url(),
+    commit_sha: '177272',
+  });
+
+  // repos_badges
+  factory.define('repos_badge', app.model.ReposBadge, {
+    repos_id: factory.sequence('ReposBadge.repos_id', n => n),
+    name: factory.sequence('ReposBadge.name', n => `badge_${n}`),
+    url: faker.internet.url(),
+    type: 'a',
+  });
+
+  // repos_questions
+  factory.define('repos_question', app.model.ReposQuestion, {
+    repos_id: factory.sequence('ReposQuestion.repos_id', n => n),
+    title: factory.sequence('ReposQuestion.title', n => `q_${n}`),
+    link: faker.internet.url(),
+    view_count: faker.random.number(),
+    answer_count: faker.random.number(),
+    score: faker.random.number(),
+    question_id: faker.random.number(),
+    creation_date: new Date(),
+    last_edit_date: new Date(),
+    last_activity_date: new Date(),
+  });
+
+  // packages
+  factory.define('package', app.model.Package, {
+    provider: 'a',
+    name: factory.sequence('Package.name', n => `package_${n}`),
+    repository: 'repository',
+    json: 'json',
+    package_url: faker.internet.url(),
+    repos_id: faker.random.number(),
+    fetched_at: new Date(),
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // repos_dependencies
+  factory.define('repos_dependency', app.model.ReposDependency, {
+    repos_id: factory.sequence('ReposDependency.repos_id', n => n),
+    source: 'source',
+    env: 'env',
+    package: 'package',
+    version: '1.0',
+    version_condition: '1.0',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // repos_languages
+  factory.define('repos_language', app.model.ReposLanguage, {
+    repos_id: factory.sequence('ReposLanguage.repos_id', n => n),
+    language: factory.sequence('ReposLanguage.language', n => `lang_${n}`),
+    bytes: 1,
+  });
 };

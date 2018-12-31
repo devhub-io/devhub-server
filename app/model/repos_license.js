@@ -7,6 +7,7 @@ module.exports = app => {
     repos_id: {
       type: INTEGER(11),
       allowNull: false,
+      primaryKey: true,
     },
     key: {
       type: STRING(20),

@@ -200,4 +200,158 @@ describe('test/app/service/repos.test.js', () => {
     });
   });
 
+
+  describe('GET /repos/:slug', () => {
+    it('should work', async () => {
+      const repos = await app.factory.create('repos');
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('repos_tag',
+          {
+            repos_id: repos.id,
+            name: `tag_${i}`,
+            zipball_url: 'url',
+            tarball_url: 'url',
+            commit_sha: '10101',
+          });
+      }
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('repos_contributor',
+          {
+            repos_id: repos.id,
+            login: 'abc',
+            avatar_url: 'url',
+            html_url: 'url',
+            type: 'User',
+            site_admin: 1,
+            contributions: 1,
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+      }
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('repos_language',
+          {
+            repos_id: repos.id,
+            language: `lang_${i}`,
+            bytes: 1,
+          });
+      }
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('repos_badge',
+          {
+            repos_id: repos.id,
+            name: `badge_${i}`,
+            url: 'url',
+            type: 'a',
+          });
+      }
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('repos_question',
+          {
+            repos_id: repos.id,
+            title: `q_${i}`,
+            link: 'url',
+            view_count: 1,
+            answer_count: 1,
+            score: 1,
+            question_id: 1,
+            creation_date: new Date(),
+            last_edit_date: new Date(),
+            last_activity_date: new Date(),
+          });
+      }
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('repos_news',
+          {
+            repos_id: repos.id,
+            url: 'url',
+            title: 'title',
+            score: 1,
+            time: 1,
+            item_id: 1,
+            post_date: moment(new Date()).format('YYYY-MM-DD'),
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+      }
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('package',
+          {
+            repos_id: repos.id,
+            provider: 'a',
+            name: `package_${i}`,
+            repository: 'repository',
+            json: 'json',
+            package_url: 'url',
+            fetched_at: new Date(),
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+      }
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('repos_topic',
+          {
+            repos_id: repos.id,
+            topic: `topic_${i}`,
+          });
+      }
+
+      for (let i = 0; i < 2; i++) {
+        await app.factory.create('repos_dependency',
+          {
+            repos_id: repos.id,
+            source: 'source',
+            env: 'env',
+            package: 'package',
+            version: '1.0',
+            version_condition: '1.0',
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+      }
+
+      const res = await app.httpRequest().get(`/repos/${repos.slug}`);
+      assert(res.status === 200);
+      assert(Object.keys(res.body).length === 10);
+      assert(res.body.repos.slug === repos.slug);
+      assert(res.body.repos.title);
+      assert(res.body.repos.description);
+
+      assert(res.body.tags.length === 2);
+      assert(res.body.tags[0].name);
+      assert(res.body.tags[0].zipball_url);
+
+      assert(res.body.contributors.length === 2);
+      assert(res.body.contributors[0].login);
+      assert(res.body.contributors[0].avatar_url);
+
+      assert(res.body.languages.length === 2);
+      assert(res.body.languages[0].language);
+      assert(res.body.languages[0].bytes);
+
+      assert(res.body.badges.length === 2);
+      assert(res.body.badges[0].name);
+      assert(res.body.badges[0].url);
+
+      assert(res.body.questions.length === 2);
+      assert(res.body.questions[0].title);
+      assert(res.body.questions[0].link);
+
+      assert(res.body.news.length === 2);
+      assert(res.body.news[0].title);
+      assert(res.body.news[0].url);
+
+      assert(res.body.packages.length === 2);
+      assert(res.body.packages[0].name);
+      assert(res.body.packages[0].repository);
+
+      assert(res.body.topics.length === 2);
+      assert(res.body.topics[0].topic);
+
+      assert(res.body.dependencies.length === 2);
+      assert(res.body.dependencies[0].version);
+      assert(res.body.dependencies[0].package);
+    });
+  });
+
 });

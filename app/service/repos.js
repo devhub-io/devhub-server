@@ -11,7 +11,8 @@ function toDate(date) {
 
 class ReposService extends Service {
   async findBySlug(slug) {
-    const repos = await this.ctx.model.Repos.find({
+    const ctx = this.ctx;
+    const repos = await ctx.model.Repos.findOne({
       where: {
         slug,
         status: ENABLE,
@@ -20,7 +21,56 @@ class ReposService extends Service {
     if (!repos) {
       this.ctx.throw(404, 'repos not found');
     }
-    return repos;
+
+    const tags = await ctx.model.ReposTag.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+    const contributors = await ctx.model.ReposContributor.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+    const languages = await ctx.model.ReposLanguage.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+    const badges = await ctx.model.ReposBadge.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+    const questions = await ctx.model.ReposQuestion.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+    const news = await ctx.model.ReposNews.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+    const packages = await ctx.model.Package.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+    const topics = await ctx.model.ReposTopic.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+    const dependencies = await ctx.model.ReposDependency.findAll({
+      where: {
+        repos_id: repos.id,
+      },
+    });
+
+    // relatedRepos TODO
+
+    return { repos, tags, contributors, languages, badges, questions, news, packages, topics, dependencies };
   }
 
   // Hottest -> stargazers_count
