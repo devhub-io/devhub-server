@@ -7,6 +7,7 @@ module.exports = app => {
     developer_id: {
       type: INTEGER(11),
       allowNull: false,
+      primaryKey: true,
     },
     language: {
       type: STRING(20),

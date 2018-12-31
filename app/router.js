@@ -21,4 +21,5 @@ module.exports = app => {
   router.get('/category/top', controller.category.topColumn);
   // Developer
   router.get('/developer/list', controller.developer.list);
+  router.get('/developer/:slug', controller.developer.find);
 };

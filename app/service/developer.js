@@ -6,16 +6,59 @@ const ENABLE = 1;
 
 class DeveloperService extends Service {
   async findBySlug(slug) {
-    const repos = await this.ctx.model.Repos.find({
+    const Op = this.app.Sequelize.Op;
+    const developer = await this.ctx.model.Developer.findOne({
       where: {
-        slug,
+        login: slug,
         status: ENABLE,
       },
     });
-    if (!repos) {
+    if (!developer) {
       this.ctx.throw(404, 'repos not found');
     }
-    return repos;
+
+    // view number TODO
+
+    const owner_repos = await this.ctx.model.Repos.findAll({
+      attributes: [ 'id', 'slug', 'title', 'cover', 'description', 'stargazers_count', 'trends' ],
+      where: {
+        owner: developer.login,
+        status: ENABLE,
+      },
+      order: [
+        [ 'stargazers_count', 'DESC' ],
+      ],
+    });
+
+    const contribute_repos = await this.ctx.model.ReposContributor.findAll({
+      include: [{
+        model: this.ctx.model.Repos,
+        as: 'repos',
+        attributes: [ 'slug', 'title', 'cover', 'description', 'stargazers_count', 'trends' ],
+        where: {
+          status: ENABLE,
+          owner: {
+            [Op.ne]: slug,
+          },
+        },
+      }],
+      attributes: [ 'repos_id' ],
+      where: {
+        login: slug,
+      },
+    });
+
+    const developer_languages = await this.ctx.model.DeveloperLanguage.findAll({
+      attributes: [ 'language', 'bytes' ],
+      where: {
+        developer_id: developer.id,
+      },
+      order: [
+        [ 'bytes', 'DESC' ],
+      ],
+    });
+
+    return { developer, owner_repos, contribute_repos, developer_languages };
   }
 
   async list({ limit = 5, page = 1, type = 'User' }) {

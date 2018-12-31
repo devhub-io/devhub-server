@@ -129,4 +129,25 @@ module.exports = app => {
     created_at: new Date(),
     updated_at: new Date(),
   });
+
+  // developer_languages
+  factory.define('developer_language', app.model.DeveloperLanguage, {
+    developer_id: factory.sequence('DeveloperLanguage.title', n => n),
+    language: factory.sequence('DeveloperLanguage.language', n => `lang_${n}`),
+    bytes: factory.sequence('DeveloperLanguage.language', n => n),
+  });
+
+  // repos_contributors
+  factory.define('repos_contributor', app.model.ReposContributor, {
+    repos_id: factory.sequence('ReposContributor.developer_id', n => n),
+    login: 'abc',
+    avatar_url: faker.image.avatar(),
+    html_url: faker.internet.url(),
+    type: 'User',
+    site_admin: 1,
+    contributions: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
 };
