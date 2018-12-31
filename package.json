@@ -5,7 +5,6 @@
   "private": true,
   "dependencies": {
     "egg": "^2.2.1",
-    "egg-logrotator": "^3.0.5",
     "egg-scripts": "^2.5.0",
     "egg-sequelize": "^4.2.0",
     "moment": "^2.23.0",

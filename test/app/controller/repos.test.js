@@ -185,4 +185,19 @@ describe('test/app/service/repos.test.js', () => {
     });
   });
 
+  describe('GET /sites', () => {
+    it('should work', async () => {
+      await app.factory.createMany('site', 3);
+      const res = await app.httpRequest().get('/sites');
+      assert(res.status === 200);
+      assert(Object.keys(res.body).length === 3);
+      const firstKey = Object.keys(res.body)[0];
+      assert(res.body[firstKey][0].title);
+      assert(res.body[firstKey][0].url);
+      assert(res.body[firstKey][0].category);
+      assert(res.body[firstKey][0].icon);
+      assert(res.body[firstKey][0].description);
+    });
+  });
+
 });

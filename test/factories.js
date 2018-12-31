@@ -115,4 +115,18 @@ module.exports = app => {
     created_at: new Date(),
     updated_at: new Date(),
   });
+
+  // sites
+  factory.define('site', app.model.Site, {
+    title: factory.sequence('Site.title', n => `site_${n}`),
+    category: factory.sequence('Site.category', n => `category_${n}`),
+    url: faker.internet.url(),
+    sort: faker.random.number(),
+    is_enable: 1,
+    icon: 'icon',
+    description: 'description',
+    level: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
 };

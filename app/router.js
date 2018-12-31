@@ -16,6 +16,7 @@ module.exports = app => {
   router.get('/news', controller.repos.news);
   router.get('/topics', controller.repos.topics);
   router.get('/topic/:topic', controller.repos.topicInPaginate);
+  router.get('/sites', controller.repos.sites);
   // Category
   router.get('/category/top', controller.category.topColumn);
   // Developer

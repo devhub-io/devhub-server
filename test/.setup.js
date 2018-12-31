@@ -14,5 +14,6 @@ afterEach(async () => {
     app.model.ReposTopic.destroy({ truncate: true, force: true }),
     app.model.TopicExplain.destroy({ truncate: true, force: true }),
     app.model.ReposNews.destroy({ truncate: true, force: true }),
+    app.model.Site.destroy({ truncate: true, force: true }),
   ]);
 });

@@ -67,6 +67,11 @@ class ReposController extends Controller {
     ctx.body = await ctx.service.repos.news(query);
   }
 
+  async sites() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.repos.sites();
+  }
+
 }
 
 module.exports = ReposController;

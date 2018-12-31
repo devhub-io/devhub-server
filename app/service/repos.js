@@ -216,6 +216,30 @@ class ReposService extends Service {
     return result;
   }
 
+  async sites() {
+    const sites = await this.ctx.model.Site.findAll({
+      attributes: [ 'title', 'url', 'category', 'icon', 'description' ],
+      where: {
+        is_enable: ENABLE,
+        level: 1,
+      },
+      order: [
+        [ 'category', 'ASC' ],
+        [ 'sort', 'ASC' ],
+      ],
+    });
+
+    const result = {};
+    sites.forEach(i => {
+      if (!(i.category in result)) {
+        result[i.category] = [];
+      }
+      result[i.category].push(i);
+    });
+
+    return result;
+  }
+
 }
 
 module.exports = ReposService;
