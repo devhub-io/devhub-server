@@ -42,5 +42,10 @@ module.exports = appInfo => {
     maxDays: 0,
   };
 
+  // CORS
+  exports.security = {
+    domainWhiteList: [ 'http://localhost:3000' ],
+  };
+
   return config;
 };

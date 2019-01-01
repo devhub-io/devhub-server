@@ -221,11 +221,11 @@ class ReposService extends Service {
     const Op = this.app.Sequelize.Op;
     date = date || toDate(new Date());
     const result = await this.ctx.model.ReposNews.findAndCountAll({
-      attributes: [ 'url', 'title', 'score', 'post_date' ],
+      attributes: [ 'url', 'title', 'score', 'post_date', 'item_id' ],
       include: [{
         model: this.ctx.model.Repos,
         as: 'repos',
-        attributes: [ 'title', 'slug', 'cover', 'description', 'stargazers_count' ],
+        attributes: [ 'title', 'slug', 'cover', 'description', 'stargazers_count', 'owner', 'repo' ],
         where: {
           status: ENABLE,
         },

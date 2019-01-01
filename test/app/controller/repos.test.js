@@ -3,7 +3,7 @@
 const { assert, app } = require('egg-mock/bootstrap');
 const moment = require('moment');
 
-describe('test/app/service/repos.test.js', () => {
+describe('test/app/controller/repos.test.js', () => {
   describe('GET /repos/hottest', () => {
     it('should work', async () => {
       // 通过 factory-girl 快速创建 repos 对象到数据库中
@@ -174,12 +174,15 @@ describe('test/app/service/repos.test.js', () => {
       assert(res.body.rows[0].url);
       assert(res.body.rows[0].title);
       assert(res.body.rows[0].score);
+      assert(res.body.rows[0].item_id);
       assert(res.body.rows[0].post_date === moment().format('YYYY-MM-DD'));
       assert(res.body.rows[0].repos.title);
       assert(res.body.rows[0].repos.slug);
       assert(res.body.rows[0].repos.cover);
       assert(res.body.rows[0].repos.description);
       assert(res.body.rows[0].repos.stargazers_count);
+      assert(res.body.rows[0].repos.owner);
+      assert(res.body.rows[0].repos.repo);
       assert(res.body.next === null);
       assert(res.body.prev.post_date === moment().subtract(1, 'd').format('YYYY-MM-DD'));
     });
