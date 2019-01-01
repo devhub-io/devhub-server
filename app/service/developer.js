@@ -63,6 +63,7 @@ class DeveloperService extends Service {
 
   async list({ limit = 5, page = 1, type = 'User' }) {
     const Op = this.app.Sequelize.Op;
+    page = page >= 1000 ? 1000 : page;
     const offset = (page - 1) * limit;
     const result = await this.ctx.model.Developer.findAndCountAll({
       where: {
