@@ -5,7 +5,7 @@ const octokit = require('@octokit/rest')();
 
 const REPOS_URL_REGEX = /https?:\/\/github\.com\/([0-9a-zA-Z\-\.]*)\/([0-9a-zA-Z\-\.]*)/i;
 // const README_URL_REGEX = '/https?:\\/\\/github\\.com\\/[0-9a-zA-Z\\-\\.]*\\/[0-9a-zA-Z\\-\\.]*/';
-// const DEVELOPER_URL_REGEX = '/^https?:\\/\\/github\\.com\\/([0-9a-zA-Z\\-\\.]*)$/';
+const DEVELOPER_URL_REGEX = /^https?:\/\/github\.com\/([0-9a-zA-Z\-\.]*)$/i;
 const GITHUB_LIMIT = 100;
 
 class JobService extends Service {
@@ -14,12 +14,112 @@ class JobService extends Service {
     return await this[payload.job](payload.data);
   }
 
-  async githubFetch(data) {
+  async developerFetch(data) {
     const { app, ctx } = this;
+    const found = data.url.match(DEVELOPER_URL_REGEX);
+    if (found) {
+      const exists = await ctx.model.Developer.findOne({
+        attributes: [ 'id' ],
+        where: {
+          login: found[1],
+        },
+      }).then(result => {
+        return result !== null;
+      });
+      if (exists) {
+        app.logger.info('[system] DeveloperFetch Job Developer exists: ' + data.url);
+        return false;
+      }
 
-    console.log(data);
+      const id = await this.selectUserId();
+      if (!id) {
+        app.logger.info('[system] DeveloperFetch Job not UserId');
+        return false;
+      }
 
+      const token = await this.userGithubToken({ id });
 
+      octokit.authenticate({
+        type: 'oauth',
+        token,
+      });
+
+      octokit.users
+        .getByUsername({
+          username: found[1],
+        })
+        .then(async ({ data, headers }) => {
+          this.updateUserGithubRemaining(id, headers);
+
+          const developer = await this.ctx.service.developer.createFromGithubAPI(data);
+          if (developer) {
+            octokit.repos
+              .listForUser({
+                username: found[1],
+                sort: 'updated',
+                per_page: 100,
+              })
+              .then(async ({ data, headers }) => {
+                this.updateUserGithubRemaining(id, headers);
+
+                data.forEach(async repos => {
+                  const exists = await ctx.model.Repos.findOne({
+                    attributes: [ 'id' ],
+                    where: {
+                      github: repos.html_url,
+                    },
+                  }).then(result => {
+                    return result !== null;
+                  });
+                  if (!exists) {
+                    if (repos.stargazers_count > 0) {
+                      const insert_repos = await ctx.service.repos.createFromGithubAPI(id, repos);
+                      octokit.repos
+                        .getReadme({
+                          owner: insert_repos.owner,
+                          repo: insert_repos.repo,
+                        })
+                        .then(async ({ data, headers }) => {
+                          this.updateUserGithubRemaining(id, headers);
+
+                          const result = await app.curl(data.download_url, {
+                            timeout: 60000,
+                          });
+                          const text = result.data;
+                          if (text !== null && text.length > 0) {
+                            insert_repos.readme = text;
+                            insert_repos.save();
+                          }
+                        })
+                        .catch(e => {
+                          console.log(e.status);
+                          console.log(e.message);
+
+                          this.updateUserGithubRemaining(id, e.headers);
+                        });
+                    }
+                  }
+                });
+              })
+              .catch(e => {
+                console.log(e.status);
+                console.log(e.message);
+
+                this.updateUserGithubRemaining(id, e.headers);
+              });
+          }
+        })
+        .catch(e => {
+          console.log(e.status);
+          console.log(e.message);
+
+          this.updateUserGithubRemaining(id, e.headers);
+        });
+    }
+  }
+
+  async reposFetch(data) {
+    const { app, ctx } = this;
     const found = data.url.match(REPOS_URL_REGEX);
     if (found) {
       const exists = await ctx.model.Repos.findOne({
@@ -31,13 +131,13 @@ class JobService extends Service {
         return result !== null;
       });
       if (exists) {
-        app.logger.info('[system] GithubFetch Job Repos exists: ' + data.url);
+        app.logger.info('[system] ReposFetch Job Repos exists: ' + data.url);
         return false;
       }
 
       const id = await this.selectUserId();
       if (!id) {
-        app.logger.info('[system] GithubFetch Job not UserId');
+        app.logger.info('[system] ReposFetch Job not UserId');
         return false;
       }
 

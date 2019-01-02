@@ -321,7 +321,7 @@ class ReposService extends Service {
       user_id: id,
       title: data.name,
       slug,
-      description: data.description,
+      description: data.description !== undefined && data.description !== null ? data.description.substring(0, 254) : '',
       language: data.language || '',
       homepage: data.homepage || '',
       github: data.html_url || '',

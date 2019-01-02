@@ -98,6 +98,42 @@ class DeveloperService extends Service {
     return await this.ctx.model.Developer.count();
   }
 
+  async createFromGithubAPI(data) {
+    const login = data.login;
+
+    const find = await this.ctx.model.Developer.findOne({
+      attributes: [ 'id' ],
+      where: {
+        login,
+      },
+    });
+
+    if (find) {
+      return false;
+    }
+    return await this.ctx.model.Developer.create({
+      login: data.login,
+      github_id: data.id,
+      avatar_url: data.avatar_url,
+      html_url: data.html_url,
+      type: data.type,
+      site_admin: data.site_admin,
+      name: data.name || '',
+      company: data.company || '',
+      blog: data.blog || '',
+      location: data.location || '',
+      email: data.email || '',
+      public_repos: data.public_repos,
+      public_gists: data.public_gists,
+      followers: data.followers,
+      following: data.following,
+      site_created_at: data.created_at,
+      site_updated_at: data.updated_at,
+      fetched_at: new Date(),
+      analytics_at: new Date(),
+    });
+  }
+
 }
 
 module.exports = DeveloperService;

@@ -38,38 +38,47 @@ module.exports = app => {
     site_admin: {
       type: INTEGER(1),
       allowNull: false,
+      defaultValue: 0,
     },
     company: {
       type: STRING(100),
       allowNull: false,
+      defaultValue: '',
     },
     blog: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
     },
     location: {
       type: STRING(200),
       allowNull: false,
+      defaultValue: '',
     },
     email: {
       type: STRING(100),
       allowNull: false,
+      defaultValue: '',
     },
     public_repos: {
       type: INTEGER(6),
       allowNull: false,
+      defaultValue: 0,
     },
     public_gists: {
       type: INTEGER(6),
       allowNull: false,
+      defaultValue: 0,
     },
     followers: {
       type: INTEGER(11),
       allowNull: false,
+      defaultValue: 0,
     },
     following: {
       type: INTEGER(11),
       allowNull: false,
+      defaultValue: 0,
     },
     site_created_at: {
       type: DATE,
@@ -90,10 +99,12 @@ module.exports = app => {
     view_number: {
       type: INTEGER(11),
       allowNull: false,
+      defaultValue: 0,
     },
     status: {
       type: INTEGER(1),
       allowNull: false,
+      defaultValue: 0,
     },
     fetched_at: {
       type: DATE,
@@ -108,6 +119,7 @@ module.exports = app => {
     rating: {
       type: 'DOUBLE(8,2)',
       allowNull: false,
+      defaultValue: 0,
     },
   }, {
     tableName: 'developer',
