@@ -293,6 +293,49 @@ class ReposService extends Service {
     return result;
   }
 
+  async createFromGithubAPI(id, data) {
+    const owner = data.owner.login;
+    const repo = data.name;
+    const slug = `${owner}-${repo}`;
+
+    const find = await this.ctx.model.Repos.findOne({
+      attributes: [ 'id' ],
+      where: {
+        slug,
+      },
+    });
+
+    if (find) {
+      return false;
+    }
+    return await this.ctx.model.Repos.create({
+      user_id: id,
+      title: data.name,
+      slug,
+      description: data.description,
+      language: data.language || '',
+      homepage: data.homepage || '',
+      github: data.html_url || '',
+      stargazers_count: data.stargazers_count || 0,
+      watchers_count: data.watchers_count || 0,
+      open_issues_count: data.open_issues_count || 0,
+      forks_count: data.forks_count || 0,
+      subscribers_count: data.subscribers_count || 0,
+      repos_created_at: data.created_at,
+      repos_updated_at: data.updated_at,
+      fetched_at: new Date(),
+      category_id: 0,
+      readme: '',
+      issue_response: 0,
+      is_recommend: false,
+      owner,
+      repo,
+      cover: data.owner.avatar_url || '',
+      // fork: TODO
+    });
+
+  }
+
 }
 
 module.exports = ReposService;

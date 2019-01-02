@@ -145,6 +145,7 @@ module.exports = app => {
     document_url: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
     },
   }, {
     tableName: 'repos',

@@ -44,7 +44,32 @@ module.exports = appInfo => {
 
   // CORS
   exports.security = {
-    domainWhiteList: [ 'http://localhost:3000' ],
+    domainWhiteList: [ 'http://localhost:7002' ],
+  };
+
+  exports.redis = {
+    client: {
+      port: 6379,
+      host: '127.0.0.1',
+      password: '',
+      db: 0,
+    },
+  };
+
+  exports.queue = {
+    client: {
+      name: 'queue',
+      redis: {
+        host: 'localhost',
+        port: 6379,
+        db: 0,
+      },
+    },
+  };
+
+  exports.github = {
+    id: env.GITHUB_CLIENT_ID,
+    secret: env.GITHUB_CLIENT_SECRET,
   };
 
   return config;

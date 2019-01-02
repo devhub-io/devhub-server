@@ -4,6 +4,8 @@
   "description": "",
   "private": true,
   "dependencies": {
+    "@octokit/rest": "^16.3.0",
+    "bull": "^3.5.2",
     "egg": "^2.2.1",
     "egg-cors": "^2.1.2",
     "egg-redis": "^2.3.0",
