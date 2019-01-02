@@ -6,8 +6,9 @@ const ENABLE = 1;
 
 class DeveloperService extends Service {
   async findBySlug(slug) {
+    const ctx = this.ctx;
     const Op = this.app.Sequelize.Op;
-    const developer = await this.ctx.model.Developer.findOne({
+    const developer = await ctx.model.Developer.findOne({
       where: {
         login: slug,
         status: ENABLE,
@@ -17,9 +18,17 @@ class DeveloperService extends Service {
       this.ctx.throw(404, 'repos not found');
     }
 
-    // view number TODO
+    // PV
+    const clientIP = ctx.ips.length > 0 ? ctx.ips[ctx.ips.length - 1] : ctx.ip;
+    const k = await this.app.redis.get(`devhub:developer:${developer.id}:pv:${clientIP}`);
+    if (!k) {
+      await this.app.redis.set(`devhub:developer:${developer.id}:pv:${clientIP}`, 1);
+      await this.app.redis.expire(`devhub:developer:${developer.id}:pv:${clientIP}`, 24 * 60 * 60);
+      developer.view_number = developer.view_number + 1;
+      developer.save();
+    }
 
-    const owner_repos = await this.ctx.model.Repos.findAll({
+    const owner_repos = await ctx.model.Repos.findAll({
       attributes: [ 'id', 'slug', 'title', 'cover', 'description', 'stargazers_count', 'trends' ],
       where: {
         owner: developer.login,
@@ -30,9 +39,9 @@ class DeveloperService extends Service {
       ],
     });
 
-    const contribute_repos = await this.ctx.model.ReposContributor.findAll({
+    const contribute_repos = await ctx.model.ReposContributor.findAll({
       include: [{
-        model: this.ctx.model.Repos,
+        model: ctx.model.Repos,
         as: 'repos',
         attributes: [ 'slug', 'title', 'cover', 'description', 'stargazers_count', 'trends' ],
         where: {
@@ -48,7 +57,7 @@ class DeveloperService extends Service {
       },
     });
 
-    const developer_languages = await this.ctx.model.DeveloperLanguage.findAll({
+    const developer_languages = await ctx.model.DeveloperLanguage.findAll({
       attributes: [ 'language', 'bytes' ],
       where: {
         developer_id: developer.id,

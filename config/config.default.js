@@ -49,9 +49,9 @@ module.exports = appInfo => {
 
   exports.redis = {
     client: {
-      port: 6379,
-      host: '127.0.0.1',
-      password: '',
+      port: env.REDIS_PORT,
+      host: env.REDIS_HOST,
+      password: env.REDIS_PASSWORD,
       db: 0,
     },
   };
@@ -60,8 +60,9 @@ module.exports = appInfo => {
     client: {
       name: 'queue',
       redis: {
-        host: 'localhost',
-        port: 6379,
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
+        password: env.REDIS_PASSWORD,
         db: 0,
       },
     },

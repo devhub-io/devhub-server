@@ -17,3 +17,8 @@ exports.redis = {
   enable: true,
   package: 'egg-redis',
 };
+
+exports.proxyagent = {
+  enable: true,
+  package: 'egg-development-proxyagent',
+};

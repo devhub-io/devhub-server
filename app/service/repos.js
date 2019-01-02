@@ -21,6 +21,15 @@ class ReposService extends Service {
     if (!repos) {
       this.ctx.throw(404, 'repos not found');
     }
+    // PV
+    const clientIP = ctx.ips.length > 0 ? ctx.ips[ctx.ips.length - 1] : ctx.ip;
+    const k = await this.app.redis.get(`devhub:repos:${repos.id}:pv:${clientIP}`);
+    if (!k) {
+      await this.app.redis.set(`devhub:repos:${repos.id}:pv:${clientIP}`, 1);
+      await this.app.redis.expire(`devhub:repos:${repos.id}:pv:${clientIP}`, 24 * 60 * 60);
+      repos.view_number = repos.view_number + 1;
+      repos.save();
+    }
 
     const tags = await ctx.model.ReposTag.findAll({
       where: {
