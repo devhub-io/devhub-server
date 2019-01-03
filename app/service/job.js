@@ -89,6 +89,7 @@ class JobService extends Service {
               }
             }
           });
+          return true;
         }
       } catch (e) {
         console.log(e.status);
@@ -97,6 +98,7 @@ class JobService extends Service {
         if ('headers' in e) {
           this.updateUserGithubRemaining(id, e.headers);
         }
+        return false;
       }
     }
   }
@@ -154,6 +156,7 @@ class JobService extends Service {
             repos.readme = text;
             repos.save();
           }
+          return true;
         }
       } catch (e) {
         console.log(e.status);
@@ -162,6 +165,8 @@ class JobService extends Service {
         if ('headers' in e) {
           this.updateUserGithubRemaining(id, e.headers);
         }
+        console.log(e);
+        return false;
       }
     }
   }
@@ -196,7 +201,7 @@ class JobService extends Service {
 
       app.logger.info(`[system] Job use UserID: ${randomId}`);
 
-      return randomId;
+      return parseInt(randomId);
     }
 
     const Op = app.Sequelize.Op;
@@ -209,7 +214,7 @@ class JobService extends Service {
         },
       },
     });
-    if (services) {
+    if (services.length > 0) {
       await app.redis.del('devhub:user:github:id');
       services.forEach(async i => {
         app.redis.set(`devhub:user:${i.user_id}:github:remaining`, 5000);
@@ -241,6 +246,10 @@ class JobService extends Service {
       }
       return null;
     });
+  }
+
+  async echo(data) {
+    return data.text;
   }
 
 }

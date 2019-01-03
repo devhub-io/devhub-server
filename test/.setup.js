@@ -23,5 +23,9 @@ afterEach(async () => {
     app.model.Package.destroy({ truncate: true, force: true }),
     app.model.ReposDependency.destroy({ truncate: true, force: true }),
     app.model.ReposLanguage.destroy({ truncate: true, force: true }),
+    app.model.User.destroy({ truncate: true, force: true }),
+    app.model.Service.destroy({ truncate: true, force: true }),
   ]);
+  // clear redis after each test case
+  await app.redis.flushdb();
 });

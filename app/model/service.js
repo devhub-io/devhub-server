@@ -21,6 +21,7 @@ module.exports = app => {
     name: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
     },
     token: {
       type: STRING(255),
@@ -41,6 +42,7 @@ module.exports = app => {
     options: {
       type: TEXT,
       allowNull: false,
+      defaultValue: '',
     },
     created_at: {
       type: DATE,

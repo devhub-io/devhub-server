@@ -31,8 +31,7 @@ module.exports = app => {
 
 function createQueue(config, app) {
   const { name } = config;
-  const queue = new Queue(name, config);
-
+  const queue = new Queue(name, { redis: config.redis.client });
   /* istanbul ignore next */
   queue.on('error', error => {
     app.coreLogger.error(error);

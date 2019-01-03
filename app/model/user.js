@@ -13,6 +13,7 @@ module.exports = app => {
     name: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
     },
     email: {
       type: STRING(255),
@@ -26,6 +27,7 @@ module.exports = app => {
     remember_token: {
       type: STRING(100),
       allowNull: true,
+      defaultValue: '',
     },
     created_at: {
       type: DATE,
@@ -38,6 +40,7 @@ module.exports = app => {
     google2fa_secret_key: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
     },
     last_activated_at: {
       type: DATE,

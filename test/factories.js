@@ -212,4 +212,26 @@ module.exports = app => {
     language: factory.sequence('ReposLanguage.language', n => `lang_${n}`),
     bytes: 1,
   });
+
+  // users
+  factory.define('user', app.model.User, {
+    email: factory.sequence('User.email', n => `email_${n}@email.local`),
+    password: 'abc',
+    created_at: new Date(),
+    updated_at: new Date(),
+    last_activated_at: new Date(),
+  });
+
+  // services
+  factory.define('service', app.model.Service, {
+    name: factory.sequence('Service.name', n => `service_${n}`),
+    user_id: 1,
+    provider: 'github',
+    token: 'abc',
+    secret: 'abc',
+    refresh_token: 'abc',
+    expires_at: new Date('2999-01-01 00:00:00'),
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
 };

@@ -23,17 +23,5 @@ module.exports = () => {
     },
   };
 
-  exports.queue = {
-    client: {
-      name: 'queue',
-      redis: {
-        host: env.REDIS_HOST,
-        port: env.REDIS_PORT,
-        password: env.REDIS_PASSWORD,
-        db: 1,
-      },
-    },
-  };
-
   return config;
 };

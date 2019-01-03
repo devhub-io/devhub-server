@@ -56,18 +56,6 @@ module.exports = appInfo => {
     },
   };
 
-  exports.queue = {
-    client: {
-      name: 'queue',
-      redis: {
-        host: env.REDIS_HOST,
-        port: env.REDIS_PORT,
-        password: env.REDIS_PASSWORD,
-        db: 0,
-      },
-    },
-  };
-
   exports.github = {
     id: env.GITHUB_CLIENT_ID,
     secret: env.GITHUB_CLIENT_SECRET,
