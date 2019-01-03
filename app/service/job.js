@@ -44,77 +44,62 @@ class JobService extends Service {
         token,
       });
 
-      octokit.users
-        .getByUsername({
-          username: found[1],
-        })
-        .then(async ({ data, headers }) => {
+      try {
+        const { data, headers } = await octokit.users
+          .getByUsername({
+            username: found[1],
+          });
+
+        this.updateUserGithubRemaining(id, headers);
+
+        const developer = await this.ctx.service.developer.createFromGithubAPI(data);
+        if (developer) {
+          const { data, headers } = await octokit.repos
+            .listForUser({
+              username: found[1],
+              sort: 'updated',
+              per_page: 100,
+            });
+
           this.updateUserGithubRemaining(id, headers);
 
-          const developer = await this.ctx.service.developer.createFromGithubAPI(data);
-          if (developer) {
-            octokit.repos
-              .listForUser({
-                username: found[1],
-                sort: 'updated',
-                per_page: 100,
-              })
-              .then(async ({ data, headers }) => {
+          data.forEach(async repos => {
+            const result = await ctx.model.Repos.findOne({
+              attributes: [ 'id' ],
+              where: {
+                github: repos.html_url,
+              },
+            });
+            if (result === null) {
+              if (repos.stargazers_count > 0) {
+                const insert_repos = await ctx.service.repos.createFromGithubAPI(id, repos);
+                const { data, headers } = await octokit.repos
+                  .getReadme({
+                    owner: insert_repos.owner,
+                    repo: insert_repos.repo,
+                  });
                 this.updateUserGithubRemaining(id, headers);
 
-                data.forEach(async repos => {
-                  const exists = await ctx.model.Repos.findOne({
-                    attributes: [ 'id' ],
-                    where: {
-                      github: repos.html_url,
-                    },
-                  }).then(result => {
-                    return result !== null;
-                  });
-                  if (!exists) {
-                    if (repos.stargazers_count > 0) {
-                      const insert_repos = await ctx.service.repos.createFromGithubAPI(id, repos);
-                      octokit.repos
-                        .getReadme({
-                          owner: insert_repos.owner,
-                          repo: insert_repos.repo,
-                        })
-                        .then(async ({ data, headers }) => {
-                          this.updateUserGithubRemaining(id, headers);
-
-                          const result = await app.curl(data.download_url, {
-                            timeout: 60000,
-                          });
-                          const text = result.data;
-                          if (text !== null && text.length > 0) {
-                            insert_repos.readme = text;
-                            insert_repos.save();
-                          }
-                        })
-                        .catch(e => {
-                          console.log(e.status);
-                          console.log(e.message);
-
-                          this.updateUserGithubRemaining(id, e.headers);
-                        });
-                    }
-                  }
+                const result = await app.curl(data.download_url, {
+                  timeout: 60000,
                 });
-              })
-              .catch(e => {
-                console.log(e.status);
-                console.log(e.message);
+                const text = result.data;
+                if (text !== null && text.length > 0) {
+                  insert_repos.readme = text;
+                  insert_repos.save();
+                }
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.log(e.status);
+        console.log(e.message);
 
-                this.updateUserGithubRemaining(id, e.headers);
-              });
-          }
-        })
-        .catch(e => {
-          console.log(e.status);
-          console.log(e.message);
-
+        if ('headers' in e) {
           this.updateUserGithubRemaining(id, e.headers);
-        });
+        }
+      }
     }
   }
 
@@ -122,15 +107,13 @@ class JobService extends Service {
     const { app, ctx } = this;
     const found = data.url.match(REPOS_URL_REGEX);
     if (found) {
-      const exists = await ctx.model.Repos.findOne({
+      const result = await ctx.model.Repos.findOne({
         attributes: [ 'id' ],
         where: {
           slug: `${found[1]}-${found[2]}`,
         },
-      }).then(result => {
-        return result !== null;
       });
-      if (exists) {
+      if (result !== null) {
         app.logger.info('[system] ReposFetch Job Repos exists: ' + data.url);
         return false;
       }
@@ -148,58 +131,53 @@ class JobService extends Service {
         token,
       });
 
-      octokit.repos
-        .get({
-          owner: found[1],
-          repo: found[2],
-        })
-        .then(async ({ data, headers }) => {
+      try {
+        const { data, headers } = await octokit.repos
+          .get({
+            owner: found[1],
+            repo: found[2],
+          });
+        this.updateUserGithubRemaining(id, headers);
+
+        const repos = await this.ctx.service.repos.createFromGithubAPI(id, data);
+        if (repos) {
+          const { data, headers } = await octokit.repos
+            .getReadme({
+              owner: found[1],
+              repo: found[2],
+            });
           this.updateUserGithubRemaining(id, headers);
 
-          const repos = await this.ctx.service.repos.createFromGithubAPI(id, data);
-          if (repos) {
-            octokit.repos
-              .getReadme({
-                owner: found[1],
-                repo: found[2],
-              })
-              .then(async ({ data, headers }) => {
-                this.updateUserGithubRemaining(id, headers);
-
-                const result = await app.curl(data.download_url, {
-                  timeout: 60000,
-                });
-                const text = result.data;
-                if (text !== null && text.length > 0) {
-                  repos.readme = text;
-                  repos.save();
-                }
-              })
-              .catch(e => {
-                console.log(e.status);
-                console.log(e.message);
-
-                this.updateUserGithubRemaining(id, e.headers);
-              });
+          const result = await app.curl(data.download_url, {
+            timeout: 60000,
+          });
+          const text = result.data;
+          if (text !== null && text.length > 0) {
+            repos.readme = text;
+            repos.save();
           }
-        })
-        .catch(e => {
-          console.log(e.status);
-          console.log(e.message);
+        }
+      } catch (e) {
+        console.log(e.status);
+        console.log(e.message);
 
+        if ('headers' in e) {
           this.updateUserGithubRemaining(id, e.headers);
-        });
+        }
+      }
     }
   }
 
   async updateUserGithubRemaining(id, headers) {
-    const { app } = this;
-    const remaining = parseInt(headers['x-ratelimit-remaining']) || 0;
-    const reset = parseInt(headers['x-ratelimit-reset']) || 0;
-    const timestamp = Math.floor(Date.now() / 1000);
+    if ('x-ratelimit-remaining' in headers && 'x-ratelimit-reset' in headers) {
+      const { app } = this;
+      const remaining = parseInt(headers['x-ratelimit-remaining']);
+      const reset = parseInt(headers['x-ratelimit-reset']);
+      const timestamp = Math.floor(Date.now() / 1000);
 
-    await app.redis.set(`devhub:user:${id}:github:remaining`, remaining);
-    await app.redis.expire(`devhub:user:${id}:github:remaining`, reset - timestamp > 0 ? reset - timestamp : 3600);
+      await app.redis.set(`devhub:user:${id}:github:remaining`, remaining);
+      await app.redis.expire(`devhub:user:${id}:github:remaining`, reset - timestamp > 0 ? reset - timestamp : 3600);
+    }
   }
 
   async selectUserId() {
