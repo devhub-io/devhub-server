@@ -5,6 +5,13 @@ const { app, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/service/job.test.js', () => {
 
+  describe('Queue', () => {
+    it('add job should work', async () => {
+      const result = await app.queue.add({ job: 'echo', data: { text: 'hi' } });
+      assert(result);
+    });
+  });
+
   describe('Process', () => {
     it('should work', async () => {
       const ctx = app.mockContext({});

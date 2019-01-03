@@ -165,7 +165,6 @@ class JobService extends Service {
         if ('headers' in e) {
           this.updateUserGithubRemaining(id, e.headers);
         }
-        console.log(e);
         return false;
       }
     }
