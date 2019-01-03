@@ -23,8 +23,6 @@ class JobService extends Service {
         where: {
           login: found[1],
         },
-      }).then(result => {
-        return result !== null;
       });
       if (exists) {
         app.logger.info('[system] DeveloperFetch Job Developer exists: ' + data.url);
@@ -64,13 +62,13 @@ class JobService extends Service {
           this.updateUserGithubRemaining(id, headers);
 
           data.forEach(async repos => {
-            const result = await ctx.model.Repos.findOne({
+            const exists = await ctx.model.Repos.findOne({
               attributes: [ 'id' ],
               where: {
                 github: repos.html_url,
               },
             });
-            if (result === null) {
+            if (!exists) {
               if (repos.stargazers_count > 0) {
                 const insert_repos = await ctx.service.repos.createFromGithubAPI(id, repos);
                 const { data, headers } = await octokit.repos
@@ -107,13 +105,13 @@ class JobService extends Service {
     const { app, ctx } = this;
     const found = data.url.match(REPOS_URL_REGEX);
     if (found) {
-      const result = await ctx.model.Repos.findOne({
+      const exists = await ctx.model.Repos.findOne({
         attributes: [ 'id' ],
         where: {
           slug: `${found[1]}-${found[2]}`,
         },
       });
-      if (result !== null) {
+      if (exists) {
         app.logger.info('[system] ReposFetch Job Repos exists: ' + data.url);
         return false;
       }
