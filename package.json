@@ -13,7 +13,8 @@
     "egg-scripts": "^2.5.0",
     "egg-sequelize": "^4.2.0",
     "moment": "^2.23.0",
-    "mysql2": "^1.6.4"
+    "mysql2": "^1.6.4",
+    "rollbar": "^2.5.1"
   },
   "devDependencies": {
     "faker": "^4.1.0",

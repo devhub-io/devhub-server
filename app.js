@@ -1,6 +1,8 @@
 'use strict';
 
 const Queue = require('bull');
+const Rollbar = require('rollbar');
+const env = require('./.env');
 
 module.exports = app => {
   app.beforeStart(async () => {
@@ -13,6 +15,16 @@ module.exports = app => {
     // 也可以通过以下方式来调用 Service
     // const ctx = app.createAnonymousContext();
     // app.cities = await ctx.service.cities.load();
+  });
+
+  app.on('error', err => {
+    // report error
+    const rollbar = new Rollbar({
+      accessToken: env.ROLLBAR_ACCESS_TOKEN,
+      captureUncaught: true,
+      captureUnhandledRejections: true,
+    });
+    rollbar.error(err);
   });
 
   app.queue = createQueue(app.config, app);
