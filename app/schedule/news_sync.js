@@ -31,7 +31,13 @@ class UpdateCache extends Subscription {
           timeout: 60000,
         });
         const itemData = res.data;
-        const found = itemData.url.match(REPOS_URL_REGEX);
+        let found;
+        if (typeof itemData.url === 'string') {
+          found = itemData.url.match(REPOS_URL_REGEX);
+        } else {
+          found = null;
+        }
+
         if (found) {
           const reposNews = await this.ctx.model.ReposNews.findOne({
             where: {
