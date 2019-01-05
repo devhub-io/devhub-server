@@ -27,7 +27,9 @@ class UpdateCache extends Subscription {
       });
       const items = res.data;
       items.forEach(async id => {
-        const res = await this.ctx.curl(`${base}/v0/item/${id}.json'`);
+        const res = await this.ctx.curl(`${base}/v0/item/${id}.json'`, {
+          timeout: 60000,
+        });
         const itemData = res.data;
         const found = itemData.url.match(REPOS_URL_REGEX);
         if (found) {
