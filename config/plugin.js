@@ -22,3 +22,8 @@ exports.proxyagent = {
   enable: true,
   package: 'egg-development-proxyagent',
 };
+
+exports.alinode = {
+  enable: true,
+  package: 'egg-alinode',
+};

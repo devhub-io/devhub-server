@@ -61,5 +61,10 @@ module.exports = appInfo => {
     secret: env.GITHUB_CLIENT_SECRET,
   };
 
+  exports.alinode = {
+    appid: env.ALINODE_APPID,
+    secret: env.ALINODE_SECRET,
+  };
+
   return config;
 };
