@@ -354,6 +354,9 @@ describe('test/app/controller/repos.test.js', () => {
       assert(res.body.dependencies.length === 2);
       assert(res.body.dependencies[0].version);
       assert(res.body.dependencies[0].package);
+
+      const res404 = await app.httpRequest().get('/repos/notfound');
+      assert(res404.status === 404);
     });
   });
 

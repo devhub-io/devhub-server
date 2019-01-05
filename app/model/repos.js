@@ -1,5 +1,7 @@
 'use strict';
 
+const constant = require('../constant');
+
 module.exports = app => {
   const { INTEGER, STRING, TEXT, DATE, literal } = app.Sequelize;
 
@@ -149,6 +151,11 @@ module.exports = app => {
     },
   }, {
     tableName: 'repos',
+    defaultScope: {
+      where: {
+        status: constant.ENABLE,
+      },
+    },
   });
 
   Repos.associate = function() {

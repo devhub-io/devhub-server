@@ -110,6 +110,9 @@ describe('test/app/controller/developer.test.js', () => {
       assert(res.body.contribute_repos[0].repos.description);
       assert(res.body.contribute_repos[0].repos.stargazers_count);
       assert(res.body.contribute_repos[0].repos.trends);
+
+      const res404 = await app.httpRequest().get('/developer/notfound');
+      assert(res404.status === 404);
     });
   });
 

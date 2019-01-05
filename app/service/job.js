@@ -2,11 +2,7 @@
 
 const Service = require('egg').Service;
 const octokit = require('@octokit/rest')();
-
-const REPOS_URL_REGEX = /https?:\/\/github\.com\/([0-9a-zA-Z\-\.]*)\/([0-9a-zA-Z\-\.]*)/i;
-// const README_URL_REGEX = '/https?:\\/\\/github\\.com\\/[0-9a-zA-Z\\-\\.]*\\/[0-9a-zA-Z\\-\\.]*/';
-const DEVELOPER_URL_REGEX = /^https?:\/\/github\.com\/([0-9a-zA-Z\-\.]*)$/i;
-const GITHUB_LIMIT = 100;
+const constant = require('../constant');
 
 class JobService extends Service {
 
@@ -16,9 +12,9 @@ class JobService extends Service {
 
   async developerFetch(data) {
     const { app, ctx } = this;
-    const found = data.url.match(DEVELOPER_URL_REGEX);
+    const found = data.url.match(constant.DEVELOPER_URL_REGEX);
     if (found) {
-      const exists = await ctx.model.Developer.findOne({
+      const exists = await ctx.model.Developer.unscoped().findOne({
         attributes: [ 'id' ],
         where: {
           login: found[1],
@@ -30,7 +26,7 @@ class JobService extends Service {
       }
 
       const id = await this.selectUserId();
-      if (!id) {
+      if (id === null || id === undefined || id === 0 || id === '') {
         app.logger.info('[system] DeveloperFetch Job not UserId');
         return false;
       }
@@ -62,7 +58,7 @@ class JobService extends Service {
           this.updateUserGithubRemaining(id, headers);
 
           data.forEach(async repos => {
-            const exists = await ctx.model.Repos.findOne({
+            const exists = await ctx.model.Repos.unscoped().findOne({
               attributes: [ 'id' ],
               where: {
                 github: repos.html_url,
@@ -105,9 +101,9 @@ class JobService extends Service {
 
   async reposFetch(data) {
     const { app, ctx } = this;
-    const found = data.url.match(REPOS_URL_REGEX);
+    const found = data.url.match(constant.REPOS_URL_REGEX);
     if (found) {
-      const exists = await ctx.model.Repos.findOne({
+      const exists = await ctx.model.Repos.unscoped().findOne({
         attributes: [ 'id' ],
         where: {
           slug: `${found[1]}-${found[2]}`,
@@ -119,7 +115,7 @@ class JobService extends Service {
       }
 
       const id = await this.selectUserId();
-      if (!id) {
+      if (id === null || id === undefined || id === 0 || id === '') {
         app.logger.info('[system] ReposFetch Job not UserId');
         return false;
       }
@@ -192,7 +188,7 @@ class JobService extends Service {
         if (remaining === null) {
           remaining = 5000;
         }
-        if (parseInt(remaining) > GITHUB_LIMIT) {
+        if (parseInt(remaining) > 100) {
           availableId.push(ids[i]);
         }
       }

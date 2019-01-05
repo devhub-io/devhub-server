@@ -1,5 +1,7 @@
 'use strict';
 
+const constant = require('../constant');
+
 module.exports = app => {
   const { INTEGER, STRING, DATE } = app.Sequelize;
 
@@ -59,5 +61,10 @@ module.exports = app => {
     },
   }, {
     tableName: 'sites',
+    defaultScope: {
+      where: {
+        is_enable: constant.ENABLE,
+      },
+    },
   });
 };

@@ -2,8 +2,6 @@
 
 const Service = require('egg').Service;
 
-const ENABLE = 1;
-
 class DeveloperService extends Service {
   async findBySlug(slug) {
     const ctx = this.ctx;
@@ -11,7 +9,6 @@ class DeveloperService extends Service {
     const developer = await ctx.model.Developer.findOne({
       where: {
         login: slug,
-        status: ENABLE,
       },
     });
     if (!developer) {
@@ -32,7 +29,6 @@ class DeveloperService extends Service {
       attributes: [ 'id', 'slug', 'title', 'cover', 'description', 'stargazers_count', 'trends' ],
       where: {
         owner: developer.login,
-        status: ENABLE,
       },
       order: [
         [ 'stargazers_count', 'DESC' ],
@@ -45,7 +41,6 @@ class DeveloperService extends Service {
         as: 'repos',
         attributes: [ 'slug', 'title', 'cover', 'description', 'stargazers_count', 'trends' ],
         where: {
-          status: ENABLE,
           owner: {
             [Op.ne]: slug,
           },
@@ -76,7 +71,6 @@ class DeveloperService extends Service {
     const offset = (page - 1) * limit;
     const result = await this.ctx.model.Developer.findAndCountAll({
       where: {
-        status: ENABLE,
         public_repos: {
           [Op.gt]: 0,
         },

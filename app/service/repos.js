@@ -3,8 +3,6 @@
 const Service = require('egg').Service;
 const moment = require('moment');
 
-const ENABLE = 1;
-
 function toDate(date) {
   return moment(date).format('YYYY-MM-DD');
 }
@@ -15,7 +13,6 @@ class ReposService extends Service {
     const repos = await ctx.model.Repos.findOne({
       where: {
         slug,
-        status: ENABLE,
       },
     });
     if (!repos) {
@@ -93,7 +90,6 @@ class ReposService extends Service {
       attributes: [ 'id', 'title', 'slug', 'cover', 'trends',
         'stargazers_count', 'description', 'owner', 'repo' ],
       where: {
-        status: ENABLE,
         cover: {
           [Op.ne]: '',
         },
@@ -114,7 +110,6 @@ class ReposService extends Service {
     return await this.ctx.model.Repos.findAll({
       attributes: [ 'id', 'title', 'slug', 'cover' ],
       where: {
-        status: ENABLE,
         is_recommend: true,
         cover: {
           [Op.ne]: '',
@@ -144,7 +139,6 @@ class ReposService extends Service {
     const result = await this.ctx.model.Repos.findAndCountAll({
       attributes: [ 'id', 'slug', 'cover', 'title', 'description', 'trends', 'stargazers_count' ],
       where: {
-        status: ENABLE,
         cover: {
           [Op.ne]: '',
         },
@@ -164,9 +158,6 @@ class ReposService extends Service {
     const offset = (page - 1) * limit;
     return await this.ctx.model.Collection.findAndCountAll({
       attributes: [ 'id', 'slug', 'title', 'image' ],
-      where: {
-        is_enable: ENABLE,
-      },
       limit,
       offset,
       order: [
@@ -214,9 +205,6 @@ class ReposService extends Service {
           topic,
         },
       }],
-      where: {
-        status: ENABLE,
-      },
       order: [
         [ 'stargazers_count', 'DESC' ],
       ],
@@ -238,9 +226,6 @@ class ReposService extends Service {
         model: this.ctx.model.Repos,
         as: 'repos',
         attributes: [ 'title', 'slug', 'cover', 'description', 'stargazers_count', 'owner', 'repo' ],
-        where: {
-          status: ENABLE,
-        },
       }],
       where: {
         post_date: date,
@@ -282,7 +267,6 @@ class ReposService extends Service {
     const sites = await this.ctx.model.Site.findAll({
       attributes: [ 'title', 'url', 'category', 'icon', 'description' ],
       where: {
-        is_enable: ENABLE,
         level: 1,
       },
       order: [

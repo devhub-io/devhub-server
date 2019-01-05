@@ -59,6 +59,16 @@ describe('test/app/service/job.test.js', () => {
     });
   });
 
+  describe('No User', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext({});
+      const falseReposStatus = await ctx.service.job.reposFetch({ url: 'https://github.com/sysatom/goexercise' });
+      assert(falseReposStatus === false);
+      const falseDeveloperStatus = await ctx.service.job.developerFetch({ url: 'https://github.com/sysatom' });
+      assert(falseDeveloperStatus === false);
+    });
+  });
+
   describe('Repos Fetch', () => {
     it('should work', async () => {
       const token = '4796692f0e48d6584ef15764cda9581f599eceed';
@@ -83,6 +93,8 @@ describe('test/app/service/job.test.js', () => {
       const ctx = app.mockContext({});
       const status = await ctx.service.job.reposFetch({ url: 'https://github.com/sysatom/goexercise' });
       assert(status === true);
+      const falseStatus = await ctx.service.job.reposFetch({ url: 'https://github.com/sysatom/goexercise' });
+      assert(falseStatus === false);
     });
   });
 
@@ -110,6 +122,8 @@ describe('test/app/service/job.test.js', () => {
       const ctx = app.mockContext({});
       const status = await ctx.service.job.developerFetch({ url: 'https://github.com/sysatom' });
       assert(status === true);
+      const falseStatus = await ctx.service.job.developerFetch({ url: 'https://github.com/sysatom' });
+      assert(falseStatus === false);
     });
   });
 
