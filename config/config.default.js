@@ -44,7 +44,7 @@ module.exports = appInfo => {
 
   // CORS
   exports.security = {
-    domainWhiteList: [ 'http://localhost:7002' ],
+    domainWhiteList: [ env.CORS_DOMAIN ],
   };
 
   exports.redis = {
