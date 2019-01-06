@@ -82,17 +82,27 @@ class ReposController extends Controller {
     const ctx = this.ctx;
     const query = { limit: 3, page: 1 };
     query.order = 'stargazers_count';
-    const hottest = await ctx.service.repos.list(query);
+    const hottest = await ctx.helper.remember('api:home:hottest', 24 * 60 * 60, async () => {
+      return await ctx.service.repos.list(query);
+    });
 
     query.order = 'repos_created_at';
-    const newest = await ctx.service.repos.list(query);
+    const newest = await ctx.helper.remember('api:home:newest', 24 * 60 * 60, async () => {
+      return await ctx.service.repos.list(query);
+    });
 
     query.order = 'repos_updated_at';
-    const trend = await ctx.service.repos.list(query);
+    const trend = await ctx.helper.remember('api:home:trend', 24 * 60 * 60, async () => {
+      return await ctx.service.repos.list(query);
+    });
 
-    const recommend = await ctx.service.repos.findRecommend(query);
+    const recommend = await ctx.helper.remember('api:home:recommend', 24 * 60 * 60, async () => {
+      return await ctx.service.repos.findRecommend(query);
+    });
 
-    const collections = await ctx.service.repos.collections(query);
+    const collections = await ctx.helper.remember('api:home:', 24 * 60 * 60, async () => {
+      return await ctx.service.repos.collections(query);
+    });
 
     ctx.body = { hottest, newest, trend, recommend, collections };
   }
