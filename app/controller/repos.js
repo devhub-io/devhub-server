@@ -78,6 +78,25 @@ class ReposController extends Controller {
     ctx.body = await ctx.service.repos.sites();
   }
 
+  async home() {
+    const ctx = this.ctx;
+    const query = { limit: 3, page: 1 };
+    query.order = 'stargazers_count';
+    const hottest = await ctx.service.repos.list(query);
+
+    query.order = 'repos_created_at';
+    const newest = await ctx.service.repos.list(query);
+
+    query.order = 'repos_updated_at';
+    const trend = await ctx.service.repos.list(query);
+
+    const recommend = await ctx.service.repos.findRecommend(query);
+
+    const collections = await ctx.service.repos.collections(query);
+
+    ctx.body = { hottest, newest, trend, recommend, collections };
+  }
+
 }
 
 module.exports = ReposController;

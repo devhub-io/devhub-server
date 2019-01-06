@@ -12,7 +12,7 @@ class DeveloperService extends Service {
       },
     });
     if (!developer) {
-      this.ctx.throw(404, 'repos not found');
+      this.ctx.throw(404, 'developer not found');
     }
 
     // PV

@@ -4,6 +4,21 @@ const { assert, app } = require('egg-mock/bootstrap');
 const moment = require('moment');
 
 describe('test/app/controller/repos.test.js', () => {
+
+  describe('GET /repos/home', () => {
+    it('should work', async () => {
+      await app.factory.createMany('repos', 1);
+      const res = await app.httpRequest().get('/repos/home');
+      assert(res.status === 200);
+      assert(Object.keys(res.body).length === 5);
+      assert(res.body.hottest);
+      assert(res.body.newest);
+      assert(res.body.trend);
+      assert(res.body.recommend);
+      assert(res.body.collections);
+    });
+  });
+
   describe('GET /repos/hottest', () => {
     it('should work', async () => {
       // 通过 factory-girl 快速创建 repos 对象到数据库中
@@ -202,7 +217,6 @@ describe('test/app/controller/repos.test.js', () => {
       assert(res.body[firstKey][0].description);
     });
   });
-
 
   describe('GET /repos/:slug', () => {
     it('should work', async () => {

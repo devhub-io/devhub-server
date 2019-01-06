@@ -19,12 +19,14 @@ module.exports = app => {
 
   app.on('error', err => {
     // report error
-    const rollbar = new Rollbar({
-      accessToken: env.ROLLBAR_ACCESS_TOKEN,
-      captureUncaught: true,
-      captureUnhandledRejections: true,
-    });
-    rollbar.error(err);
+    if (err.status !== 404) {
+      const rollbar = new Rollbar({
+        accessToken: env.ROLLBAR_ACCESS_TOKEN,
+        captureUncaught: true,
+        captureUnhandledRejections: true,
+      });
+      rollbar.error(err);
+    }
   });
 
   app.queue = createQueue(app.config, app);

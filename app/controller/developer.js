@@ -8,7 +8,7 @@ function toInt(str) {
   return parseInt(str, 10) || 0;
 }
 
-class CategoryController extends Controller {
+class DeveloperController extends Controller {
 
   async list() {
     const ctx = this.ctx;
@@ -24,4 +24,4 @@ class CategoryController extends Controller {
 
 }
 
-module.exports = CategoryController;
+module.exports = DeveloperController;
