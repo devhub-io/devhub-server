@@ -51,8 +51,12 @@ class ReposController extends Controller {
 
   async count() {
     const ctx = this.ctx;
-    const repos = await ctx.service.repos.count();
-    const developers = await ctx.service.developer.count();
+    const repos = await ctx.helper.remember('api:count:repos', 24 * 60 * 60, async () => {
+      return await ctx.service.repos.count();
+    });
+    const developers = await ctx.helper.remember('api:count:developers', 24 * 60 * 60, async () => {
+      return await ctx.service.developer.count();
+    });
     ctx.body = { repos, developers };
   }
 
@@ -82,25 +86,19 @@ class ReposController extends Controller {
     const ctx = this.ctx;
     const query = { limit: 3, page: 1 };
     query.order = 'stargazers_count';
-    const hottest = await ctx.helper.remember('api:home:hottest', 24 * 60 * 60, async () => {
-      return await ctx.service.repos.list(query);
-    });
+    const hottest = await ctx.service.repos.list(query);
 
     query.order = 'repos_created_at';
-    const newest = await ctx.helper.remember('api:home:newest', 24 * 60 * 60, async () => {
-      return await ctx.service.repos.list(query);
-    });
+    const newest = await ctx.service.repos.list(query);
 
     query.order = 'repos_updated_at';
-    const trend = await ctx.helper.remember('api:home:trend', 24 * 60 * 60, async () => {
-      return await ctx.service.repos.list(query);
-    });
+    const trend = await ctx.service.repos.list(query);
 
     const recommend = await ctx.helper.remember('api:home:recommend', 24 * 60 * 60, async () => {
       return await ctx.service.repos.findRecommend(query);
     });
 
-    const collections = await ctx.helper.remember('api:home:', 24 * 60 * 60, async () => {
+    const collections = await ctx.helper.remember('api:home:collections', 24 * 60 * 60, async () => {
       return await ctx.service.repos.collections(query);
     });
 

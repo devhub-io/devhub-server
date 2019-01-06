@@ -83,17 +83,11 @@ class ReposService extends Service {
   // Newest -> repos_created_at
   // Trend -> repos_updated_at
   async list({ limit = 5, page = 1, order = 'stargazers_count' }) {
-    const Op = this.app.Sequelize.Op;
     page = page >= 1000 ? 1000 : page;
     const offset = (page - 1) * limit;
     const result = await this.ctx.model.Repos.findAndCountAll({
       attributes: [ 'id', 'title', 'slug', 'cover', 'trends',
         'stargazers_count', 'description', 'owner', 'repo' ],
-      where: {
-        cover: {
-          [Op.ne]: '',
-        },
-      },
       limit,
       offset,
       order: [
@@ -106,14 +100,10 @@ class ReposService extends Service {
   }
 
   async findRecommend({ limit = 10 }) {
-    const Op = this.app.Sequelize.Op;
     return await this.ctx.model.Repos.findAll({
       attributes: [ 'id', 'title', 'slug', 'cover' ],
       where: {
         is_recommend: true,
-        cover: {
-          [Op.ne]: '',
-        },
       },
       limit,
       order: [
@@ -133,16 +123,10 @@ class ReposService extends Service {
 
   // TODO
   async findWhereInPaginate({ limit = 5, page = 1, order = 'stargazers_count' }) {
-    const Op = this.app.Sequelize.Op;
     page = page >= 1000 ? 1000 : page;
     const offset = (page - 1) * limit;
     const result = await this.ctx.model.Repos.findAndCountAll({
       attributes: [ 'id', 'slug', 'cover', 'title', 'description', 'trends', 'stargazers_count' ],
-      where: {
-        cover: {
-          [Op.ne]: '',
-        },
-      },
       limit,
       offset,
       order: [
