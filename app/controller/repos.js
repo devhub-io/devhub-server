@@ -102,12 +102,13 @@ class ReposController extends Controller {
       return await ctx.service.repos.list(query);
     });
 
-    const recommend = await ctx.helper.remember('api:home:recommend', 7 * 24 * 60 * 60, async () => {
-      return await ctx.service.repos.findRecommend(query);
-    });
-
     const collections = await ctx.helper.remember('api:home:collections', 7 * 24 * 60 * 60, async () => {
       return await ctx.service.repos.collections(query);
+    });
+
+    query.limit = 5;
+    const recommend = await ctx.helper.remember('api:home:recommend', 7 * 24 * 60 * 60, async () => {
+      return await ctx.service.repos.findRecommend(query);
     });
 
     ctx.body = { hottest, newest, trend, recommend, collections };
