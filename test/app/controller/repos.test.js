@@ -156,6 +156,66 @@ describe('test/app/controller/repos.test.js', () => {
     });
   });
 
+  describe('GET /repos/category/:slug', () => {
+    it('should work', async () => {
+      const category = await app.factory.create('category');
+      const twoCategory = await app.factory.create('category', {
+        title: 'two',
+        slug: 'two',
+        parent_id: category.id,
+      });
+      const repos = await app.factory.create('repos', {
+        title: 'repos_2',
+        category_id: twoCategory.id,
+        slug: 'two-repos',
+        readme: 'readme',
+        description: 'desc',
+        language: 'js',
+        homepage: '1',
+        github: 'https://github.io',
+        stargazers_count: 1,
+        watchers_count: 1,
+        open_issues_count: 1,
+        forks_count: 1,
+        subscribers_count: 1,
+        issue_response: 1,
+        status: 1,
+        repos_created_at: new Date(),
+        repos_updated_at: new Date(),
+        fetched_at: new Date(),
+        analytics_at: new Date(),
+        user_id: 0,
+        is_recommend: 1,
+        trends: '0,15,50,63,0,35,0,53',
+        owner: 'a',
+        repo: 'b',
+        cover: 'demo',
+        document_url: '',
+      });
+      const res = await app.httpRequest().get(`/repos/category/${category.slug}`);
+      assert(res.status === 200);
+      assert(res.body.count === 1);
+      assert(res.body.page === 1);
+      assert(res.body.last_page === 1);
+      assert(res.body.rows[0].id === repos.id);
+      assert(res.body.rows[0].slug);
+      assert(res.body.rows[0].title);
+      assert(res.body.rows[0].cover);
+      assert(res.body.rows[0].trends);
+      assert(res.body.rows[0].stargazers_count);
+      assert(res.body.rows[0].description);
+      assert(res.body.rows[0].owner);
+      assert(res.body.rows[0].repo);
+
+      const res2 = await app.httpRequest().get(`/repos/category/${twoCategory.slug}`);
+      assert(res2.status === 200);
+      assert(res2.body.count === 1);
+      assert(res2.body.page === 1);
+      assert(res2.body.last_page === 1);
+      assert(res2.body.rows[0].id === repos.id);
+    });
+  });
+
   describe('GET /topics', () => {
     it('should work', async () => {
       await app.factory.createMany('repos_topic', 3);

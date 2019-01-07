@@ -340,6 +340,50 @@ class ReposService extends Service {
     return { collection, repos };
   }
 
+  async category({ limit = 5, page = 1, slug }) {
+    const category = await this.ctx.model.Category.findOne({
+      where: {
+        slug,
+      },
+    });
+    if (!category) {
+      this.ctx.throw(404, 'category not found');
+    }
+    let foundCategoryId = -1;
+    if (category.parent_id === 0) {
+      const childCategory = await this.ctx.model.Category.findAll({
+        where: {
+          parent_id: category.id,
+        },
+      });
+      if (childCategory.length > 0) {
+        foundCategoryId = childCategory[0].id;
+      } else {
+        foundCategoryId = category.id;
+      }
+    } else {
+      foundCategoryId = category.id;
+    }
+
+    page = page >= 1000 ? 1000 : page;
+    const offset = (page - 1) * limit;
+    const result = await this.ctx.model.Repos.findAndCountAll({
+      attributes: [ 'id', 'title', 'slug', 'cover', 'trends',
+        'stargazers_count', 'description', 'owner', 'repo' ],
+      limit,
+      offset,
+      where: {
+        category_id: foundCategoryId,
+      },
+      order: [
+        [ 'stargazers_count', 'DESC' ],
+      ],
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
 }
 
 module.exports = ReposService;
