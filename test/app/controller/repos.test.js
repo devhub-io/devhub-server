@@ -197,8 +197,7 @@ describe('test/app/controller/repos.test.js', () => {
       assert(res.body.count === 1);
       assert(res.body.page === 1);
       assert(res.body.last_page === 1);
-      assert(res.body.rows[0].id === repos.id);
-      assert(res.body.rows[0].slug);
+      assert(res.body.rows[0].slug === repos.slug);
       assert(res.body.rows[0].title);
       assert(res.body.rows[0].cover);
       assert(res.body.rows[0].trends);
@@ -206,13 +205,17 @@ describe('test/app/controller/repos.test.js', () => {
       assert(res.body.rows[0].description);
       assert(res.body.rows[0].owner);
       assert(res.body.rows[0].repo);
+      assert(res.body.category.length === 1);
+      assert(res.body.category[0].slug === twoCategory.slug);
 
       const res2 = await app.httpRequest().get(`/repos/category/${twoCategory.slug}`);
       assert(res2.status === 200);
       assert(res2.body.count === 1);
       assert(res2.body.page === 1);
       assert(res2.body.last_page === 1);
-      assert(res2.body.rows[0].id === repos.id);
+      assert(res2.body.rows[0].slug === repos.slug);
+      assert(res2.body.category.length === 1);
+      assert(res2.body.category[0].slug === twoCategory.slug);
     });
   });
 

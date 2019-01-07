@@ -342,6 +342,7 @@ class ReposService extends Service {
 
   async category({ limit = 5, page = 1, slug }) {
     const category = await this.ctx.model.Category.findOne({
+      attributes: [ 'id', 'title', 'slug', 'parent_id' ],
       where: {
         slug,
       },
@@ -350,18 +351,29 @@ class ReposService extends Service {
       this.ctx.throw(404, 'category not found');
     }
     let foundCategoryId = -1;
+    let childCategory = [];
     if (category.parent_id === 0) {
-      const childCategory = await this.ctx.model.Category.findAll({
+      childCategory = await this.ctx.model.Category.findAll({
+        attributes: [ 'id', 'title', 'slug', 'parent_id' ],
         where: {
           parent_id: category.id,
         },
       });
+
       if (childCategory.length > 0) {
         foundCategoryId = childCategory[0].id;
       } else {
         foundCategoryId = category.id;
+        childCategory = [ category ];
       }
     } else {
+      childCategory = await this.ctx.model.Category.findAll({
+        attributes: [ 'id', 'title', 'slug', 'parent_id' ],
+        where: {
+          parent_id: category.parent_id,
+        },
+      });
+
       foundCategoryId = category.id;
     }
 
@@ -381,6 +393,7 @@ class ReposService extends Service {
     });
     result.last_page = Math.ceil(result.count / limit);
     result.page = page;
+    result.category = childCategory;
     return result;
   }
 
