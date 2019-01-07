@@ -314,7 +314,7 @@ class ReposService extends Service {
 
   async collection(slug) {
     const collection = await this.ctx.model.Collection.findOne({
-      attributes: [ 'id' ],
+      attributes: [ 'id', 'title', 'slug', 'image' ],
       where: {
         slug,
       },
@@ -322,7 +322,7 @@ class ReposService extends Service {
     if (!collection) {
       this.ctx.throw(404, 'collection not found');
     }
-    return await this.ctx.model.CollectionRepos.findAll({
+    const repos = await this.ctx.model.CollectionRepos.findAll({
       include: [{
         model: this.ctx.model.Repos,
         attributes: [ 'id', 'title', 'slug', 'cover', 'trends',
@@ -332,11 +332,12 @@ class ReposService extends Service {
           [ 'sort', 'ASC' ],
         ],
       }],
-      attributes: [ 'collection_id', 'sort' ],
+      attributes: [ 'sort' ],
       where: {
         collection_id: collection.id,
       },
     });
+    return { collection, repos };
   }
 
 }
