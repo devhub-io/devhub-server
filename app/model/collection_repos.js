@@ -3,7 +3,7 @@
 module.exports = app => {
   const { INTEGER, DATE } = app.Sequelize;
 
-  return app.model.define('collection_repos', {
+  const CollectionRepos = app.model.define('collection_repos', {
     id: {
       type: INTEGER(10).UNSIGNED,
       allowNull: false,
@@ -38,4 +38,10 @@ module.exports = app => {
   }, {
     tableName: 'collection_repos',
   });
+
+  CollectionRepos.associate = function() {
+    app.model.CollectionRepos.belongsTo(app.model.Repos, { as: 'repos', foreignKey: 'repos_id', sourceKey: 'repos_id' });
+  };
+
+  return CollectionRepos;
 };

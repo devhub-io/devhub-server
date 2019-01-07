@@ -120,6 +120,38 @@ describe('test/app/controller/repos.test.js', () => {
     });
   });
 
+  describe('GET /repos/collection/:slug', () => {
+    it('should work', async () => {
+      const collection = await app.factory.create('collection');
+      const repos1 = await app.factory.create('repos');
+      const repos2 = await app.factory.create('repos');
+      await app.factory.create('collection_repos', {
+        collection_id: collection.id,
+        repos_id: repos1.id,
+        sort: 1,
+        is_enable: 1,
+      });
+      await app.factory.create('collection_repos', {
+        collection_id: collection.id,
+        repos_id: repos2.id,
+        sort: 1,
+        is_enable: 1,
+      });
+      const res = await app.httpRequest().get(`/repos/collection/${collection.slug}`);
+      assert(res.status === 200);
+      assert(res.body.length === 2);
+      assert(res.body[0].collection_id);
+      assert(res.body[0].repos.slug);
+      assert(res.body[0].repos.title);
+      assert(res.body[0].repos.cover);
+      assert(res.body[0].repos.trends);
+      assert(res.body[0].repos.stargazers_count);
+      assert(res.body[0].repos.description);
+      assert(res.body[0].repos.owner);
+      assert(res.body[0].repos.repo);
+    });
+  });
+
   describe('GET /topics', () => {
     it('should work', async () => {
       await app.factory.createMany('repos_topic', 3);

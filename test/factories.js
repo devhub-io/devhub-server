@@ -80,6 +80,16 @@ module.exports = app => {
     updated_at: new Date(),
   });
 
+  // collection_repos
+  factory.define('collection_repos', app.model.CollectionRepos, {
+    collection_id: factory.sequence('CollectionRepos.collection_id', n => n),
+    repos_id: factory.sequence('CollectionRepos.repos_id', n => n),
+    sort: 1,
+    is_enable: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
   // categories
   factory.define('category', app.model.Category, {
     title: factory.sequence('Category.title', n => `category_${n}`),

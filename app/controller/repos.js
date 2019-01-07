@@ -49,6 +49,12 @@ class ReposController extends Controller {
     ctx.body = await ctx.service.repos.collections(query);
   }
 
+  async collection() {
+    const ctx = this.ctx;
+    const slug = ctx.params.slug;
+    ctx.body = await ctx.service.repos.collection(slug);
+  }
+
   async count() {
     const ctx = this.ctx;
     const repos = await ctx.helper.remember('api:count:repos', 7 * 24 * 60 * 60, async () => {

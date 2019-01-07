@@ -310,7 +310,33 @@ class ReposService extends Service {
       cover: data.owner.avatar_url || '',
       // fork: TODO
     });
+  }
 
+  async collection(slug) {
+    const collection = await this.ctx.model.Collection.findOne({
+      attributes: [ 'id' ],
+      where: {
+        slug,
+      },
+    });
+    if (!collection) {
+      this.ctx.throw(404, 'collection not found');
+    }
+    return await this.ctx.model.CollectionRepos.findAll({
+      include: [{
+        model: this.ctx.model.Repos,
+        attributes: [ 'id', 'title', 'slug', 'cover', 'trends',
+          'stargazers_count', 'description', 'owner', 'repo' ],
+        as: 'repos',
+        order: [
+          [ 'sort', 'ASC' ],
+        ],
+      }],
+      attributes: [ 'collection_id', 'sort' ],
+      where: {
+        collection_id: collection.id,
+      },
+    });
   }
 
 }
