@@ -68,12 +68,26 @@ class ReposService extends Service {
         repos_id: repos.id,
       },
     });
-    const dependencies = await ctx.model.ReposDependency.findAll({
+    let dependencies = await ctx.model.ReposDependency.findAll({
+      attributes: [ 'source', 'env', 'package', 'version' ],
       where: {
         repos_id: repos.id,
       },
     });
-
+    const deps = {};
+    dependencies.forEach(i => {
+      if (i.source in deps) {
+        if (i.env in deps[i.source]) {
+          deps[i.source][i.env].push(i);
+        } else {
+          deps[i.source][i.env] = [ i ];
+        }
+      } else {
+        deps[i.source] = {};
+        deps[i.source][i.env] = [ i ];
+      }
+    });
+    dependencies = deps;
     // relatedRepos TODO
 
     return { repos, tags, contributors, languages, badges, questions, news, packages, topics, dependencies };
