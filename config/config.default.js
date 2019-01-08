@@ -66,5 +66,9 @@ module.exports = appInfo => {
     secret: env.ALINODE_SECRET,
   };
 
+  exports.security = {
+    csrf: false,
+  };
+
   return config;
 };

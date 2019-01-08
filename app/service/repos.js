@@ -411,6 +411,37 @@ class ReposService extends Service {
     return result;
   }
 
+  async review({ slug, reliable, recommendation, documentation, user_agent, ip }) {
+    const repos = await this.ctx.model.Repos.findOne({
+      attributes: [ 'id' ],
+      where: {
+        slug,
+      },
+    });
+    if (!repos) {
+      return false;
+    }
+    const vote = await this.ctx.model.ReposVote.findOne({
+      where: {
+        repos_id: repos.id,
+        ip,
+        user_agent,
+      },
+    });
+    if (!vote) {
+      await this.ctx.model.ReposVote.create({
+        repos_id: repos.id,
+        reliable,
+        recommendation,
+        documentation,
+        ip,
+        user_agent,
+      });
+      return true;
+    }
+    return false;
+  }
+
 }
 
 module.exports = ReposService;

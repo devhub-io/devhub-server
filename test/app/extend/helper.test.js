@@ -15,4 +15,12 @@ describe('test/app/extend/helper.test.js', () => {
     });
   });
 
+  describe('ip', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const ip = await ctx.helper.ip();
+      assert(ip === '127.0.0.1');
+    });
+  });
+
 });

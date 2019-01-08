@@ -126,6 +126,20 @@ class ReposController extends Controller {
     ctx.body = { hottest, newest, trend, recommend, collections };
   }
 
+  async review() {
+    const ctx = this.ctx;
+    const query = {
+      slug: ctx.params.slug,
+      reliable: ctx.request.body.reliable || 0,
+      recommendation: ctx.request.body.recommendation || 0,
+      documentation: ctx.request.body.documentation || 0,
+      user_agent: ctx.request.headers['user-agent'],
+      ip: ctx.helper.ip(),
+    };
+    const status = await ctx.service.repos.review(query);
+    ctx.body = { status };
+  }
+
 }
 
 module.exports = ReposController;

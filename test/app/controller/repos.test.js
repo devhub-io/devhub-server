@@ -416,7 +416,7 @@ describe('test/app/controller/repos.test.js', () => {
         await app.factory.create('repos_dependency',
           {
             repos_id: repos.id,
-            source: 'source',
+            source: 'npm',
             env: 'env',
             package: 'package',
             version: '1.0',
@@ -464,12 +464,54 @@ describe('test/app/controller/repos.test.js', () => {
       assert(res.body.topics.length === 2);
       assert(res.body.topics[0].topic);
 
-      assert(res.body.dependencies.length === 2);
-      assert(res.body.dependencies[0].version);
-      assert(res.body.dependencies[0].package);
+      assert(res.body.dependencies.npm);
+      assert(res.body.dependencies.npm.env);
+      assert(res.body.dependencies.npm.env[0].package);
 
       const res404 = await app.httpRequest().get('/repos/notfound');
       assert(res404.status === 404);
+    });
+  });
+
+  describe('GET /repos/:slug/review', () => {
+    it('should work', async () => {
+      const repos = await app.factory.create('repos');
+      await app.httpRequest()
+        .post(`/repos/${repos.slug}/review`)
+        .type('form')
+        .send({
+          reliable: 1,
+          recommendation: 0,
+          documentation: -1,
+        })
+        .expect(200)
+        .expect({
+          status: true,
+        });
+      await app.httpRequest()
+        .post(`/repos/${repos.slug}/review`)
+        .type('form')
+        .send({
+          reliable: 1,
+          recommendation: 0,
+          documentation: -1,
+        })
+        .expect(200)
+        .expect({
+          status: false,
+        });
+      await app.httpRequest()
+        .post('/repos/not-repos-review-slug/review')
+        .type('form')
+        .send({
+          reliable: 1,
+          recommendation: 0,
+          documentation: -1,
+        })
+        .expect(200)
+        .expect({
+          status: false,
+        });
     });
   });
 
