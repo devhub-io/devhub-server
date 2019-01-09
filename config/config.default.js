@@ -42,9 +42,10 @@ module.exports = appInfo => {
     maxDays: 0,
   };
 
-  // CORS
   exports.security = {
+    // CORS
     domainWhiteList: [ env.CORS_DOMAIN ],
+    csrf: false,
   };
 
   exports.redis = {
@@ -64,10 +65,6 @@ module.exports = appInfo => {
   exports.alinode = {
     appid: env.ALINODE_APPID,
     secret: env.ALINODE_SECRET,
-  };
-
-  exports.security = {
-    csrf: false,
   };
 
   return config;
