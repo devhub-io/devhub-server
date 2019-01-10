@@ -35,7 +35,7 @@ class IndexSync extends Subscription {
       const repos = await ctx.model.Repos.findAll({
         attributes: [ 'id', 'title', 'slug', 'description', 'language', 'stargazers_count', 'watchers_count',
           'open_issues_count', 'forks_count', 'subscribers_count', 'issue_response', 'status', 'repos_created_at',
-          'repos_updated_at', 'view_number', 'cover', 'owner', 'repo' ],
+          'repos_updated_at', 'view_number', 'cover', 'owner', 'repo', 'trends' ],
         limit,
         offest,
         order: [
