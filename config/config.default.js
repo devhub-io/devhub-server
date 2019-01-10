@@ -57,6 +57,11 @@ module.exports = appInfo => {
     },
   };
 
+  exports.elasticsearch = {
+    host: env.ELASTICSEARCH_HOST,
+    index: 'devhub',
+  };
+
   exports.github = {
     id: env.GITHUB_CLIENT_ID,
     secret: env.GITHUB_CLIENT_SECRET,

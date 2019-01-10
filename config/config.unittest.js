@@ -23,5 +23,10 @@ module.exports = () => {
     },
   };
 
+  exports.elasticsearch = {
+    host: env.ELASTICSEARCH_HOST,
+    index: 'devhub_test',
+  };
+
   return config;
 };

@@ -1,6 +1,7 @@
 'use strict';
 
 const { assert, app } = require('egg-mock/bootstrap');
+const mm = require('egg-mock');
 const moment = require('moment');
 
 describe('test/app/controller/repos.test.js', () => {
@@ -428,7 +429,7 @@ describe('test/app/controller/repos.test.js', () => {
 
       const res = await app.httpRequest().get(`/repos/${repos.slug}`);
       assert(res.status === 200);
-      assert(Object.keys(res.body).length === 10);
+      assert(Object.keys(res.body).length === 11);
       assert(res.body.repos.slug === repos.slug);
       assert(res.body.repos.title);
       assert(res.body.repos.description);
@@ -473,7 +474,7 @@ describe('test/app/controller/repos.test.js', () => {
     });
   });
 
-  describe('GET /repos/:slug/review', () => {
+  describe('POST /repos/:slug/review', () => {
     it('should work', async () => {
       const repos = await app.factory.create('repos');
       await app.httpRequest()
@@ -512,6 +513,26 @@ describe('test/app/controller/repos.test.js', () => {
         .expect({
           status: false,
         });
+    });
+  });
+
+  describe('GET /repos/search', () => {
+    it('should work', async () => {
+      const app = mm.app();
+      await app.ready();
+      await app.factory.createMany('repos', 3);
+      const status = await app.runSchedule('index_sync');
+      assert(status);
+
+      const keyword = 'description';
+      const res = await app.httpRequest().get(`/repos/search?keyword=${keyword}&limit=2&page=2`);
+      assert(res.status === 200);
+      assert(Object.keys(res.body).length === 4);
+      // assert(res.body.count === 3);
+      // assert(res.body.rows[0].description === 'description');
+      // assert(res.body.rows[0].title);
+      // assert(res.body.rows[0].slug);
+      // assert(res.body.rows[0].cover);
     });
   });
 

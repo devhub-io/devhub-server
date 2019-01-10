@@ -140,6 +140,12 @@ class ReposController extends Controller {
     ctx.body = { status };
   }
 
+  async search() {
+    const ctx = this.ctx;
+    const query = { limit: toInt(ctx.query.limit) || 10, page: toInt(ctx.query.page) || 1, keyword: ctx.query.keyword };
+    ctx.body = await ctx.service.repos.search(query);
+  }
+
 }
 
 module.exports = ReposController;

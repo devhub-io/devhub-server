@@ -3,6 +3,7 @@
 const Queue = require('bull');
 const Rollbar = require('rollbar');
 const env = require('./.env');
+const elasticsearch = require('elasticsearch');
 
 module.exports = app => {
   app.beforeStart(async () => {
@@ -39,6 +40,10 @@ module.exports = app => {
       app.logger.error(`[system] Queue Error ${e}`);
       done(new Error(e));
     }
+  });
+
+  app.elasticsearch = new elasticsearch.Client({
+    hosts: [ app.config.elasticsearch.host ],
   });
 
 };

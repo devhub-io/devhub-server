@@ -26,7 +26,14 @@ afterEach(async () => {
     app.model.ReposLanguage.destroy({ truncate: true, force: true }),
     app.model.User.destroy({ truncate: true, force: true }),
     app.model.Service.destroy({ truncate: true, force: true }),
+    app.model.ReposVote.destroy({ truncate: true, force: true }),
   ]);
   // clear redis after each test case
   await app.redis.flushdb();
+  // clear elasticsearch index after each test case
+  // try {
+  //   await app.elasticsearch.indices.delete({ index: app.config.elasticsearch.index });
+  // } catch (e) {
+  //   app.logger.info(e.message);
+  // }
 });

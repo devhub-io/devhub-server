@@ -88,9 +88,11 @@ class ReposService extends Service {
       }
     });
     dependencies = deps;
-    // relatedRepos TODO
 
-    return { repos, tags, contributors, languages, badges, questions, news, packages, topics, dependencies };
+    const searchRes = await this.search({ keyword: repos.repo, limit: 5, page: 1 });
+    const related = 'rows' in searchRes ? searchRes.rows : [];
+
+    return { repos, tags, contributors, languages, badges, questions, news, packages, topics, dependencies, related };
   }
 
   // Hottest -> stargazers_count
@@ -130,26 +132,58 @@ class ReposService extends Service {
     return await this.ctx.model.Repos.count();
   }
 
-  async search({ keyword = '', limit = 10 }) {
-    console.log(keyword);
-    console.log(limit);
-  }
-
-  // TODO
-  async findWhereInPaginate({ limit = 5, page = 1, order = 'stargazers_count' }) {
-    page = page >= 1000 ? 1000 : page;
-    const offset = (page - 1) * limit;
-    const result = await this.ctx.model.Repos.findAndCountAll({
-      attributes: [ 'id', 'slug', 'cover', 'title', 'description', 'trends', 'stargazers_count' ],
-      limit,
-      offset,
-      order: [
-        [ order, 'DESC' ],
-      ],
-    });
-    result.last_page = Math.ceil(result.count / limit);
-    result.page = page;
-    return result;
+  async search({ keyword, limit = 10, page = 1 }) {
+    const app = this.app;
+    try {
+      const result = await app.elasticsearch.search({
+        index: app.config.elasticsearch.index,
+        type: 'repos',
+        body: {
+          size: limit,
+          from: (page - 1) * limit,
+          query: {
+            bool: {
+              should: [
+                {
+                  match: {
+                    title: keyword,
+                  },
+                },
+                {
+                  match: {
+                    description: keyword,
+                  },
+                },
+              ],
+            },
+          },
+          sort: [
+            {
+              stargazers_count: {
+                order: 'desc',
+              },
+            },
+            {
+              repos_updated_at: {
+                order: 'desc',
+              },
+            },
+          ],
+        },
+      });
+      if (result.hits) {
+        const count = result.hits.total;
+        const rows = [];
+        result.hits.hits.forEach(item => {
+          rows.push(item._source);
+        });
+        const last_page = Math.ceil(count / limit);
+        return { rows, count, last_page, page };
+      }
+    } catch (e) {
+      app.logger.warn(`[system] Search ${e.message}`);
+    }
+    return { rows: [], count: 0, last_page: 1, page: 1 };
   }
 
   async collections({ limit = 3, page = 1 }) {
