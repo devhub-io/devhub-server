@@ -1,0 +1,65 @@
+version: '3'
+services:
+  devhub:
+    image: node:latest
+    command: npm run dev
+    working_dir: /home/node/app
+    volumes:
+      - ./:/home/node/app
+    environment:
+      - NODE_ENV=development
+    networks:
+      - devhub_network
+    depends_on:
+      - redis
+      - mysql
+      - elasticsearch
+    ports:
+      - 7001:7001
+
+  redis:
+    image: redis:latest
+    command: redis-server --appendonly yes --requirepass egg_devhub
+    volumes:
+      - devhub-redis:/data
+    networks:
+      - devhub_network
+    ports:
+      - 6379:6379
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - devhub-mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=devhub_development
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+      - TZ=UTC
+    networks:
+      - devhub_network
+    ports:
+      - 3306:3306
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.3
+    volumes:
+      - devhub-elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - cluster.name=devhub-cluster
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - devhub_network
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+volumes:
+  devhub-mysql:
+  devhub-redis:
+  devhub-elasticsearch:
+
+networks:
+  devhub_network:
+    driver: bridge
