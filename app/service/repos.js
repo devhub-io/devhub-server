@@ -90,7 +90,14 @@ class ReposService extends Service {
     dependencies = deps;
 
     const searchRes = await this.search({ keyword: repos.repo, limit: 5, page: 1 });
-    const related = 'rows' in searchRes ? searchRes.rows : [];
+    let related = 'rows' in searchRes ? searchRes.rows : [];
+    const tempRelated = [];
+    related.forEach(i => {
+      if (i.id !== repos.id) {
+        tempRelated.push(i);
+      }
+    });
+    related = tempRelated;
 
     return { repos, tags, contributors, languages, badges, questions, news, packages, topics, dependencies, related };
   }

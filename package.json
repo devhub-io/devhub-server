@@ -10,13 +10,16 @@
     "egg-alinode": "^2.0.1",
     "egg-cors": "^2.1.2",
     "egg-development-proxyagent": "^1.0.0",
+    "egg-passport": "^2.0.1",
+    "egg-passport-jwt": "^0.1.0",
     "egg-redis": "^2.3.0",
     "egg-scripts": "^2.5.0",
     "egg-sequelize": "^4.2.0",
     "elasticsearch": "^15.3.0",
     "moment": "^2.23.0",
     "mysql2": "^1.6.4",
-    "rollbar": "^2.5.1"
+    "rollbar": "^2.5.1",
+    "sitemap": "^2.1.0"
   },
   "devDependencies": {
     "faker": "^4.1.0",

@@ -43,7 +43,6 @@ module.exports = appInfo => {
   };
 
   exports.security = {
-    // CORS
     domainWhiteList: [ env.CORS_DOMAIN ],
     csrf: false,
   };
@@ -70,6 +69,10 @@ module.exports = appInfo => {
   exports.alinode = {
     appid: env.ALINODE_APPID,
     secret: env.ALINODE_SECRET,
+  };
+
+  exports.passportJwt = {
+    secret: env.JWT_SECRET,
   };
 
   return config;

@@ -13,3 +13,4 @@ run/
 .nyc_output/
 .env
 .env.js
+sitemap.xml

@@ -27,3 +27,13 @@ exports.alinode = {
   enable: true,
   package: 'egg-alinode',
 };
+
+exports.passport = {
+  enable: true,
+  package: 'egg-passport',
+};
+
+exports.passportJwt = {
+  enable: true,
+  package: 'egg-passport-jwt',
+};

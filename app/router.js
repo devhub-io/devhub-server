@@ -29,4 +29,11 @@ module.exports = app => {
   // Developer
   router.get('/developer/list', controller.developer.list);
   router.get('/developer/:slug', controller.developer.find);
+
+  const jwt = app.passport.authenticate('jwt', { session: false, successReturnToOrRedirect: null });
+  router.get('/auth', jwt, controller.home.index);
+
+  // Oauth
+  router.get('/passport/github', controller.oauth.github);
+  router.get('/passport/github/callback', controller.oauth.callback);
 };

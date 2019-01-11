@@ -14,6 +14,11 @@ module.exports = app => {
       type: INTEGER(11),
       allowNull: false,
     },
+    uid: {
+      type: STRING(255),
+      allowNull: false,
+      defaultValue: '',
+    },
     provider: {
       type: STRING(255),
       allowNull: false,

@@ -46,6 +46,22 @@ module.exports = app => {
     hosts: [ app.config.elasticsearch.host ],
   });
 
+  // JWT
+  app.passport.verify(async (ctx, user) => {
+    // check user
+    // assert(user.provider, 'user.provider should exists');
+    // assert(user.payload, 'user.payload should exists');
+    // console.log('verify', user);
+
+    // find user from database
+    const existsUser = await ctx.model.User.findOne({
+      where: {
+        id: user.payload.sub,
+      },
+    });
+    if (existsUser) return existsUser;
+  });
+
 };
 
 function createQueue(config, app) {
