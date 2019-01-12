@@ -9,7 +9,9 @@ class HomeController extends Controller {
   async github() {
     const ctx = this.ctx;
     const clientId = env.GITHUB_CLIENT_ID;
-    const redirectUri = encodeURIComponent(`${ctx.request.protocol}://${ctx.request.host}/passport/github/callback`);
+    let source = ctx.query.source || '';
+    source = source.length > 0 ? '?source=' + source : '';
+    const redirectUri = encodeURIComponent(`${ctx.request.protocol}://${ctx.request.host}/passport/github/callback${source}`);
     const base = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
     ctx.redirect(base, 302);
   }
@@ -18,6 +20,8 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     const app = this.app;
     const query = { code: ctx.query.code };
+    let source = ctx.query.source || '';
+    source = decodeURIComponent(source);
 
     const tokenResult = await app.curl('https://github.com/login/oauth/access_token', {
       method: 'POST',
@@ -75,17 +79,20 @@ class HomeController extends Controller {
           });
           if (existsUser) {
             const token = jwt.sign({ sub: existsUser.id }, env.JWT_SECRET);
-            ctx.redirect(`${env.WEB_URL}/login?token=${token}`, 302);
+            ctx.redirect(`${source}?token=${token}`, 302);
+            return true;
           }
         }
         // 注册新用户
         const newUser = await ctx.service.user.oauthRegister(user);
         const token = jwt.sign({ sub: newUser.id }, env.JWT_SECRET);
-        ctx.redirect(`${env.WEB_URL}/login?token=${token}`, 302);
+        ctx.redirect(`${source}?token=${token}`, 302);
+        return true;
       }
     }
 
-    ctx.redirect(`${env.WEB_URL}/login?status=error`, 302);
+    ctx.redirect(`${source}?status=error`, 302);
+    return false;
   }
 
 }
