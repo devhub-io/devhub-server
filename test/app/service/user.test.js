@@ -27,6 +27,9 @@ describe('test/app/service/user.test.js', () => {
       const result = await ctx.service.user.oauthRegister(user);
       assert(result.name === user.name);
       assert(result.avatar === user.photo);
+      const existsUser = await ctx.service.user.oauthRegister(user);
+      assert(existsUser.name === user.name);
+      assert(existsUser.avatar === user.photo);
     });
   });
 
