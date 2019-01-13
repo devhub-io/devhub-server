@@ -8,6 +8,7 @@ function toDate(date) {
 }
 
 class ReposService extends Service {
+
   async findBySlug(slug) {
     const ctx = this.ctx;
     const repos = await ctx.model.Repos.findOne({

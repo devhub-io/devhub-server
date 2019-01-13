@@ -64,28 +64,9 @@ class HomeController extends Controller {
           profile,
         };
 
-        // 检查用户
-        const service = await ctx.model.Service.findOne({
-          where: {
-            uid: user.id,
-            provider: user.provider,
-          },
-        });
-        if (service) {
-          const existsUser = await ctx.model.User.findOne({
-            where: {
-              id: service.user_id,
-            },
-          });
-          if (existsUser) {
-            const token = jwt.sign({ sub: existsUser.id }, env.JWT_SECRET);
-            ctx.redirect(`${source}?token=${token}`, 302);
-            return true;
-          }
-        }
-        // 注册新用户
-        const newUser = await ctx.service.user.oauthRegister(user);
-        const token = jwt.sign({ sub: newUser.id }, env.JWT_SECRET);
+        // 检查用户并注册新用户
+        const oauthUser = await ctx.service.user.oauthRegister(user);
+        const token = jwt.sign({ sub: oauthUser.id }, env.JWT_SECRET);
         ctx.redirect(`${source}?token=${token}`, 302);
         return true;
       }

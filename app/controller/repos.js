@@ -2,12 +2,6 @@
 
 const Controller = require('egg').Controller;
 
-function toInt(str) {
-  if (typeof str === 'number') return str;
-  if (!str) return str;
-  return parseInt(str, 10) || 0;
-}
-
 class ReposController extends Controller {
 
   async find() {
@@ -18,34 +12,34 @@ class ReposController extends Controller {
 
   async hottest() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
     query.order = 'stargazers_count';
     ctx.body = await ctx.service.repos.list(query);
   }
 
   async newest() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
     query.order = 'repos_created_at';
     ctx.body = await ctx.service.repos.list(query);
   }
 
   async trend() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
     query.order = 'repos_updated_at';
     ctx.body = await ctx.service.repos.list(query);
   }
 
   async recommend() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit) };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit) };
     ctx.body = await ctx.service.repos.findRecommend(query);
   }
 
   async collections() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1 };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
     ctx.body = await ctx.service.repos.collections(query);
   }
 
@@ -57,7 +51,7 @@ class ReposController extends Controller {
 
   async category() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit), page: toInt(ctx.query.page) || 1, slug: ctx.params.slug };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1, slug: ctx.params.slug };
     ctx.body = await ctx.service.repos.category(query);
   }
 
@@ -81,7 +75,7 @@ class ReposController extends Controller {
 
   async topicInPaginate() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit) || 5, page: toInt(ctx.query.page) || 1, topic: ctx.params.topic };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit) || 5, page: ctx.helper.toInt(ctx.query.page) || 1, topic: ctx.params.topic };
     ctx.body = await ctx.service.repos.topicInPaginate(query);
   }
 
@@ -142,7 +136,7 @@ class ReposController extends Controller {
 
   async search() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit) || 10, page: toInt(ctx.query.page) || 1, keyword: ctx.query.keyword };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1, keyword: ctx.query.keyword };
     ctx.body = await ctx.service.repos.search(query);
   }
 

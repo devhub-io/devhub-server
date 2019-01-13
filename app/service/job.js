@@ -6,9 +6,13 @@ const constant = require('../constant');
 
 class JobService extends Service {
 
+  // Hub
+
   async process(payload) {
     return await this[payload.job](payload.data);
   }
+
+  // Job
 
   async developerFetch(data) {
     const { app, ctx } = this;
@@ -166,6 +170,12 @@ class JobService extends Service {
     }
   }
 
+  async echo(data) {
+    return data.text;
+  }
+
+  // Func
+
   async updateUserGithubRemaining(id, headers) {
     if ('x-ratelimit-remaining' in headers && 'x-ratelimit-reset' in headers) {
       const { app } = this;
@@ -241,10 +251,6 @@ class JobService extends Service {
       }
       return null;
     });
-  }
-
-  async echo(data) {
-    return data.text;
   }
 
 }

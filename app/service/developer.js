@@ -3,6 +3,7 @@
 const Service = require('egg').Service;
 
 class DeveloperService extends Service {
+
   async findBySlug(slug) {
     const ctx = this.ctx;
     const Op = this.app.Sequelize.Op;

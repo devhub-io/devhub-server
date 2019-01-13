@@ -5,13 +5,13 @@ const Service = require('egg').Service;
 class UserService extends Service {
 
   async oauthRegister(user) {
-    const auth = await this.ctx.model.Service.findOne({
+    const service = await this.ctx.model.Service.findOne({
       where: {
         uid: user.id,
         provider: user.provider,
       },
     });
-    if (!auth) {
+    if (!service) {
       const siteUser = await this.ctx.model.User.create({
         name: user.name,
         email: `${user.provider}_${user.id}@devhub.io`,
@@ -32,8 +32,16 @@ class UserService extends Service {
       });
       return siteUser;
     }
-    const existsUser = await this.ctx.model.User.findOne({ id: auth.user_id });
+    const existsUser = await this.ctx.model.User.findOne({
+      where: {
+        id: service.user_id,
+      },
+    });
     if (existsUser) {
+      service.access_token = user.accessToken;
+      service.save();
+      existsUser.last_activated_at = new Date();
+      existsUser.save();
       return existsUser;
     }
     return false;

@@ -23,4 +23,16 @@ describe('test/app/extend/helper.test.js', () => {
     });
   });
 
+  describe('toInt', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const n1 = ctx.helper.toInt(1);
+      assert(n1 === 1);
+      const n2 = ctx.helper.toInt(null);
+      assert(n2 === null);
+      const n3 = ctx.helper.toInt('10');
+      assert(n3 === 10);
+    });
+  });
+
 });

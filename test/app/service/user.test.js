@@ -7,23 +7,13 @@ describe('test/app/service/user.test.js', () => {
 
   describe('oauthRegister', () => {
     it('should work', async () => {
-      const ctx = app.mockContext({});
+      const ctx = app.mockUserContext();
       const accessToken = 'abc';
       const refreshToken = 'abc';
-      const params = {
-        access_token: 'abc',
-      };
-      const user = {
-        provider: 'github',
-        id: 1,
-        name: 'demo',
-        displayName: 'test',
-        photo: 'http://photeo.jpg',
-        accessToken,
-        refreshToken,
-        params,
-        profile: params,
-      };
+      const user = ctx.user;
+      user.accessToken = accessToken;
+      user.refreshToken = refreshToken;
+
       const result = await ctx.service.user.oauthRegister(user);
       assert(result.name === user.name);
       assert(result.avatar === user.photo);

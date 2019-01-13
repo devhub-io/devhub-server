@@ -30,8 +30,11 @@ module.exports = app => {
   router.get('/developer/list', controller.developer.list);
   router.get('/developer/:slug', controller.developer.find);
 
+  // Check
   const jwt = app.passport.authenticate('jwt', { session: false, successReturnToOrRedirect: null });
   router.get('/auth', jwt, controller.home.index);
+  const admin = app.middleware.admin();
+  router.get('/admin', jwt, admin, controller.home.index);
 
   // Oauth
   router.get('/passport/github', controller.oauth.github);
