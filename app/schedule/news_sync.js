@@ -14,6 +14,7 @@ class NewsSync extends Subscription {
   }
 
   async subscribe() {
+    const ctx = this.ctx;
     const base = 'https://hacker-news.firebaseio.com';
     const endpoints = {
       top: '/v0/topstories.json',
@@ -23,7 +24,7 @@ class NewsSync extends Subscription {
     for (const endpointsKey in endpoints) {
       let items;
       try {
-        const res = await this.ctx.curl(base + endpoints[endpointsKey], {
+        const res = await ctx.curl(base + endpoints[endpointsKey], {
           dataType: 'json',
           timeout: 60000,
         });
@@ -33,7 +34,7 @@ class NewsSync extends Subscription {
       }
       items.forEach(async id => {
         try {
-          const res = await this.ctx.curl(`${base}/v0/item/${id}.json'`, {
+          const res = await ctx.curl(`${base}/v0/item/${id}.json'`, {
             dataType: 'json',
             timeout: 60000,
           });
@@ -45,14 +46,14 @@ class NewsSync extends Subscription {
             found = null;
           }
           if (found) {
-            const reposNews = await this.ctx.model.ReposNews.findOne({
+            const reposNews = await ctx.model.ReposNews.findOne({
               where: {
                 url: itemData.url,
                 item_id: itemData.id,
               },
             });
             if (reposNews) {
-              const repos = await this.ctx.model.Repos.findOne({
+              const repos = await ctx.model.Repos.findOne({
                 where: {
                   slug: `${found[1]}-${found[2]}`,
                 },
@@ -63,7 +64,7 @@ class NewsSync extends Subscription {
               reposNews.score = itemData.score;
               reposNews.save();
             } else {
-              const repos = await this.ctx.model.Repos.findOne({
+              const repos = await ctx.model.Repos.findOne({
                 where: {
                   slug: `${found[1]}-${found[2]}`,
                 },
@@ -73,16 +74,16 @@ class NewsSync extends Subscription {
                 reposId = repos.id;
               } else {
                 // const githubUrl = `https://github.com/${found[1]}/${found[2]}`;
-                // this.ctx.app.queue.add({ job: 'fetchRepos', data: { url: githubUrl } });
+                // ctx.app.queue.add({ job: 'fetchRepos', data: { url: githubUrl } });
               }
-              this.ctx.model.ReposNews.create({
+              await ctx.model.ReposNews.create({
                 url: itemData.url,
-                time: moment(itemData.time).toDate().getTime() / 1000,
+                time: itemData.time,
                 repos_id: reposId,
                 title: itemData.title.replace('Show HN: ', ''),
                 score: itemData.score,
                 item_id: itemData.id,
-                post_date: moment(itemData).format('YYYY-MM-DD'),
+                post_date: moment(itemData.time * 1000).format('YYYY-MM-DD'),
               });
             }
           }

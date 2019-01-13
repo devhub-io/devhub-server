@@ -17,16 +17,18 @@ describe('test/app/schedule/news_sync.test.js', () => {
     const base = 'https://hacker-news.firebaseio.com';
     app.mockHttpclient(`${base}/v0/item/1.json'`, {
       data: {
-        by: 'pg', descendants: 15, id: 1,
+        by: 'test', descendants: 15, id: 1,
         kids: [ 15, 234509, 487171, 454410, 82729 ], score: 57,
-        time: 1160418111, title: 'Y Combinator', type: 'story', url: 'https://github.com/sysatom/goexercise',
+        time: (new Date()).getTime() / 1000,
+        title: 'Y1 Combinator', type: 'story', url: 'https://github.com/sysatom/goexercise',
       },
     });
     app.mockHttpclient(`${base}/v0/item/2.json'`, {
       data: {
-        by: 'pg', descendants: 15, id: 2,
-        kids: [ 15, 234509, 487171, 454410, 82729 ], score: 57,
-        time: 1160418111, title: 'Y Combinator', type: 'story', url: 'https://github.com/sysatom/goexercise',
+        by: 'test', descendants: 15, id: 2,
+        kids: [ 15, 234509, 487171, 454410, 82729 ], score: 56,
+        time: (new Date()).getTime() / 1000,
+        title: 'Y2 Combinator', type: 'story', url: 'https://github.com/sysatom/goexercise',
       },
     });
     const result = await app.runSchedule('news_sync');
