@@ -21,6 +21,8 @@ class NewsSync extends Subscription {
       new: '/v0/newstories.json',
     };
 
+    let newsCount = 0;
+
     for (const endpointsKey in endpoints) {
       let items;
       try {
@@ -32,9 +34,9 @@ class NewsSync extends Subscription {
       } catch (e) {
         items = [];
       }
-      items.forEach(async id => {
+      for (let i = 0; i < items.length; i++) {
         try {
-          const res = await ctx.curl(`${base}/v0/item/${id}.json'`, {
+          const res = await ctx.curl(`${base}/v0/item/${items[i]}.json'`, {
             dataType: 'json',
             timeout: 60000,
           });
@@ -63,6 +65,7 @@ class NewsSync extends Subscription {
               }
               reposNews.score = itemData.score;
               reposNews.save();
+              newsCount = newsCount + 1;
             } else {
               const repos = await ctx.model.Repos.findOne({
                 where: {
@@ -73,8 +76,8 @@ class NewsSync extends Subscription {
               if (repos) {
                 reposId = repos.id;
               } else {
-                // const githubUrl = `https://github.com/${found[1]}/${found[2]}`;
-                // ctx.app.queue.add({ job: 'fetchRepos', data: { url: githubUrl } });
+                const githubUrl = `https://github.com/${found[1]}/${found[2]}`;
+                ctx.app.queue.add({ job: 'reposFetch', data: { url: githubUrl } });
               }
               await ctx.model.ReposNews.create({
                 url: itemData.url,
@@ -85,14 +88,16 @@ class NewsSync extends Subscription {
                 item_id: itemData.id,
                 post_date: moment(itemData.time * 1000).format('YYYY-MM-DD'),
               });
+              newsCount = newsCount + 1;
             }
           }
         } catch (e) {
           this.app.logger.error(e);
         }
-      });
+      }
     }
-    return true;
+
+    return newsCount;
   }
 }
 
