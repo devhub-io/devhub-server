@@ -27,6 +27,7 @@ afterEach(async () => {
     app.model.User.destroy({ truncate: true, force: true }),
     app.model.Service.destroy({ truncate: true, force: true }),
     app.model.ReposVote.destroy({ truncate: true, force: true }),
+    app.model.LinkClick.destroy({ truncate: true, force: true }),
   ]);
   // clear redis after each test case
   await app.redis.flushdb();

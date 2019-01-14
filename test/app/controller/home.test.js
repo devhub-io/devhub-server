@@ -42,4 +42,13 @@ describe('test/app/controller/home.test.js', () => {
       .expect(401);
   });
 
+  it('should GET /link', async () => {
+    await app.httpRequest()
+      .get('/link?target=' + encodeURIComponent('https//github.com'))
+      .expect(302);
+    await app.httpRequest()
+      .get('/link')
+      .expect(302);
+  });
+
 });
