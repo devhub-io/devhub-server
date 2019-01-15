@@ -32,7 +32,7 @@ module.exports = app => {
   router.get('/developer/:slug', controller.developer.find);
 
   // Ecosystems
-  router.get('/ecosystems/topics', controller.ecosystems.topics);
+  router.get('/ecosystems', controller.ecosystem.topics);
 
   // Check
   const jwt = app.passport.authenticate('jwt', { session: false, successReturnToOrRedirect: null });

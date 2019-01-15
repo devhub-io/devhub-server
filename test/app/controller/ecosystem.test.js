@@ -2,12 +2,12 @@
 
 const { assert, app } = require('egg-mock/bootstrap');
 
-describe('test/app/controller/ecosystems.test.js', () => {
+describe('test/app/controller/ecosystem.test.js', () => {
 
-  describe('GET /ecosystems/topics', () => {
+  describe('GET /ecosystems', () => {
     it('should work', async () => {
       await app.factory.createMany('topic', 3);
-      const res = await app.httpRequest().get('/ecosystems/topics?limit=2&page=2');
+      const res = await app.httpRequest().get('/ecosystems?limit=2&page=2');
       assert(res.status === 200);
       assert(res.body.page === 2);
       assert(res.body.count === 3);

@@ -2,7 +2,7 @@
 
 const Service = require('egg').Service;
 
-class EcosystemsService extends Service {
+class EcosystemService extends Service {
 
   async topics({ limit = 5, page = 1 }) {
     page = page >= 1000 ? 1000 : page;
@@ -21,4 +21,4 @@ class EcosystemsService extends Service {
 
 }
 
-module.exports = EcosystemsService;
+module.exports = EcosystemService;
