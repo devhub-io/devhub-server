@@ -109,7 +109,7 @@ describe('test/app/controller/repos.test.js', () => {
   });
 
   describe('GET /repos/collections', () => {
-    it('should work', async () => {
+    it.skip('should work', async () => {
       await app.factory.createMany('collection', 3);
       const res = await app.httpRequest().get('/repos/collections?limit=2');
       assert(res.status === 200);
@@ -122,7 +122,7 @@ describe('test/app/controller/repos.test.js', () => {
   });
 
   describe('GET /repos/collection/:slug', () => {
-    it('should work', async () => {
+    it.skip('should work', async () => {
       const collection = await app.factory.create('collection');
       const repos1 = await app.factory.create('repos');
       const repos2 = await app.factory.create('repos');

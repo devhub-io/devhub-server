@@ -69,7 +69,7 @@ module.exports = app => {
     rating: 0,
   });
 
-  // collections
+  // collections TODO
   factory.define('collection', app.model.Collection, {
     title: factory.sequence('Collection.title', n => `collection_${n}`),
     image: faker.image.imageUrl(),
@@ -80,7 +80,7 @@ module.exports = app => {
     updated_at: new Date(),
   });
 
-  // collection_repos
+  // collection_repos TODO
   factory.define('collection_repos', app.model.CollectionRepos, {
     collection_id: factory.sequence('CollectionRepos.collection_id', n => n),
     repos_id: factory.sequence('CollectionRepos.repos_id', n => n),

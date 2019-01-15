@@ -5,7 +5,7 @@ module.exports = {
     const { INTEGER, STRING, DATE } = Sequelize;
 
     return queryInterface.createTable(
-      'collections',
+      'collection_items',
       {
         id: {
           type: INTEGER(10).UNSIGNED,
@@ -13,36 +13,23 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true,
         },
-        topic_id: {
-          type: INTEGER(11),
+        collection: {
+          type: INTEGER(10).UNSIGNED,
           allowNull: false,
-          defaultValue: 0,
-        },
-        parent_id: {
-          type: INTEGER(11),
-          allowNull: false,
-          defaultValue: 0,
-        },
-        slug: {
-          type: STRING(255),
-          allowNull: false,
-          unique: true,
         },
         title: {
-          type: STRING(255),
-          allowNull: false,
+          type: STRING,
         },
-        image: {
-          type: STRING(255),
-          allowNull: false,
+        type: {
+          type: STRING(20),
         },
-        sort: {
-          type: INTEGER(6),
-          allowNull: false,
+        foreign_id: {
+          type: INTEGER(10).UNSIGNED,
+          defaultValue: 0,
         },
         user_id: {
-          type: INTEGER(11),
-          allowNull: false,
+          type: INTEGER(10).UNSIGNED,
+          defaultValue: 0,
         },
         status: {
           type: INTEGER(4),

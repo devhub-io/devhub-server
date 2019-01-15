@@ -12,6 +12,21 @@ module.exports = app => {
       primaryKey: true,
       autoIncrement: true,
     },
+    topic_id: {
+      type: INTEGER(11),
+      allowNull: false,
+      defaultValue: 0,
+    },
+    parent_id: {
+      type: INTEGER(11),
+      allowNull: false,
+      defaultValue: 0,
+    },
+    slug: {
+      type: STRING(255),
+      allowNull: false,
+      unique: true,
+    },
     title: {
       type: STRING(255),
       allowNull: false,
@@ -20,19 +35,18 @@ module.exports = app => {
       type: STRING(255),
       allowNull: false,
     },
-    slug: {
-      type: STRING(255),
-      allowNull: false,
-      unique: true,
-    },
     sort: {
       type: INTEGER(6),
       allowNull: false,
     },
-    is_enable: {
-      type: INTEGER(1),
+    user_id: {
+      type: INTEGER(11),
       allowNull: false,
-      defaultValue: 1,
+    },
+    status: {
+      type: INTEGER(4),
+      allowNull: false,
+      defaultValue: 0,
     },
     created_at: {
       type: DATE,
@@ -42,16 +56,11 @@ module.exports = app => {
       type: DATE,
       allowNull: true,
     },
-    user_id: {
-      type: INTEGER(11),
-      allowNull: false,
-      defaultValue: 0,
-    },
   }, {
-    tableName: 'collection',
+    tableName: 'collections',
     defaultScope: {
       where: {
-        is_enable: constant.ENABLE,
+        status: constant.ENABLE,
       },
     },
   });
