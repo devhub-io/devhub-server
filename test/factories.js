@@ -244,4 +244,18 @@ module.exports = app => {
     created_at: new Date(),
     updated_at: new Date(),
   });
+
+  // topics
+  factory.define('topic', app.model.Topic, {
+    title: factory.sequence('Topic.name', n => `topic_${n}`),
+    slug: factory.sequence('Topic.slug', n => `${n}_${faker.random.uuid()}`),
+    user_id: 1,
+    description: 'description',
+    homepage: faker.internet.url,
+    wiki: faker.internet.url,
+    github: 'https://github.com/demo',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
 };
