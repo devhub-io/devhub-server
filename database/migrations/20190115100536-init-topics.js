@@ -36,6 +36,16 @@ module.exports = {
           type: INTEGER(10).UNSIGNED,
           defaultValue: 0,
         },
+        view_number: {
+          type: INTEGER(11),
+          allowNull: false,
+          defaultValue: 0,
+        },
+        status: {
+          type: INTEGER(4),
+          allowNull: false,
+          defaultValue: 0,
+        },
         created_at: {
           type: DATE,
           allowNull: true,

@@ -33,6 +33,9 @@ module.exports = app => {
 
   // Ecosystems
   router.get('/ecosystems', controller.ecosystem.topics);
+  router.get('/ecosystem/:slug', controller.ecosystem.find);
+  router.get('/ecosystem/:slug/outline', controller.ecosystem.collections);
+  router.get('/ecosystem/:slug/items', controller.ecosystem.items);
 
   // Check
   const jwt = app.passport.authenticate('jwt', { session: false, successReturnToOrRedirect: null });

@@ -44,6 +44,11 @@ module.exports = {
           type: INTEGER(11),
           allowNull: false,
         },
+        view_number: {
+          type: INTEGER(11),
+          allowNull: false,
+          defaultValue: 0,
+        },
         status: {
           type: INTEGER(4),
           allowNull: false,

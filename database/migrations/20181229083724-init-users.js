@@ -30,6 +30,11 @@ module.exports = {
           type: STRING(100),
           allowNull: true,
         },
+        status: {
+          type: INTEGER(4),
+          allowNull: false,
+          defaultValue: 1,
+        },
         created_at: {
           type: DATE,
           allowNull: true,

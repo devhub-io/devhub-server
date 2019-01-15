@@ -69,17 +69,6 @@ module.exports = app => {
     rating: 0,
   });
 
-  // collections TODO
-  factory.define('collection', app.model.Collection, {
-    title: factory.sequence('Collection.title', n => `collection_${n}`),
-    image: faker.image.imageUrl(),
-    slug: factory.sequence('Collection.slug', n => `${n}_${faker.random.uuid()}`),
-    sort: faker.random.number(),
-    is_enable: 1,
-    created_at: new Date(),
-    updated_at: new Date(),
-  });
-
   // collection_repos TODO
   factory.define('collection_repos', app.model.CollectionRepos, {
     collection_id: factory.sequence('CollectionRepos.collection_id', n => n),
@@ -254,6 +243,41 @@ module.exports = app => {
     homepage: faker.internet.url,
     wiki: faker.internet.url,
     github: 'https://github.com/demo',
+    status: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // wikis
+  factory.define('wiki', app.model.Wiki, {
+    title: factory.sequence('Wiki.title', n => `wiki_${n}`),
+    slug: factory.sequence('Wiki.slug', n => `${n}_${faker.random.uuid()}`),
+    summary: 'Node.js is an open-source, cross-platform JavaScript run-time environment that executes JavaScript code outside of a browser.',
+    source: 'wikipedia',
+    url: 'https://en.wikipedia.org/wiki/Node.js',
+    status: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // collections
+  factory.define('collection', app.model.Collection, {
+    title: factory.sequence('Collection.title', n => `collection_${n}`),
+    image: faker.image.imageUrl(),
+    slug: factory.sequence('Collection.slug', n => `${n}_${faker.random.uuid()}`),
+    sort: faker.random.number(),
+    status: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // collection_items
+  factory.define('collection_item', app.model.CollectionItem, {
+    title: factory.sequence('CollectionItem.title', n => `item_${n}`),
+    collection_id: 1,
+    type: 'text',
+    sort: faker.random.number(),
+    status: 1,
     created_at: new Date(),
     updated_at: new Date(),
   });

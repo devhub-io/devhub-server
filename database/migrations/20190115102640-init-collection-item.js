@@ -13,7 +13,7 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true,
         },
-        collection: {
+        collection_id: {
           type: INTEGER(10).UNSIGNED,
           allowNull: false,
         },
@@ -29,6 +29,11 @@ module.exports = {
         },
         user_id: {
           type: INTEGER(10).UNSIGNED,
+          defaultValue: 0,
+        },
+        sort: {
+          type: INTEGER(6),
+          allowNull: false,
           defaultValue: 0,
         },
         status: {
