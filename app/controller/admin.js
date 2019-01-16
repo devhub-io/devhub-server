@@ -50,7 +50,10 @@ class HomeController extends Controller {
   async ecosystems() {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
-    ctx.body = await ctx.service.admin.repos(query);
+    query.status = ctx.query.status || '';
+    query.sort_type = ctx.query.sort_type || '';
+    query.slug = ctx.query.slug || '';
+    ctx.body = await ctx.service.admin.ecosystems(query);
   }
 
 }

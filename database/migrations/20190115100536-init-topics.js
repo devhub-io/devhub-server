@@ -36,6 +36,11 @@ module.exports = {
           type: INTEGER(10).UNSIGNED,
           defaultValue: 0,
         },
+        sort: {
+          type: INTEGER(11),
+          allowNull: false,
+          defaultValue: 0,
+        },
         view_number: {
           type: INTEGER(11),
           allowNull: false,

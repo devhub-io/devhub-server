@@ -121,4 +121,33 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.affected);
   });
 
+  it('should GET /admin/ecosystems', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topics = await app.factory.createMany('topic', 3);
+    const res = await app.httpRequest()
+      .get('/admin/ecosystems?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].slug);
+    assert(res.body.rows[0].title);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/ecosystems?limit=1&page=1&sort_type=sort&slug=${topics[0].slug}&status=${topics[0].status}}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === topics[0].id);
+    assert(resSearch.body.rows[0].title === topics[0].title);
+    assert(resSearch.body.rows[0].slug === topics[0].slug);
+  });
+
 });
