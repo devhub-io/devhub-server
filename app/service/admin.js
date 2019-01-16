@@ -33,7 +33,7 @@ class AdminService extends Service {
 
   async reposSwitch({ id, status }) {
     const Op = this.app.Sequelize.Op;
-    return await this.ctx.model.Repos.update(
+    const res = await this.ctx.model.Repos.update(
       {
         status,
       },
@@ -45,6 +45,7 @@ class AdminService extends Service {
           status: status === 1 ? 0 : 1,
         },
       });
+    return { affected: res };
   }
 
   async reposEdit({ id, status }) {
@@ -54,7 +55,8 @@ class AdminService extends Service {
       },
     });
     repos.status = status;
-    repos.save();
+    const res = repos.save();
+    return { affected: res };
   }
 
 }

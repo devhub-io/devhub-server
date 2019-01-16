@@ -70,7 +70,7 @@ describe('test/app/service/job.test.js', () => {
   });
 
   describe('Repos Fetch', () => {
-    it('should work', async () => {
+    it.skip('should work', async () => {
       const token = '4796692f0e48d6584ef15764cda9581f599eceed';
       const user = await app.factory.create('repos', {
         email: 'demo@email.local',
@@ -99,7 +99,7 @@ describe('test/app/service/job.test.js', () => {
   });
 
   describe('Developer Fetch', () => {
-    it('should work', async () => {
+    it.skip('should work', async () => {
       const token = '4796692f0e48d6584ef15764cda9581f599eceed';
       const user = await app.factory.create('repos', {
         email: 'demo@email.local',
