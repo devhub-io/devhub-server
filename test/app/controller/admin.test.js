@@ -150,4 +150,29 @@ describe('test/app/controller/admin.test.js', () => {
     assert(resSearch.body.rows[0].slug === topics[0].slug);
   });
 
+  it('should POST /admin/ecosystem/switch', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/switch')
+      .send({ id: [ topic.id ], status: 0 })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.affected);
+  });
+
+  it('should POST /admin/ecosystem/edit', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/edit')
+      .send({ id: topic.id, status: 2 })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.affected);
+  });
+
+
 });

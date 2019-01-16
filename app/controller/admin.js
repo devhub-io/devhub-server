@@ -56,6 +56,18 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystems(query);
   }
 
+  async ecosystemSwitch() {
+    const ctx = this.ctx;
+    const query = { id: ctx.request.body.id, status: ctx.helper.toInt(ctx.request.body.status) };
+    ctx.body = await ctx.service.admin.ecosystemSwitch(query);
+  }
+
+  async ecosystemEdit() {
+    const ctx = this.ctx;
+    const query = { id: ctx.helper.toInt(ctx.request.body.id), status: ctx.helper.toInt(ctx.request.body.status) };
+    ctx.body = await ctx.service.admin.ecosystemEdit(query);
+  }
+
 }
 
 module.exports = HomeController;

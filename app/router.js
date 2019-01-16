@@ -55,4 +55,7 @@ module.exports = app => {
   router.post('/admin/developer/switch', jwt, admin, controller.admin.developerSwitch);
   router.post('/admin/developer/edit', jwt, admin, controller.admin.developerEdit);
   router.get('/admin/ecosystems', jwt, admin, controller.admin.ecosystems);
+  router.post('/admin/ecosystem/switch', jwt, admin, controller.admin.ecosystemSwitch);
+  router.post('/admin/ecosystem/edit', jwt, admin, controller.admin.ecosystemEdit);
+
 };

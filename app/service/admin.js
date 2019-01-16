@@ -141,6 +141,34 @@ class AdminService extends Service {
     return result;
   }
 
+  async ecosystemSwitch({ id, status }) {
+    const Op = this.app.Sequelize.Op;
+    const res = await this.ctx.model.Topic.update(
+      {
+        status,
+      },
+      {
+        where: {
+          id: {
+            [Op.in]: id,
+          },
+          status: status === 1 ? 0 : 1,
+        },
+      });
+    return { affected: res };
+  }
+
+  async ecosystemEdit({ id, status }) {
+    const topic = await this.ctx.model.Topic.unscoped().findOne({
+      where: {
+        id,
+      },
+    });
+    topic.status = status;
+    const res = topic.save();
+    return { affected: res };
+  }
+
 }
 
 module.exports = AdminService;
