@@ -40,10 +40,17 @@ module.exports = app => {
   // Check
   const jwt = app.passport.authenticate('jwt', { session: false, successReturnToOrRedirect: null });
   router.get('/auth', jwt, controller.home.index);
-  const admin = app.middleware.admin();
-  router.get('/admin', jwt, admin, controller.home.index);
 
   // Oauth
   router.get('/passport/github', controller.oauth.github);
   router.get('/passport/github/callback', controller.oauth.callback);
+
+  // Admin
+  const admin = app.middleware.admin();
+  router.get('/admin', jwt, admin, controller.home.index);
+  router.get('/admin/repos', jwt, admin, controller.admin.repos);
+  router.post('/admin/repos/switch', jwt, admin, controller.admin.reposSwitch);
+  router.post('/admin/repos/edit', jwt, admin, controller.admin.reposEdit);
+  router.get('/admin/developers', jwt, admin, controller.admin.developers);
+  router.get('/admin/ecosystems', jwt, admin, controller.admin.ecosystems);
 };
