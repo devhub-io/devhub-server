@@ -52,5 +52,7 @@ module.exports = app => {
   router.post('/admin/repos/switch', jwt, admin, controller.admin.reposSwitch);
   router.post('/admin/repos/edit', jwt, admin, controller.admin.reposEdit);
   router.get('/admin/developers', jwt, admin, controller.admin.developers);
+  router.post('/admin/developer/switch', jwt, admin, controller.admin.developerSwitch);
+  router.post('/admin/developer/edit', jwt, admin, controller.admin.developerEdit);
   router.get('/admin/ecosystems', jwt, admin, controller.admin.ecosystems);
 };
