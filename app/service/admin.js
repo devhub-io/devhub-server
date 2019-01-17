@@ -5,6 +5,35 @@ const arrayToTree = require('array-to-tree');
 
 class AdminService extends Service {
 
+  async sites({ limit = 5, page = 1, title = '', status = '', sort_type = '' }) {
+    const Op = this.app.Sequelize.Op;
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (title !== '') {
+      where.title = {
+        [Op.like]: `%${title}%`,
+      };
+    }
+    if (status !== '') {
+      where.is_enable = status;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'id', 'DESC' ]);
+    }
+    const result = await this.ctx.model.Site.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
   async repos({ limit = 5, page = 1, slug = '', status = '', sort_type = '' }) {
     const offset = (page - 1) * limit;
     const where = {};
@@ -213,6 +242,15 @@ class AdminService extends Service {
     if (childCollection) {
       return false;
     }
+    const items = await this.ctx.model.CollectionItem.unscoped().findOne({
+      attributes: [ 'id' ],
+      where: {
+        collection_id: data.id,
+      },
+    });
+    if (items) {
+      return false;
+    }
     return await this.ctx.model.Collection.unscoped().destroy({
       where: {
         id: data.id,
@@ -234,6 +272,78 @@ class AdminService extends Service {
     collections = arrayToTree(collections);
 
     return collections;
+  }
+
+  async ecosystemCollectionItems({ id }) {
+    const items = await this.ctx.model.CollectionItem.unscoped().findAll({
+      where: {
+        collection_id: id,
+      },
+      order: [
+        [ 'sort', 'ASC' ],
+      ],
+    });
+
+    return items;
+  }
+
+  async ecosystemCollectionItemCreate(data) {
+    if (data.type === 'repos') {
+      const repos = await this.ctx.model.Repos.unscoped().findOne({
+        where: {
+          id: data.foreign_id,
+        },
+      });
+      if (!repos) {
+        return false;
+      }
+      data.title = `${repos.owner}/${repos.repo}`;
+    }
+    if (data.type === 'developers') {
+      const developer = await this.ctx.model.Developer.unscoped().findOne({
+        where: {
+          id: data.foreign_id,
+        },
+      });
+      if (!developer) {
+        return false;
+      }
+      data.title = `${developer.login} (${developer.name})`;
+    }
+    if (data.type === 'sites') {
+      const site = await this.ctx.model.Site.unscoped().findOne({
+        where: {
+          id: data.foreign_id,
+        },
+      });
+      if (!site) {
+        return false;
+      }
+      data.title = site.title;
+    }
+    if (data.type === 'links') {
+      const link = await this.ctx.model.Link.unscoped().findOne({
+        where: {
+          url: data.url,
+        },
+      });
+      if (!link) {
+        const newLink = await this.ctx.model.Link.create({
+          title: data.title,
+          url: data.url,
+        });
+        data.foreign_id = newLink.id;
+      } else {
+        data.title = link.title;
+        data.foreign_id = link.id;
+      }
+    }
+
+    return await this.ctx.model.CollectionItem.create(
+      data,
+      {
+        fields: [ 'collection_id', 'title', 'type', 'foreign_id', 'sort' ],
+      });
   }
 
 }

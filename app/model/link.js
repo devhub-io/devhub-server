@@ -12,12 +12,15 @@ module.exports = app => {
     },
     title: {
       type: STRING,
+      defaultValue: '',
     },
     summary: {
       type: STRING(1024),
+      defaultValue: '',
     },
     source: {
       type: STRING,
+      defaultValue: '',
     },
     url: {
       type: STRING,

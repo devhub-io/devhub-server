@@ -48,6 +48,7 @@ module.exports = app => {
   // Admin
   const admin = app.middleware.admin();
   router.get('/admin', jwt, admin, controller.home.index);
+  router.get('/admin/sites', jwt, admin, controller.admin.sites);
   router.get('/admin/repos', jwt, admin, controller.admin.repos);
   router.post('/admin/repos/switch', jwt, admin, controller.admin.reposSwitch);
   router.post('/admin/repos/edit', jwt, admin, controller.admin.reposEdit);
@@ -62,5 +63,7 @@ module.exports = app => {
   router.post('/admin/ecosystem/collection/edit', jwt, admin, controller.admin.ecosystemCollectionEdit);
   router.post('/admin/ecosystem/collection/delete', jwt, admin, controller.admin.ecosystemCollectionDelete);
   router.get('/admin/ecosystem/collections', jwt, admin, controller.admin.ecosystemCollections);
+  router.get('/admin/ecosystem/collection/items', jwt, admin, controller.admin.ecosystemCollectionItems);
+  router.post('/admin/ecosystem/collection/item/create', jwt, admin, controller.admin.ecosystemCollectionItemCreate);
 
 };

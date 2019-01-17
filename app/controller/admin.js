@@ -4,6 +4,15 @@ const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
 
+  async sites() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.title = ctx.query.title || '';
+    query.status = ctx.query.status || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.sites(query);
+  }
+
   async repos() {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
@@ -96,6 +105,18 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     const query = { id: ctx.query.id };
     ctx.body = await ctx.service.admin.ecosystemCollections(query);
+  }
+
+  async ecosystemCollectionItems() {
+    const ctx = this.ctx;
+    const query = { id: ctx.query.id };
+    ctx.body = await ctx.service.admin.ecosystemCollectionItems(query);
+  }
+
+  async ecosystemCollectionItemCreate() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionItemCreate(data);
   }
 
 }
