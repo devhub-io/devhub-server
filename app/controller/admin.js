@@ -64,8 +64,38 @@ class HomeController extends Controller {
 
   async ecosystemEdit() {
     const ctx = this.ctx;
-    const query = { id: ctx.helper.toInt(ctx.request.body.id), status: ctx.helper.toInt(ctx.request.body.status) };
-    ctx.body = await ctx.service.admin.ecosystemEdit(query);
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemEdit(data);
+  }
+
+  async ecosystemCreate() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCreate(data);
+  }
+
+  async ecosystemCollectionCreate() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionCreate(data);
+  }
+
+  async ecosystemCollectionEdit() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionEdit(data);
+  }
+
+  async ecosystemCollectionDelete() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionDelete(data);
+  }
+
+  async ecosystemCollections() {
+    const ctx = this.ctx;
+    const query = { id: ctx.query.id };
+    ctx.body = await ctx.service.admin.ecosystemCollections(query);
   }
 
 }

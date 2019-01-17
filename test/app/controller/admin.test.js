@@ -168,11 +168,35 @@ describe('test/app/controller/admin.test.js', () => {
     const topic = await app.factory.create('topic');
     const res = await app.httpRequest()
       .post('/admin/ecosystem/edit')
-      .send({ id: topic.id, status: 2 })
+      .send({ id: topic.id, status: 2, title: 'edit' })
       .set({ Authorization: `bearer ${token}` });
     assert(res.status === 200);
     assert(res.body.affected);
   });
 
+  it('should POST /admin/ecosystem/create', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/create')
+      .send({
+        title: 'demo',
+        slug: 'demo',
+        description: 'demo',
+        homepage: 'demo',
+        github: 'demo',
+        wiki: 'demo',
+        sort: 1,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.title === 'demo');
+    assert(res.body.slug === 'demo');
+    assert(res.body.description === 'demo');
+    assert(res.body.homepage === 'demo');
+    assert(res.body.github === 'demo');
+    assert(res.body.wiki === 'demo');
+    assert(res.body.sort === 1);
+  });
 
 });

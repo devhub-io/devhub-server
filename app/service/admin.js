@@ -1,6 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
+const arrayToTree = require('array-to-tree');
 
 class AdminService extends Service {
 
@@ -158,15 +159,81 @@ class AdminService extends Service {
     return { affected: res };
   }
 
-  async ecosystemEdit({ id, status }) {
+  async ecosystemEdit(data) {
     const topic = await this.ctx.model.Topic.unscoped().findOne({
       where: {
-        id,
+        id: data.id,
       },
     });
-    topic.status = status;
-    const res = topic.save();
+    const res = await topic.update(data, {
+      fields: [ 'title', 'slug', 'description', 'homepage', 'github', 'wiki', 'sort' ],
+    });
     return { affected: res };
+  }
+
+  async ecosystemCreate(data) {
+    const title = data.title || '';
+    data.slug = title.replace(' ', '-').toLowerCase();
+    return await this.ctx.model.Topic.create(
+      data,
+      {
+        fields: [ 'title', 'slug', 'description', 'homepage', 'github', 'wiki', 'sort' ],
+      });
+  }
+
+  async ecosystemCollectionCreate(data) {
+    const title = data.title || '';
+    data.slug = title.replace(' ', '-').toLowerCase();
+    return await this.ctx.model.Collection.create(
+      data,
+      {
+        fields: [ 'title', 'slug', 'parent_id', 'topic_id', 'sort' ],
+      });
+  }
+
+  async ecosystemCollectionEdit(data) {
+    const collection = await this.ctx.model.Collection.unscoped().findOne({
+      where: {
+        id: data.id,
+      },
+    });
+    const res = await collection.update(data, {
+      fields: [ 'title', 'slug', 'parent_id', 'topic_id', 'sort', 'status' ],
+    });
+    return { affected: res };
+  }
+
+  async ecosystemCollectionDelete(data) {
+    const childCollection = await this.ctx.model.Collection.unscoped().findOne({
+      attributes: [ 'id' ],
+      where: {
+        parent_id: data.id,
+      },
+    });
+    if (childCollection) {
+      return false;
+    }
+    return await this.ctx.model.Collection.unscoped().destroy({
+      where: {
+        id: data.id,
+      },
+      limit: 1,
+    });
+  }
+
+  async ecosystemCollections({ id }) {
+    let collections = await this.ctx.model.Collection.unscoped().findAll({
+      where: {
+        topic_id: id,
+      },
+      order: [
+        [ 'sort', 'ASC' ],
+      ],
+    });
+    collections = JSON.parse(JSON.stringify(collections));
+    collections = arrayToTree(collections);
+
+    return collections;
   }
 
 }

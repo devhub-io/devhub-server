@@ -57,5 +57,10 @@ module.exports = app => {
   router.get('/admin/ecosystems', jwt, admin, controller.admin.ecosystems);
   router.post('/admin/ecosystem/switch', jwt, admin, controller.admin.ecosystemSwitch);
   router.post('/admin/ecosystem/edit', jwt, admin, controller.admin.ecosystemEdit);
+  router.post('/admin/ecosystem/create', jwt, admin, controller.admin.ecosystemCreate);
+  router.post('/admin/ecosystem/collection/create', jwt, admin, controller.admin.ecosystemCollectionCreate);
+  router.post('/admin/ecosystem/collection/edit', jwt, admin, controller.admin.ecosystemCollectionEdit);
+  router.post('/admin/ecosystem/collection/delete', jwt, admin, controller.admin.ecosystemCollectionDelete);
+  router.get('/admin/ecosystem/collections', jwt, admin, controller.admin.ecosystemCollections);
 
 };

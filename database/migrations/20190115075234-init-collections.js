@@ -26,7 +26,6 @@ module.exports = {
         slug: {
           type: STRING(255),
           allowNull: false,
-          unique: true,
         },
         title: {
           type: STRING(255),
@@ -35,14 +34,17 @@ module.exports = {
         image: {
           type: STRING(255),
           allowNull: false,
+          defaultValue: '',
         },
         sort: {
           type: INTEGER(6),
           allowNull: false,
+          defaultValue: 0,
         },
         user_id: {
           type: INTEGER(11),
           allowNull: false,
+          defaultValue: 0,
         },
         view_number: {
           type: INTEGER(11),

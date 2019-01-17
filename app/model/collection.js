@@ -25,7 +25,6 @@ module.exports = app => {
     slug: {
       type: STRING(255),
       allowNull: false,
-      unique: true,
     },
     title: {
       type: STRING(255),
