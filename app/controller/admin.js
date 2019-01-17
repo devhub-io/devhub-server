@@ -119,6 +119,18 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemCollectionItemCreate(data);
   }
 
+  async ecosystemCollectionItemEdit() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionItemEdit(data);
+  }
+
+  async ecosystemCollectionItemDelete() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionItemDelete(data);
+  }
+
 }
 
 module.exports = HomeController;

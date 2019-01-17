@@ -346,6 +346,27 @@ class AdminService extends Service {
       });
   }
 
+  async ecosystemCollectionItemEdit(data) {
+    const item = await this.ctx.model.CollectionItem.unscoped().findOne({
+      where: {
+        id: data.id,
+      },
+    });
+    const res = await item.update(data, {
+      fields: [ 'title', 'sort', 'status' ],
+    });
+    return { affected: res };
+  }
+
+  async ecosystemCollectionItemDelete(data) {
+    return await this.ctx.model.CollectionItem.unscoped().destroy({
+      where: {
+        id: data.id,
+      },
+      limit: 1,
+    });
+  }
+
 }
 
 module.exports = AdminService;
