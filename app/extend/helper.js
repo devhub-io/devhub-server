@@ -1,4 +1,5 @@
 'use strict';
+const constant = require('../constant');
 
 module.exports = {
   async remember(key, ttl, callback) {
@@ -20,6 +21,22 @@ module.exports = {
     if (typeof str === 'number') return str;
     if (!str) return str;
     return parseInt(str, 10) || 0;
+  },
+
+  isGithubRepos(url) {
+    return url.match(constant.REPOS_URL_REGEX);
+  },
+
+  isGithubDeveloper(url) {
+    return url.match(constant.DEVELOPER_URL_REGEX);
+  },
+
+  isSite(url) {
+    return url.match(/^http(?:s)?:\/\/(?:[\w-]+\.)*([\w-]{1,63})(?:\.(?:\w{3}|\w{2}))(?:$|\/)$/i);
+  },
+
+  isUrl(text) {
+    return text.match(/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/i);
   },
 
 };

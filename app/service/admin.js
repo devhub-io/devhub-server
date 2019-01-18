@@ -371,7 +371,8 @@ class AdminService extends Service {
 
   async ecosystemCollectionFetch(data) {
     if (data.text && data.text !== '') {
-      const topic_id = 6;
+      // Cache TODO
+      const topic_id = data.topic_id;
       // Insert Collections
       const collectionTokens = this.lexerCollectionToken(data.text);
       await this.insertCollections(topic_id, collectionTokens);
@@ -418,6 +419,7 @@ class AdminService extends Service {
     for (let i = 0; i < tokens.length; i++) {
       if (tokens[i].parent !== '') {
         const parentCollection = await this.ctx.model.Collection.unscoped().findOne({
+          attributes: [ 'id' ],
           where: {
             topic_id,
             slug: tokens[i].parent,
@@ -425,6 +427,7 @@ class AdminService extends Service {
         });
         if (parentCollection) {
           const found = await this.ctx.model.Collection.unscoped().findOne({
+            attributes: [ 'id' ],
             where: {
               topic_id,
               parent_id: parentCollection.id,
@@ -443,6 +446,7 @@ class AdminService extends Service {
         }
       } else {
         const found = await this.ctx.model.Collection.unscoped().findOne({
+          attributes: [ 'id' ],
           where: {
             topic_id,
             parent_id: 0,
@@ -509,21 +513,118 @@ class AdminService extends Service {
     for (let i = 0; i < tokens.length; i++) {
       if (tokens[i].type === 'text') {
         const found = await this.ctx.model.Collection.unscoped().findOne({
+          attributes: [ 'id' ],
           where: {
             topic_id,
             title: tokens[i].collection,
           },
         });
+
         if (found) {
+          const analyzeText = await this.analyzeItemText(tokens[i].text);
           await this.ctx.model.CollectionItem.create({
             collection_id: found.id,
-            title: tokens[i].text,
-            type: 'text',
+            title: (analyzeText.title || tokens[i].text).substring(0, 255),
+            type: analyzeText.type || 'text',
             sort: i,
+            foreign_id: analyzeText.foreign_id || 0,
           });
         }
       }
     }
+  }
+
+  async analyzeItemText(text) {
+    const found = text.match(/\[(.*)\]\((.*)\)( \- )?(.*)/i);
+    const res = {};
+    if (found) {
+      res.title = found[1];
+      if (this.ctx.helper.isUrl(found[2])) {
+        // Repos
+        const reposFound = this.ctx.helper.isGithubRepos(found[2]);
+        if (reposFound) {
+          const owner = reposFound[1];
+          const repo = reposFound[2];
+          const reposExist = await this.ctx.model.Repos.unscoped().findOne({
+            attributes: [ 'id' ],
+            where: {
+              slug: `${owner}-${repo}`,
+            },
+          });
+          if (reposExist) {
+            res.foreign_id = reposExist.id;
+            res.type = 'repos';
+            res.title = `${owner}/${repo}`;
+          } else {
+            // TODO
+            res.foreign_id = 0;
+            res.type = 'repos';
+            res.title = text;
+          }
+        }
+
+        // Developer
+        const developerFound = this.ctx.helper.isGithubDeveloper(found[2]);
+        if (developerFound) {
+          const login = developerFound[1];
+          const developerExist = await this.ctx.model.Developer.unscoped().findOne({
+            attributes: [ 'id' ],
+            where: {
+              login,
+            },
+          });
+          if (developerExist) {
+            res.foreign_id = developerExist.id;
+            res.type = 'developers';
+            res.title = developerExist.login;
+          } else {
+            res.foreign_id = 0;
+            res.type = 'developers';
+            res.title = text;
+          }
+        }
+
+        // Site
+        const siteFound = this.ctx.helper.isSite(found[2]);
+        if (siteFound) {
+          const siteExist = await this.ctx.model.Site.unscoped().findOne({
+            where: {
+              url: found[2],
+            },
+          });
+          if (siteExist) {
+            res.foreign_id = siteExist.id;
+            res.type = 'sites';
+            res.title = siteExist.title !== '' ? siteExist.title : found[1];
+          } else {
+            res.foreign_id = 0;
+            res.type = 'sites';
+            res.title = text;
+          }
+        }
+
+        if (!('type' in res)) {
+          const linkExist = await this.ctx.model.Link.unscoped().findOne({
+            where: {
+              url: found[2],
+            },
+          });
+          if (linkExist) {
+            res.foreign_id = linkExist.id;
+            res.type = 'links';
+            res.title = linkExist.title !== '' ? linkExist.title : found[1];
+          } else {
+            res.foreign_id = 0;
+            res.type = 'links';
+            res.title = text;
+          }
+        }
+      }
+    } else {
+      res.title = text;
+      res.type = 'text';
+    }
+    return res;
   }
 
 }
