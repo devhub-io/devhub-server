@@ -2,6 +2,8 @@
 
 const Service = require('egg').Service;
 const arrayToTree = require('array-to-tree');
+const toc = require('markdown-toc');
+const marked = require('marked');
 
 class AdminService extends Service {
 
@@ -365,6 +367,163 @@ class AdminService extends Service {
       },
       limit: 1,
     });
+  }
+
+  async ecosystemCollectionFetch(data) {
+    if (data.text && data.text !== '') {
+      const topic_id = 6;
+      // Insert Collections
+      const collectionTokens = this.lexerCollectionToken(data.text);
+      await this.insertCollections(topic_id, collectionTokens);
+
+      // Insert Items
+      const itemTokens = this.lexerItemTokens(data.text);
+      await this.insertCollectionItems(topic_id, itemTokens);
+    }
+
+    return data;
+  }
+
+  lexerCollectionToken(md) {
+    const collections = toc(md).json;
+    let preLvl = 0;
+    let curLvl = 0;
+    for (let i = 0; i < collections.length; i++) {
+      curLvl = collections[i].lvl;
+      if (preLvl !== 0) {
+        if (curLvl > preLvl) {
+          collections[i].parent = collections[i - 1].slug;
+        } else if (curLvl === preLvl) {
+          collections[i].parent = collections[i - 1].parent;
+        } else {
+          for (let j = 1; j <= i - 1; j++) {
+            if (curLvl === collections[i - j].lvl) {
+              collections[i].parent = collections[i - j].parent;
+            }
+          }
+          if (collections[i].parent === undefined) {
+            collections[i].parent = collections[0].slug;
+          }
+        }
+      } else {
+        collections[i].parent = '';
+      }
+      preLvl = curLvl;
+    }
+
+    return collections;
+  }
+
+  async insertCollections(topic_id, tokens) {
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].parent !== '') {
+        const parentCollection = await this.ctx.model.Collection.unscoped().findOne({
+          where: {
+            topic_id,
+            slug: tokens[i].parent,
+          },
+        });
+        if (parentCollection) {
+          const found = await this.ctx.model.Collection.unscoped().findOne({
+            where: {
+              topic_id,
+              parent_id: parentCollection.id,
+              slug: tokens[i].slug,
+            },
+          });
+          if (!found) {
+            await this.ctx.model.Collection.create({
+              topic_id,
+              parent_id: parentCollection.id,
+              title: tokens[i].content,
+              slug: tokens[i].slug,
+              sort: tokens[i].i,
+            });
+          }
+        }
+      } else {
+        const found = await this.ctx.model.Collection.unscoped().findOne({
+          where: {
+            topic_id,
+            parent_id: 0,
+            slug: tokens[i].slug,
+          },
+        });
+        if (!found) {
+          await this.ctx.model.Collection.create({
+            topic_id,
+            parent_id: 0,
+            title: tokens[i].content,
+            slug: tokens[i].slug,
+            sort: tokens[i].i,
+          });
+        }
+      }
+    }
+  }
+
+  lexerItemTokens(md) {
+    const tokens = marked.lexer(md);
+
+    let list = [];
+    const _tokens = [];
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].type === 'heading') {
+        _tokens.push(tokens[i]);
+      }
+      if ([ 'text', 'list_start', 'list_end', 'list_item_start', 'list_item_end' ].includes(tokens[i].type)) {
+        list.push(tokens[i]);
+        if (tokens[i].type === 'list_end') {
+          list.forEach(listItem => {
+            _tokens.push(listItem);
+          });
+          list = [];
+        }
+      }
+    }
+
+    const __tokens = [];
+    for (let i = 0; i < _tokens.length; i++) {
+      if ([ 'heading', 'text' ].includes(_tokens[i].type)) {
+        __tokens.push(_tokens[i]);
+      }
+    }
+
+    for (let i = 0; i < __tokens.length; i++) {
+      if (__tokens[i].type === 'text') {
+        let slug = '';
+        for (let j = i - 1; j >= 0; j--) {
+          if (__tokens[j].type === 'heading') {
+            slug = __tokens[j].text;
+            break;
+          }
+        }
+        __tokens[i].collection = slug;
+      }
+    }
+
+    return __tokens;
+  }
+
+  async insertCollectionItems(topic_id, tokens) {
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].type === 'text') {
+        const found = await this.ctx.model.Collection.unscoped().findOne({
+          where: {
+            topic_id,
+            title: tokens[i].collection,
+          },
+        });
+        if (found) {
+          await this.ctx.model.CollectionItem.create({
+            collection_id: found.id,
+            title: tokens[i].text,
+            type: 'text',
+            sort: i,
+          });
+        }
+      }
+    }
   }
 
 }

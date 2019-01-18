@@ -75,5 +75,10 @@ module.exports = appInfo => {
     secret: env.JWT_SECRET,
   };
 
+  exports.bodyParser = {
+    jsonLimit: '10mb',
+    formLimit: '10mb',
+  };
+
   return config;
 };
