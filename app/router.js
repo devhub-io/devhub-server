@@ -48,6 +48,8 @@ module.exports = app => {
   // Admin
   const admin = app.middleware.admin();
   router.get('/admin', jwt, admin, controller.home.index);
+  router.get('/admin/users', jwt, admin, controller.admin.users);
+  router.get('/admin/queue_jobs', jwt, admin, controller.admin.queueJobs);
   router.get('/admin/sites', jwt, admin, controller.admin.sites);
   router.get('/admin/links', jwt, admin, controller.admin.links);
   router.get('/admin/wiki', jwt, admin, controller.admin.wiki);

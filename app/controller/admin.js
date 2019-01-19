@@ -4,6 +4,24 @@ const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
 
+  async users() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.name = ctx.query.name || '';
+    query.email = ctx.query.email || '';
+    query.status = ctx.query.status || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.users(query);
+  }
+
+  async queueJobs() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.queue = ctx.query.queue || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.queueJobs(query);
+  }
+
   async sites() {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };

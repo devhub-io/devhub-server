@@ -215,6 +215,7 @@ module.exports = app => {
 
   // users
   factory.define('user', app.model.User, {
+    name: factory.sequence('User.name', n => `name_${n}`),
     email: factory.sequence('User.email', n => `email_${n}@email.local`),
     password: 'abc',
     created_at: new Date(),
@@ -302,11 +303,25 @@ module.exports = app => {
 
   // links
   factory.define('link', app.model.Link, {
-    title: factory.sequence('Link.title', n => `wiki_${n}`), slug: factory.sequence('Link.slug', n => `${n}_${faker.random.uuid()}`),
+    title: factory.sequence('Link.title', n => `wiki_${n}`),
     summary: 'summary',
     source: 'internet',
     url: faker.internet.url,
     status: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // queue_jobs
+  factory.define('queue_job', app.model.QueueJob, {
+    queue: factory.sequence('QueueJob.queue', n => `job_${n}`),
+    payload: JSON.stringify({
+      url: faker.internet.url,
+    }),
+    attempts: 0,
+    reserved: 0,
+    reserved_at: null,
+    available_at: null,
     created_at: new Date(),
     updated_at: new Date(),
   });

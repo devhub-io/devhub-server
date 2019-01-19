@@ -7,6 +7,61 @@ const marked = require('marked');
 
 class AdminService extends Service {
 
+  async users({ limit = 5, page = 1, name = '', email = '', status = '', sort_type = '' }) {
+    const Op = this.app.Sequelize.Op;
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (name !== '') {
+      where.name = {
+        [Op.like]: `%${name}%`,
+      };
+    }
+    if (email !== '') {
+      where.email = email;
+    }
+    if (status !== '') {
+      where.status = status;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'id', 'DESC' ]);
+    }
+    const result = await this.ctx.model.User.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
+  async queueJobs({ limit = 5, page = 1, queue = '', sort_type = '' }) {
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (queue !== '') {
+      where.queue = queue;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'id', 'DESC' ]);
+    }
+    const result = await this.ctx.model.QueueJob.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
   async sites({ limit = 5, page = 1, title = '', url = '', status = '', sort_type = '' }) {
     const Op = this.app.Sequelize.Op;
     const offset = (page - 1) * limit;

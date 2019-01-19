@@ -15,6 +15,62 @@ describe('test/app/controller/admin.test.js', () => {
       .expect(200);
   });
 
+  it('should GET /admin/users', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const users = await app.factory.createMany('user', 2);
+    const res = await app.httpRequest()
+      .get('/admin/users?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].name);
+    assert(res.body.rows[0].email);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/users?limit=1&page=1&sort_type=updated_at&name=${users[0].name}&email=${users[0].email}&status=${users[0].status}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === users[0].id);
+    assert(resSearch.body.rows[0].name === users[0].name);
+    assert(resSearch.body.rows[0].email === users[0].email);
+  });
+
+  it('should GET /admin/queue_jobs', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const jobs = await app.factory.createMany('queue_job', 3);
+    const res = await app.httpRequest()
+      .get('/admin/queue_jobs?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].queue);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/queue_jobs?limit=1&page=1&sort_type=updated_at&queue=${jobs[0].queue}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === jobs[0].id);
+    assert(resSearch.body.rows[0].queue === jobs[0].queue);
+  });
+
   it('should GET /admin/sites', async () => {
     const user = await app.factory.create('user');
     const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
