@@ -344,4 +344,407 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.sort === 1);
   });
 
+  it('should GET /admin/ecosystem/collections', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    const collection = await app.factory.create('collection', {
+      topic_id: topic.id,
+      parent_id: 0,
+      title: 'collection_1',
+      slug: 'c_1',
+      sort: 1,
+      status: 1,
+    });
+    const childCollection = await app.factory.create('collection', {
+      topic_id: topic.id,
+      parent_id: collection.id,
+      title: 'collection_1',
+      slug: 'c_2',
+      sort: 1,
+      status: 1,
+    });
+    const res = await app.httpRequest()
+      .get(`/admin/ecosystem/collections?id=${topic.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.length === 1);
+    assert(res.body[0].id === collection.id);
+    assert(res.body[0].slug === collection.slug);
+    assert(res.body[0].children[0].id === childCollection.id);
+  });
+
+  it('should POST /admin/ecosystem/collection/create', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    const collection = await app.httpRequest()
+      .post('/admin/ecosystem/collection/create')
+      .send({
+        topic_id: topic.id,
+        title: 'demo',
+        slug: 'demo',
+        parent_id: 0,
+        sort: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+
+    const res = await app.httpRequest()
+      .get(`/admin/ecosystem/collections?id=${topic.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.length === 1);
+    assert(res.body[0].id === collection.body.id);
+    assert(res.body[0].slug === collection.body.slug);
+  });
+
+  it('should POST /admin/ecosystem/collection/edit', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const collection = await app.factory.create('collection');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/edit')
+      .send({
+        id: collection.id,
+        title: 'edit',
+        slug: 'edit',
+        parent_id: 0,
+        sort: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+
+    assert(res.status === 200);
+    assert(res.body.affected.id === collection.id);
+    assert(res.body.affected.title === 'edit');
+    assert(res.body.affected.slug === 'edit');
+  });
+
+  it('should POST /admin/ecosystem/collection/delete', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic_id = 1;
+    const collection = await app.factory.create('collection', {
+      topic_id,
+      parent_id: 0,
+      title: 'collection_1',
+      slug: 'c_1',
+      sort: 1,
+      status: 1,
+    });
+    const resStart = await app.httpRequest()
+      .get(`/admin/ecosystem/collections?id=${topic_id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body.length === 1);
+
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/delete')
+      .send({
+        id: collection.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const resEnd = await app.httpRequest()
+      .get(`/admin/ecosystem/collections?id=${topic_id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resEnd.status === 200);
+    assert(resEnd.body.length === 0);
+  });
+
+  it('should GET /admin/ecosystem/collection/items', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const collection = await app.factory.create('collection');
+    await app.factory.create('collection_item', {
+      collection_id: collection.id,
+      title: 'item_1',
+      type: 'text',
+      sort: 2,
+      status: 1,
+    });
+    const repos = await app.factory.create('repos');
+    const item = await app.factory.create('collection_item', {
+      collection_id: collection.id,
+      title: repos.title,
+      type: 'repos',
+      foreign_id: repos.id,
+      sort: 1,
+      status: 1,
+    });
+    const res = await app.httpRequest()
+      .get(`/admin/ecosystem/collection/items?id=${collection.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.length === 2);
+    assert(res.body[0].id === item.id);
+    assert(res.body[0].title === item.title);
+    assert(res.body[0].type === item.type);
+  });
+
+  it('should POST /admin/ecosystem/collection/item/create', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const collection = await app.factory.create('collection');
+    // repos type
+    const repos = await app.factory.create('repos');
+    const reposTypeRes = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/create')
+      .send({
+        collection_id: collection.id,
+        title: 'demo',
+        type: 'repos',
+        foreign_id: repos.id,
+        sort: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(reposTypeRes.status === 200);
+    assert(reposTypeRes.body.type === 'repos');
+    assert(reposTypeRes.body.foreign_id === repos.id);
+    assert(reposTypeRes.body.title === `${repos.owner}/${repos.repo}`);
+
+    // developer type
+    const developer = await app.factory.create('developer');
+    const developerTypeRes = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/create')
+      .send({
+        collection_id: collection.id,
+        title: 'demo',
+        type: 'developers',
+        foreign_id: developer.id,
+        sort: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(developerTypeRes.status === 200);
+    assert(developerTypeRes.body.type === 'developers');
+    assert(developerTypeRes.body.foreign_id === developer.id);
+    assert(developerTypeRes.body.title === `${developer.login} (${developer.name})`);
+
+    // site type
+    const site = await app.factory.create('site');
+    const siteTypeRes = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/create')
+      .send({
+        collection_id: collection.id,
+        title: 'demo',
+        type: 'sites',
+        foreign_id: site.id,
+        sort: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(siteTypeRes.status === 200);
+    assert(siteTypeRes.body.type === 'sites');
+    assert(siteTypeRes.body.foreign_id === site.id);
+    assert(siteTypeRes.body.title === site.title);
+
+    // link type
+    const link = await app.factory.create('link');
+    const linkTypeRes = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/create')
+      .send({
+        collection_id: collection.id,
+        title: 'demo',
+        type: 'links',
+        url: link.url,
+        sort: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(linkTypeRes.status === 200);
+    assert(linkTypeRes.body.type === 'links');
+    assert(linkTypeRes.body.foreign_id === link.id);
+    assert(linkTypeRes.body.title === link.title);
+    const newlinkTypeRes = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/create')
+      .send({
+        collection_id: collection.id,
+        title: 'demo',
+        type: 'links',
+        url: 'http://oth.er',
+        sort: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(newlinkTypeRes.status === 200);
+    assert(newlinkTypeRes.body.foreign_id);
+
+    const res = await app.httpRequest()
+      .get(`/admin/ecosystem/collection/items?id=${collection.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.length === 5);
+  });
+
+  it('should POST /admin/ecosystem/collection/item/edit', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const item = await app.factory.create('collection_item');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/edit')
+      .send({
+        id: item.id,
+        title: 'edit',
+        status: 2,
+        sort: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+
+    assert(res.status === 200);
+    assert(res.body.affected.id === item.id);
+    assert(res.body.affected.title === 'edit');
+    assert(res.body.affected.status === 2);
+    assert(res.body.affected.sort === 0);
+  });
+
+  it('should POST /admin/ecosystem/collection/item/delete', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const collection = await app.factory.create('collection');
+    const item = await app.factory.create('collection_item', {
+      collection_id: collection.id,
+      title: 'item_1',
+      type: 'text',
+      sort: 2,
+      status: 1,
+    });
+    const resStart = await app.httpRequest()
+      .get(`/admin/ecosystem/collection/items?id=${collection.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body.length === 1);
+
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/delete')
+      .send({
+        id: item.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const resEnd = await app.httpRequest()
+      .get(`/admin/ecosystem/collection/items?id=${collection.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resEnd.status === 200);
+    assert(resEnd.body.length === 0);
+  });
+
+  it('should POST /admin/ecosystem/collection/fetch', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    await app.factory.create('repos', {
+      title: 'webtorrent',
+      category_id: 0,
+      slug: 'feross-webtorrent',
+      readme: 'readme',
+      description: 'description',
+      language: 'javascript',
+      homepage: '',
+      github: 'https://github.com/feross/webtorrent',
+      stargazers_count: 1,
+      watchers_count: 2,
+      open_issues_count: 3,
+      forks_count: 4,
+      subscribers_count: 5,
+      issue_response: 6,
+      status: 1,
+      repos_created_at: new Date(),
+      repos_updated_at: new Date(),
+      fetched_at: new Date(),
+      analytics_at: new Date(),
+      user_id: 0,
+      is_recommend: 1,
+      trends: '0,15,50,63,0,35,0,53',
+      owner: 'feross',
+      repo: 'webtorrent',
+      cover: '',
+      document_url: '',
+    });
+    await app.factory.create('developer', {
+      login: 'mafintosh',
+      name: 'mafintosh',
+      description: 'description',
+      github_id: 1,
+      avatar_url: '',
+      html_url: '',
+      type: 'Organization',
+      site_admin: 1,
+      company: '',
+      blog: '',
+      location: '',
+      email: '',
+      public_repos: 1,
+      public_gists: 2,
+      followers: 3,
+      following: 4,
+      view_number: 0,
+      status: 1,
+      site_created_at: new Date(),
+      site_updated_at: new Date(),
+      fetched_at: new Date(),
+      analytics_at: new Date(),
+      rating: 0,
+    });
+    await app.factory.create('site', {
+      title: 'nodebots',
+      category: 0,
+      url: 'http://nodebots.io',
+      sort: 0,
+      status: 1,
+      icon: 'icon',
+      description: 'description',
+      level: 1,
+    });
+    await app.factory.create('link', {
+      title: 'nodebots',
+      summary: '',
+      source: 'internet',
+      url: 'http://stackoverflow.com/questions/tagged/node.js',
+      status: 1,
+    });
+
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/fetch')
+      .send({
+        topic_id: topic.id,
+        text: '## Demo\n' +
+          '\n' +
+          '### Mad science\n' +
+          '\n' +
+          '- [webtorrent](https://github.com/feross/webtorrent) - Streaming torrent client for Node.js and the browser.\n' +
+          '- [CASL](https://github.com/stalniy/casl) - Isomorphic authorization for UI and API.\n' +
+          '- [mafintosh](https://github.com/mafintosh)\n' +
+          '- [Swaagie](https://github.com/Swaagie) - HTML minifier.\n' +
+          '\n' +
+          '### Community\n' +
+          '\n' +
+          '- [Gitter](https://gitter.im/nodejs/node)\n' +
+          '- [`#node.js` on Freenode](http://webchat.freenode.net/?channels=node.js)\n' +
+          '- [Stack Overflow](http://stackoverflow.com/questions/tagged/node.js)\n' +
+          '- Module Requests & Ideas\n' +
+          '- [nodebots](http://nodebots.io) - Robots powered by JavaScript.\n' +
+          '- [Node Weekly](http://nodeweekly.com) - Weekly e-mail round-up of Node.js news and articles.\n' +
+          '\n' +
+          '## Books\n' +
+          '# Articles\n',
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const collectionsRes = await app.httpRequest()
+      .get(`/admin/ecosystem/collections?id=${topic.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(collectionsRes.status === 200);
+    assert(collectionsRes.body.length === 1);
+
+    const items1Res = await app.httpRequest()
+      .get(`/admin/ecosystem/collection/items?id=${collectionsRes.body[0].children[0].id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(items1Res.status === 200);
+    assert(items1Res.body.length === 4);
+    const items2Res = await app.httpRequest()
+      .get(`/admin/ecosystem/collection/items?id=${collectionsRes.body[0].children[1].id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(items2Res.status === 200);
+    assert(items2Res.body.length === 6);
+  });
+
 });

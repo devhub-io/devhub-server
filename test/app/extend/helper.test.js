@@ -35,4 +35,63 @@ describe('test/app/extend/helper.test.js', () => {
     });
   });
 
+  describe('isGithubRepos', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const n1 = ctx.helper.isGithubRepos('https://github.com/bcoe/nyc');
+      assert(n1);
+      assert(n1[1]);
+      assert(n1[2]);
+      const n2 = ctx.helper.isGithubRepos('https://github.com/bcoe');
+      assert(n2 === null);
+    });
+  });
+
+  describe('isGithubRepos', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const n1 = ctx.helper.isGithubDeveloper('https://github.com/bcoe/nyc');
+      assert(n1 === null);
+      const n2 = ctx.helper.isGithubDeveloper('https://github.com/bcoe');
+      assert(n2);
+      assert(n2[1]);
+    });
+  });
+
+  describe('isSite', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const n1 = ctx.helper.isSite('https://github.com/bcoe/nyc');
+      assert(n1 === null);
+      const n2 = ctx.helper.isSite('https://github.com/bcoe');
+      assert(n2 === null);
+      const n3 = ctx.helper.isSite('https://github.com/');
+      assert(n3);
+      const n4 = ctx.helper.isSite('https://github.com');
+      assert(n4);
+      const n5 = ctx.helper.isSite('https://www.github.com');
+      assert(n5);
+    });
+  });
+
+  describe('isSite', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const n1 = ctx.helper.isUrl('https://github.com/bcoe/nyc');
+      assert(n1);
+      const n2 = ctx.helper.isUrl('https://github.com/bcoe');
+      assert(n2);
+      const n3 = ctx.helper.isUrl('https://github.com/');
+      assert(n3);
+      const n4 = ctx.helper.isUrl('https://github.com');
+      assert(n4);
+      const n5 = ctx.helper.isUrl('https://www.github.com');
+      assert(n5);
+      const n6 = ctx.helper.isUrl('www.github.com');
+      assert(n6 === null);
+      const n7 = ctx.helper.isUrl('www.github.com/demo.html');
+      assert(n7 === null);
+    });
+  });
+
 });
