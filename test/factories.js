@@ -105,12 +105,13 @@ module.exports = app => {
   // repos_news
   factory.define('repos_news', app.model.ReposNews, {
     url: faker.internet.url(),
-    title: faker.random.word(),
+    title: factory.sequence('ReposNews.title', n => `news_${n}`),
     repos_id: 1,
     score: faker.random.number(),
     time: faker.random.number(),
     item_id: faker.random.number(),
     post_date: moment(new Date()).format('YYYY-MM-DD'),
+    status: 1,
     created_at: new Date(),
     updated_at: new Date(),
   });
@@ -277,6 +278,34 @@ module.exports = app => {
     collection_id: 1,
     type: 'text',
     sort: faker.random.number(),
+    status: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // articles
+  factory.define('article', app.model.Article, {
+    title: factory.sequence('Article.title', n => `article_${n}`),
+    slug: factory.sequence('Article.slug', n => `${n}_${faker.random.uuid()}`),
+    description: 'description',
+    content: 'content',
+    source: 'news',
+    url: faker.internet.url,
+    read_number: faker.random.number(),
+    up_number: faker.random.number(),
+    down_number: faker.random.number(),
+    status: 1,
+    fetched_at: new Date(),
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // links
+  factory.define('link', app.model.Link, {
+    title: factory.sequence('Link.title', n => `wiki_${n}`), slug: factory.sequence('Link.slug', n => `${n}_${faker.random.uuid()}`),
+    summary: 'summary',
+    source: 'internet',
+    url: faker.internet.url,
     status: 1,
     created_at: new Date(),
     updated_at: new Date(),

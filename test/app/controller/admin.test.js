@@ -32,7 +32,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].url);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/sites?limit=1&page=1&sort_type=updated_at&title=${sites[0].title}&status=${sites[0].status}`)
+      .get(`/admin/sites?limit=1&page=1&sort_type=updated_at&title=${sites[0].title}&url=${sites[0].url}&status=${sites[0].status}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -42,6 +42,122 @@ describe('test/app/controller/admin.test.js', () => {
     assert(resSearch.body.rows[0].id === sites[0].id);
     assert(resSearch.body.rows[0].title === sites[0].title);
     assert(resSearch.body.rows[0].url === sites[0].url);
+  });
+
+  it('should GET /admin/links', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const links = await app.factory.createMany('link', 3);
+    const res = await app.httpRequest()
+      .get('/admin/links?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].title);
+    assert(res.body.rows[0].url);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/links?limit=1&page=1&sort_type=updated_at&title=${links[0].title}&url=${links[0].url}&status=${links[0].status}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === links[0].id);
+    assert(resSearch.body.rows[0].title === links[0].title);
+    assert(resSearch.body.rows[0].url === links[0].url);
+  });
+
+  it('should GET /admin/wiki', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const wiki = await app.factory.createMany('wiki', 3);
+    const res = await app.httpRequest()
+      .get('/admin/wiki?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].title);
+    assert(res.body.rows[0].url);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/wiki?limit=1&page=1&sort_type=updated_at&title=${wiki[0].title}&url=${wiki[0].url}&status=${wiki[0].status}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === wiki[0].id);
+    assert(resSearch.body.rows[0].title === wiki[0].title);
+    assert(resSearch.body.rows[0].url === wiki[0].url);
+  });
+
+  it('should GET /admin/news', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const news = await app.factory.createMany('repos_news', 3);
+    const res = await app.httpRequest()
+      .get('/admin/news?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].title);
+    assert(res.body.rows[0].post_date);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/news?limit=1&page=1&sort_type=updated_at&title=${news[0].title}&post_date=${news[0].post_date}&status=${news[0].status}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === news[0].id);
+    assert(resSearch.body.rows[0].title === news[0].title);
+    assert(resSearch.body.rows[0].post_date === news[0].post_date);
+  });
+
+  it('should GET /admin/articles', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const articles = await app.factory.createMany('article', 3);
+    const res = await app.httpRequest()
+      .get('/admin/articles?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].title);
+    assert(res.body.rows[0].url);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/articles?limit=1&page=1&sort_type=updated_at&title=${articles[0].title}&url=${articles[0].url}&status=${articles[0].status}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === articles[0].id);
+    assert(resSearch.body.rows[0].title === articles[0].title);
+    assert(resSearch.body.rows[0].url === articles[0].url);
   });
 
   it('should GET /admin/repos', async () => {

@@ -35,22 +35,22 @@ module.exports = app => {
     user_id: {
       type: INTEGER(11),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     read_number: {
       type: INTEGER(11),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     up_number: {
       type: INTEGER(11),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     down_number: {
       type: INTEGER(11),
       allowNull: false,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     status: {
       type: INTEGER(1),
