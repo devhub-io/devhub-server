@@ -52,6 +52,7 @@ module.exports = app => {
   router.get('/admin/links', jwt, admin, controller.admin.links);
   router.get('/admin/wiki', jwt, admin, controller.admin.wiki);
   router.get('/admin/news', jwt, admin, controller.admin.news);
+  router.get('/admin/articles', jwt, admin, controller.admin.articles);
   router.get('/admin/repos', jwt, admin, controller.admin.repos);
   router.post('/admin/repos/switch', jwt, admin, controller.admin.reposSwitch);
   router.post('/admin/repos/edit', jwt, admin, controller.admin.reposEdit);

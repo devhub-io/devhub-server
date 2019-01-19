@@ -29,6 +29,11 @@ module.exports = {
           type: INTEGER(10).UNSIGNED,
           defaultValue: 0,
         },
+        status: {
+          type: INTEGER(1),
+          allowNull: false,
+          defaultValue: 1,
+        },
         created_at: {
           type: DATE,
           allowNull: true,

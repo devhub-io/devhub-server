@@ -8,6 +8,7 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
     query.title = ctx.query.title || '';
+    query.url = ctx.query.url || '';
     query.status = ctx.query.status || '';
     query.sort_type = ctx.query.sort_type || '';
     ctx.body = await ctx.service.admin.sites(query);
@@ -18,6 +19,7 @@ class HomeController extends Controller {
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
     query.title = ctx.query.title || '';
     query.url = ctx.query.url || '';
+    query.status = ctx.query.status || '';
     query.sort_type = ctx.query.sort_type || '';
     ctx.body = await ctx.service.admin.links(query);
   }
@@ -27,6 +29,7 @@ class HomeController extends Controller {
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
     query.title = ctx.query.title || '';
     query.url = ctx.query.url || '';
+    query.status = ctx.query.status || '';
     query.sort_type = ctx.query.sort_type || '';
     ctx.body = await ctx.service.admin.wiki(query);
   }
@@ -36,8 +39,19 @@ class HomeController extends Controller {
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
     query.title = ctx.query.title || '';
     query.post_date = ctx.query.post_date || '';
+    query.status = ctx.query.status || '';
     query.sort_type = ctx.query.sort_type || '';
     ctx.body = await ctx.service.admin.news(query);
+  }
+
+  async articles() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.title = ctx.query.title || '';
+    query.url = ctx.query.url || '';
+    query.status = ctx.query.status || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.articles(query);
   }
 
   async repos() {

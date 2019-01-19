@@ -1,5 +1,7 @@
 'use strict';
 
+const constant = require('../constant');
+
 module.exports = app => {
   const { INTEGER, STRING, DATE } = app.Sequelize;
 
@@ -29,6 +31,11 @@ module.exports = app => {
       type: INTEGER(10).UNSIGNED,
       defaultValue: 0,
     },
+    status: {
+      type: INTEGER(1),
+      allowNull: false,
+      defaultValue: 1,
+    },
     created_at: {
       type: DATE,
       allowNull: true,
@@ -39,5 +46,10 @@ module.exports = app => {
     },
   }, {
     tableName: 'links',
+    defaultScope: {
+      where: {
+        status: constant.ENABLE,
+      },
+    },
   });
 };

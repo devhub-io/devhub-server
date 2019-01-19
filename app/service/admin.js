@@ -7,7 +7,7 @@ const marked = require('marked');
 
 class AdminService extends Service {
 
-  async sites({ limit = 5, page = 1, title = '', status = '', sort_type = '' }) {
+  async sites({ limit = 5, page = 1, title = '', url = '', status = '', sort_type = '' }) {
     const Op = this.app.Sequelize.Op;
     const offset = (page - 1) * limit;
     const where = {};
@@ -15,6 +15,9 @@ class AdminService extends Service {
       where.title = {
         [Op.like]: `%${title}%`,
       };
+    }
+    if (url !== '') {
+      where.url = url;
     }
     if (status !== '') {
       where.status = status;
@@ -36,7 +39,7 @@ class AdminService extends Service {
     return result;
   }
 
-  async links({ limit = 5, page = 1, title = '', url = '', sort_type = '' }) {
+  async links({ limit = 5, page = 1, title = '', url = '', status = '', sort_type = '' }) {
     const Op = this.app.Sequelize.Op;
     const offset = (page - 1) * limit;
     const where = {};
@@ -47,6 +50,9 @@ class AdminService extends Service {
     }
     if (url !== '') {
       where.url = url;
+    }
+    if (status !== '') {
+      where.status = status;
     }
     const order = [];
     if (sort_type !== '') {
@@ -65,7 +71,7 @@ class AdminService extends Service {
     return result;
   }
 
-  async wiki({ limit = 5, page = 1, title = '', url = '', sort_type = '' }) {
+  async wiki({ limit = 5, page = 1, title = '', url = '', status = '', sort_type = '' }) {
     const Op = this.app.Sequelize.Op;
     const offset = (page - 1) * limit;
     const where = {};
@@ -76,6 +82,9 @@ class AdminService extends Service {
     }
     if (url !== '') {
       where.url = url;
+    }
+    if (status !== '') {
+      where.status = status;
     }
     const order = [];
     if (sort_type !== '') {
@@ -94,7 +103,7 @@ class AdminService extends Service {
     return result;
   }
 
-  async news({ limit = 5, page = 1, title = '', post_date = '', sort_type = '' }) {
+  async news({ limit = 5, page = 1, title = '', post_date = '', status = '', sort_type = '' }) {
     const Op = this.app.Sequelize.Op;
     const offset = (page - 1) * limit;
     const where = {};
@@ -105,6 +114,9 @@ class AdminService extends Service {
     }
     if (post_date !== '') {
       where.post_date = post_date;
+    }
+    if (status !== '') {
+      where.status = status;
     }
     const order = [];
     if (sort_type !== '') {
@@ -123,7 +135,7 @@ class AdminService extends Service {
     return result;
   }
 
-  async articles({ limit = 5, page = 1, title = '', post_date = '', sort_type = '' }) {
+  async articles({ limit = 5, page = 1, title = '', url = '', status = '', sort_type = '' }) {
     const Op = this.app.Sequelize.Op;
     const offset = (page - 1) * limit;
     const where = {};
@@ -132,8 +144,11 @@ class AdminService extends Service {
         [Op.like]: `%${title}%`,
       };
     }
-    if (post_date !== '') {
-      where.post_date = post_date;
+    if (url !== '') {
+      where.url = url;
+    }
+    if (status !== '') {
+      where.status = status;
     }
     const order = [];
     if (sort_type !== '') {

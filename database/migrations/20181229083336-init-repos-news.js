@@ -41,6 +41,11 @@ module.exports = {
           type: DATEONLY,
           allowNull: false,
         },
+        status: {
+          type: INTEGER(1),
+          allowNull: false,
+          defaultValue: 1,
+        },
         created_at: {
           type: DATE,
           allowNull: true,
