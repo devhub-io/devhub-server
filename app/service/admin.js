@@ -17,7 +17,7 @@ class AdminService extends Service {
       };
     }
     if (status !== '') {
-      where.is_enable = status;
+      where.status = status;
     }
     const order = [];
     if (sort_type !== '') {
@@ -26,6 +26,122 @@ class AdminService extends Service {
       order.push([ 'id', 'DESC' ]);
     }
     const result = await this.ctx.model.Site.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
+  async links({ limit = 5, page = 1, title = '', url = '', sort_type = '' }) {
+    const Op = this.app.Sequelize.Op;
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (title !== '') {
+      where.title = {
+        [Op.like]: `%${title}%`,
+      };
+    }
+    if (url !== '') {
+      where.url = url;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'id', 'DESC' ]);
+    }
+    const result = await this.ctx.model.Link.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
+  async wiki({ limit = 5, page = 1, title = '', url = '', sort_type = '' }) {
+    const Op = this.app.Sequelize.Op;
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (title !== '') {
+      where.title = {
+        [Op.like]: `%${title}%`,
+      };
+    }
+    if (url !== '') {
+      where.url = url;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'id', 'DESC' ]);
+    }
+    const result = await this.ctx.model.Wiki.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
+  async news({ limit = 5, page = 1, title = '', post_date = '', sort_type = '' }) {
+    const Op = this.app.Sequelize.Op;
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (title !== '') {
+      where.title = {
+        [Op.like]: `%${title}%`,
+      };
+    }
+    if (post_date !== '') {
+      where.post_date = post_date;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'id', 'DESC' ]);
+    }
+    const result = await this.ctx.model.ReposNews.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
+  async articles({ limit = 5, page = 1, title = '', post_date = '', sort_type = '' }) {
+    const Op = this.app.Sequelize.Op;
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (title !== '') {
+      where.title = {
+        [Op.like]: `%${title}%`,
+      };
+    }
+    if (post_date !== '') {
+      where.post_date = post_date;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'id', 'DESC' ]);
+    }
+    const result = await this.ctx.model.Article.unscoped().findAndCountAll({
       where,
       limit,
       offset,
@@ -62,34 +178,6 @@ class AdminService extends Service {
     return result;
   }
 
-  async reposSwitch({ id, status }) {
-    const Op = this.app.Sequelize.Op;
-    const res = await this.ctx.model.Repos.update(
-      {
-        status,
-      },
-      {
-        where: {
-          id: {
-            [Op.in]: id,
-          },
-          status: status === 1 ? 0 : 1,
-        },
-      });
-    return { affected: res };
-  }
-
-  async reposEdit({ id, status }) {
-    const repos = await this.ctx.model.Repos.unscoped().findOne({
-      where: {
-        id,
-      },
-    });
-    repos.status = status;
-    const res = repos.save();
-    return { affected: res };
-  }
-
   async developers({ limit = 5, page = 1, login = '', status = '', sort_type = '', type = '' }) {
     const offset = (page - 1) * limit;
     const where = {};
@@ -117,6 +205,34 @@ class AdminService extends Service {
     result.last_page = Math.ceil(result.count / limit);
     result.page = page;
     return result;
+  }
+
+  async reposSwitch({ id, status }) {
+    const Op = this.app.Sequelize.Op;
+    const res = await this.ctx.model.Repos.update(
+      {
+        status,
+      },
+      {
+        where: {
+          id: {
+            [Op.in]: id,
+          },
+          status: status === 1 ? 0 : 1,
+        },
+      });
+    return { affected: res };
+  }
+
+  async reposEdit({ id, status }) {
+    const repos = await this.ctx.model.Repos.unscoped().findOne({
+      where: {
+        id,
+      },
+    });
+    repos.status = status;
+    const res = repos.save();
+    return { affected: res };
   }
 
   async developerSwitch({ id, status }) {

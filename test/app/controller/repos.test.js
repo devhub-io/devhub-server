@@ -130,13 +130,13 @@ describe('test/app/controller/repos.test.js', () => {
         collection_id: collection.id,
         repos_id: repos1.id,
         sort: 1,
-        is_enable: 1,
+        status: 1,
       });
       await app.factory.create('collection_repos', {
         collection_id: collection.id,
         repos_id: repos2.id,
         sort: 1,
-        is_enable: 1,
+        status: 1,
       });
       const res = await app.httpRequest().get(`/repos/collection/${collection.slug}`);
       assert(res.status === 200);

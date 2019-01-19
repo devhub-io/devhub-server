@@ -29,10 +29,10 @@ module.exports = {
           type: INTEGER(6),
           allowNull: false,
         },
-        is_enable: {
+        status: {
           type: INTEGER(1),
           allowNull: false,
-          defaultValue: '1',
+          defaultValue: 1,
         },
         icon: {
           type: STRING(255),

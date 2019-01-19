@@ -13,6 +13,33 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.sites(query);
   }
 
+  async links() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.title = ctx.query.title || '';
+    query.url = ctx.query.url || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.links(query);
+  }
+
+  async wiki() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.title = ctx.query.title || '';
+    query.url = ctx.query.url || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.wiki(query);
+  }
+
+  async news() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.title = ctx.query.title || '';
+    query.post_date = ctx.query.post_date || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.news(query);
+  }
+
   async repos() {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };

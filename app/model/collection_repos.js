@@ -1,5 +1,7 @@
 'use strict';
 
+const constant = require('../constant');
+
 module.exports = app => {
   const { INTEGER, DATE } = app.Sequelize;
 
@@ -22,10 +24,10 @@ module.exports = app => {
       type: INTEGER(4),
       allowNull: false,
     },
-    is_enable: {
+    status: {
       type: INTEGER(1),
       allowNull: false,
-      defaultValue: '1',
+      defaultValue: 1,
     },
     created_at: {
       type: DATE,
@@ -37,6 +39,11 @@ module.exports = app => {
     },
   }, {
     tableName: 'collection_repos',
+    defaultScope: {
+      where: {
+        status: constant.ENABLE,
+      },
+    },
   });
 
   CollectionRepos.associate = function() {

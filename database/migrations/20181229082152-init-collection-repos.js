@@ -25,10 +25,10 @@ module.exports = {
           type: INTEGER(4),
           allowNull: false,
         },
-        is_enable: {
+        status: {
           type: INTEGER(1),
           allowNull: false,
-          defaultValue: '1',
+          defaultValue: 1,
         },
         created_at: {
           type: DATE,

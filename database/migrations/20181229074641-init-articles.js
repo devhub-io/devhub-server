@@ -53,10 +53,10 @@ module.exports = {
           allowNull: false,
           defaultValue: '0',
         },
-        is_enable: {
+        status: {
           type: INTEGER(1),
           allowNull: false,
-          defaultValue: '1',
+          defaultValue: 1,
         },
         fetched_at: {
           type: DATE,

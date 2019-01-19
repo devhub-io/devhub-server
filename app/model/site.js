@@ -28,7 +28,7 @@ module.exports = app => {
       type: INTEGER(6),
       allowNull: false,
     },
-    is_enable: {
+    status: {
       type: INTEGER(1),
       allowNull: false,
       defaultValue: 1,
@@ -63,7 +63,7 @@ module.exports = app => {
     tableName: 'sites',
     defaultScope: {
       where: {
-        is_enable: constant.ENABLE,
+        status: constant.ENABLE,
       },
     },
   });

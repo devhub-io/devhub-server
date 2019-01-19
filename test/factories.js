@@ -74,7 +74,7 @@ module.exports = app => {
     collection_id: factory.sequence('CollectionRepos.collection_id', n => n),
     repos_id: factory.sequence('CollectionRepos.repos_id', n => n),
     sort: 1,
-    is_enable: 1,
+    status: 1,
     created_at: new Date(),
     updated_at: new Date(),
   });
@@ -121,7 +121,7 @@ module.exports = app => {
     category: factory.sequence('Site.category', n => `category_${n}`),
     url: faker.internet.url(),
     sort: faker.random.number(),
-    is_enable: 1,
+    status: 1,
     icon: 'icon',
     description: 'description',
     level: 1,
