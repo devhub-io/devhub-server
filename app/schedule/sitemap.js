@@ -16,7 +16,7 @@ class Sitemap extends Subscription {
   async subscribe() {
     // const app = this.app;
     // const ctx = this.ctx;
-
+    // TODO
     const hostname = 'https://devhub.io';
     const sitemap = sm.createSitemap({
       hostname,

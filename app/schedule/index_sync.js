@@ -28,7 +28,7 @@ class IndexSync extends Subscription {
     }
 
     const count = await ctx.model.Repos.count();
-    const limit = 100;
+    const limit = 10000;
     const lastPage = Math.ceil(count / limit);
     for (let page = 1; page <= lastPage; page++) {
       const offest = (page - 1) * limit;
