@@ -77,7 +77,7 @@ class NewsSync extends Subscription {
                 reposId = repos.id;
               } else {
                 const githubUrl = `https://github.com/${found[1]}/${found[2]}`;
-                ctx.app.queue.add({ job: 'reposFetch', data: { url: githubUrl } });
+                ctx.service.queue.addJob({ queue: 'reposFetch', payload: { url: githubUrl } });
               }
               await ctx.model.ReposNews.create({
                 url: itemData.url,

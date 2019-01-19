@@ -196,6 +196,20 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemCollectionFetch(data);
   }
 
+  async apiSearch() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
+    const type = ctx.query.type || '';
+    query.keywords = ctx.query.keywords || '';
+    if (type === 'repos') {
+      ctx.body = await ctx.service.admin.users(query);
+    } else if (type === 'developers') {
+      ctx.body = [];
+    } else {
+      ctx.body = [];
+    }
+  }
+
 }
 
 module.exports = HomeController;

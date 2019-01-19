@@ -17,6 +17,7 @@
     "egg-scripts": "^2.5.0",
     "egg-sequelize": "^4.2.0",
     "elasticsearch": "^15.3.0",
+    "formstream": "^1.1.0",
     "markdown-toc": "^1.2.0",
     "marked": "^0.6.0",
     "moment": "^2.23.0",

@@ -18,9 +18,11 @@ module.exports = app => {
     },
     attempts: {
       type: INTEGER(3).UNSIGNED,
+      defaultValue: 0,
     },
     reserved: {
       type: INTEGER(3).UNSIGNED,
+      defaultValue: 0,
     },
     reserved_at: {
       type: DATE,

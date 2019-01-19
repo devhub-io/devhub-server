@@ -74,5 +74,6 @@ module.exports = app => {
   router.post('/admin/ecosystem/collection/item/edit', jwt, admin, controller.admin.ecosystemCollectionItemEdit);
   router.post('/admin/ecosystem/collection/item/delete', jwt, admin, controller.admin.ecosystemCollectionItemDelete);
   router.post('/admin/ecosystem/collection/fetch', jwt, admin, controller.admin.ecosystemCollectionFetch);
+  router.post('/admin/api/search', jwt, admin, controller.admin.apiSearch);
 
 };

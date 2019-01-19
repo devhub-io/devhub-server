@@ -746,6 +746,8 @@ class AdminService extends Service {
             res.foreign_id = 0;
             res.type = 'repos';
             res.title = text;
+            // fetch job
+            this.ctx.service.queue.addJob({ queue: 'reposFetch', payload: { url: found[2] } });
           }
         }
 
@@ -767,6 +769,8 @@ class AdminService extends Service {
             res.foreign_id = 0;
             res.type = 'developers';
             res.title = text;
+            // fetch job
+            this.ctx.service.queue.addJob({ queue: 'developerFetch', payload: { url: found[2] } });
           }
         }
 
