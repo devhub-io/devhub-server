@@ -32,7 +32,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].email);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/users?limit=1&page=1&sort_type=updated_at&name=${users[0].name}&email=${users[0].email}&status=${users[0].status}`)
+      .get(`/admin/users?limit=1&sort_type=updated_at&name=${users[0].name}&email=${users[0].email}&status=${users[0].status}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -60,7 +60,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].queue);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/queue_jobs?limit=1&page=1&sort_type=updated_at&queue=${jobs[0].queue}`)
+      .get(`/admin/queue_jobs?limit=1&sort_type=updated_at&queue=${jobs[0].queue}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -88,7 +88,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].url);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/sites?limit=1&page=1&sort_type=updated_at&title=${sites[0].title}&url=${sites[0].url}&status=${sites[0].status}`)
+      .get(`/admin/sites?limit=1&sort_type=updated_at&title=${sites[0].title}&url=${sites[0].url}&status=${sites[0].status}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -117,7 +117,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].url);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/links?limit=1&page=1&sort_type=updated_at&title=${links[0].title}&url=${links[0].url}&status=${links[0].status}`)
+      .get(`/admin/links?limit=1&sort_type=updated_at&title=${links[0].title}&url=${links[0].url}&status=${links[0].status}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -146,7 +146,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].url);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/wiki?limit=1&page=1&sort_type=updated_at&title=${wiki[0].title}&url=${wiki[0].url}&status=${wiki[0].status}`)
+      .get(`/admin/wiki?limit=1&sort_type=updated_at&title=${wiki[0].title}&url=${wiki[0].url}&status=${wiki[0].status}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -175,7 +175,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].post_date);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/news?limit=1&page=1&sort_type=updated_at&title=${news[0].title}&post_date=${news[0].post_date}&status=${news[0].status}`)
+      .get(`/admin/news?limit=1&sort_type=updated_at&title=${news[0].title}&post_date=${news[0].post_date}&status=${news[0].status}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -204,7 +204,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].url);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/articles?limit=1&page=1&sort_type=updated_at&title=${articles[0].title}&url=${articles[0].url}&status=${articles[0].status}`)
+      .get(`/admin/articles?limit=1&sort_type=updated_at&title=${articles[0].title}&url=${articles[0].url}&status=${articles[0].status}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -233,7 +233,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].slug);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/repos?limit=1&page=1&sort_type=stargazers_count&slug=${repos[0].slug}&status=${repos[0].status}`)
+      .get(`/admin/repos?limit=1&sort_type=stargazers_count&slug=${repos[0].slug}&status=${repos[0].status}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -286,7 +286,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].type);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/developers?limit=1&page=1&sort_type=view_number&login=${developers[0].login}&status=${developers[0].status}&type=${developers[0].type}`)
+      .get(`/admin/developers?limit=1&sort_type=view_number&login=${developers[0].login}&status=${developers[0].status}&type=${developers[0].type}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);

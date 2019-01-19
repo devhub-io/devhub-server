@@ -45,7 +45,7 @@ describe('test/app/controller/repos.test.js', () => {
   describe('GET /repos/newest', () => {
     it('should work', async () => {
       await app.factory.createMany('repos', 3);
-      const res = await app.httpRequest().get('/repos/hottest?limit=2&page=2');
+      const res = await app.httpRequest().get('/repos/newest?limit=2&page=2');
       assert(res.status === 200);
       assert(res.body.page === 2);
       assert(res.body.count === 3);
@@ -66,7 +66,7 @@ describe('test/app/controller/repos.test.js', () => {
   describe('GET /repos/trend', () => {
     it('should work', async () => {
       await app.factory.createMany('repos', 3);
-      const res = await app.httpRequest().get('/repos/hottest?limit=2&page=2');
+      const res = await app.httpRequest().get('/repos/trend?limit=2&page=2');
       assert(res.status === 200);
       assert(res.body.page === 2);
       assert(res.body.count === 3);
@@ -87,13 +87,13 @@ describe('test/app/controller/repos.test.js', () => {
   describe('GET /repos/recommend', () => {
     it('should work', async () => {
       await app.factory.createMany('repos', 3);
-      const res = await app.httpRequest().get('/repos/hottest?limit=2');
+      const res = await app.httpRequest().get('/repos/recommend?limit=2');
       assert(res.status === 200);
-      assert(res.body.rows.length === 2);
-      assert(res.body.rows[0].id);
-      assert(res.body.rows[0].title);
-      assert(res.body.rows[0].slug);
-      assert(res.body.rows[0].cover);
+      assert(res.body.length === 2);
+      assert(res.body[0].id);
+      assert(res.body[0].title);
+      assert(res.body[0].slug);
+      assert(res.body[0].cover);
     });
   });
 

@@ -6,7 +6,7 @@ const formstream = require('formstream');
 
 class ApiService extends Service {
 
-  async librariesioReposSearch({ keywords = '', page = 1, limit = 10 }) {
+  async librariesioReposSearch({ keywords, page = 1, limit = 10 }) {
     const res = await this.ctx.curl(`https://libraries.io/api/search?q=${keywords}&page=${page}&per_page=${limit}&api_key=${env.LIBRARIESIO_KEY}`, {
       dataType: 'json',
       timeout: 60000,
