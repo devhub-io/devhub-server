@@ -11,12 +11,11 @@ describe('test/app/controller/repos.test.js', () => {
       await app.factory.createMany('repos', 1);
       const res = await app.httpRequest().get('/repos/home');
       assert(res.status === 200);
-      assert(Object.keys(res.body).length === 5);
+      assert(Object.keys(res.body).length === 4);
       assert(res.body.hottest);
       assert(res.body.newest);
       assert(res.body.trend);
       assert(res.body.recommend);
-      assert(res.body.collections);
     });
   });
 
@@ -105,55 +104,6 @@ describe('test/app/controller/repos.test.js', () => {
       assert(res.status === 200);
       assert(res.body.repos === 3);
       assert(res.body.developers === 2);
-    });
-  });
-
-  describe('GET /repos/collections', () => {
-    it.skip('should work', async () => {
-      await app.factory.createMany('collection', 3);
-      const res = await app.httpRequest().get('/repos/collections?limit=2');
-      assert(res.status === 200);
-      assert(res.body.rows.length === 2);
-      assert(res.body.rows[0].id);
-      assert(res.body.rows[0].title);
-      assert(res.body.rows[0].slug);
-      assert(res.body.rows[0].image);
-    });
-  });
-
-  describe('GET /repos/collection/:slug', () => {
-    it.skip('should work', async () => {
-      const collection = await app.factory.create('collection');
-      const repos1 = await app.factory.create('repos');
-      const repos2 = await app.factory.create('repos');
-      await app.factory.create('collection_repos', {
-        collection_id: collection.id,
-        repos_id: repos1.id,
-        sort: 1,
-        status: 1,
-      });
-      await app.factory.create('collection_repos', {
-        collection_id: collection.id,
-        repos_id: repos2.id,
-        sort: 1,
-        status: 1,
-      });
-      const res = await app.httpRequest().get(`/repos/collection/${collection.slug}`);
-      assert(res.status === 200);
-      assert(res.body.collection.id);
-      assert(res.body.collection.title);
-      assert(res.body.collection.slug === collection.slug);
-      assert(res.body.collection.image);
-      assert(res.body.repos.length === 2);
-      assert(res.body.repos[0].sort);
-      assert(res.body.repos[0].repos.slug);
-      assert(res.body.repos[0].repos.title);
-      assert(res.body.repos[0].repos.cover);
-      assert(res.body.repos[0].repos.trends);
-      assert(res.body.repos[0].repos.stargazers_count);
-      assert(res.body.repos[0].repos.description);
-      assert(res.body.repos[0].repos.owner);
-      assert(res.body.repos[0].repos.repo);
     });
   });
 

@@ -37,18 +37,6 @@ class ReposController extends Controller {
     ctx.body = await ctx.service.repos.findRecommend(query);
   }
 
-  async collections() {
-    const ctx = this.ctx;
-    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1 };
-    ctx.body = await ctx.service.repos.collections(query);
-  }
-
-  async collection() {
-    const ctx = this.ctx;
-    const slug = ctx.params.slug;
-    ctx.body = await ctx.service.repos.collection(slug);
-  }
-
   async category() {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1, slug: ctx.params.slug };
@@ -112,12 +100,7 @@ class ReposController extends Controller {
       return await ctx.service.repos.findRecommend(query);
     });
 
-    query.limit = 3;
-    const collections = await ctx.helper.remember('api:home:collections', 7 * 24 * 60 * 60, async () => {
-      return await ctx.service.repos.collections(query);
-    });
-
-    ctx.body = { hottest, newest, trend, recommend, collections };
+    ctx.body = { hottest, newest, trend, recommend };
   }
 
   async review() {

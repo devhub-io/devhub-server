@@ -195,18 +195,6 @@ class ReposService extends Service {
     return { rows: [], count: 0, last_page: 1, page: 1 };
   }
 
-  async collections({ limit = 3, page = 1 }) {
-    const offset = (page - 1) * limit;
-    return await this.ctx.model.Collection.findAndCountAll({
-      attributes: [ 'id', 'slug', 'title', 'image' ],
-      limit,
-      offset,
-      order: [
-        [ 'sort', 'ASC' ],
-      ],
-    });
-  }
-
   async topColumn() {
     return await this.ctx.model.Category.findAll({
       where: {
@@ -368,34 +356,6 @@ class ReposService extends Service {
       cover: data.owner.avatar_url || '',
       // fork: TODO
     });
-  }
-
-  async collection(slug) {
-    const collection = await this.ctx.model.Collection.findOne({
-      attributes: [ 'id', 'title', 'slug', 'image' ],
-      where: {
-        slug,
-      },
-    });
-    if (!collection) {
-      this.ctx.throw(404, 'Collection not found');
-    }
-    const repos = await this.ctx.model.CollectionRepos.findAll({
-      include: [{
-        model: this.ctx.model.Repos,
-        attributes: [ 'id', 'title', 'slug', 'cover', 'trends',
-          'stargazers_count', 'description', 'owner', 'repo' ],
-        as: 'repos',
-        order: [
-          [ 'sort', 'ASC' ],
-        ],
-      }],
-      attributes: [ 'sort' ],
-      where: {
-        collection_id: collection.id,
-      },
-    });
-    return { collection, repos };
   }
 
   async category({ limit = 5, page = 1, slug }) {
