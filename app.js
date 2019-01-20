@@ -6,18 +6,8 @@ const env = require('./.env');
 const elasticsearch = require('elasticsearch');
 
 module.exports = app => {
-  app.beforeStart(async () => {
-    // 应用会等待这个函数执行完成才启动
-    // app.cities = await app.curl('http://example.com/city.json', {
-    //   method: 'GET',
-    //   dataType: 'json',
-    // });
 
-    // 也可以通过以下方式来调用 Service
-    // const ctx = app.createAnonymousContext();
-    // app.cities = await ctx.service.cities.load();
-  });
-
+  // Error
   app.on('error', err => {
     // report error
     if (err.status !== 404) {
@@ -30,11 +20,12 @@ module.exports = app => {
     }
   });
 
+  // Queue
   app.queue = createQueue(app.config, app);
   app.queue.process(async function(job, done) {
     try {
       const ctx = app.createAnonymousContext();
-      await ctx.service.job.process(job.data);
+      await ctx.service.queue.processJob(job.data);
       done();
     } catch (e) {
       app.logger.error(`[system] Queue Error ${e}`);
@@ -42,6 +33,7 @@ module.exports = app => {
     }
   });
 
+  // ES
   app.elasticsearch = new elasticsearch.Client({
     hosts: [ app.config.elasticsearch.host ],
   });

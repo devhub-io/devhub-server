@@ -17,7 +17,7 @@ class ReposService extends Service {
       },
     });
     if (!repos) {
-      this.ctx.throw(404, 'repos not found');
+      this.ctx.throw(404, 'Repos not found');
     }
 
     // PV
@@ -261,7 +261,6 @@ class ReposService extends Service {
   async news({ date = '' }) {
     const Op = this.app.Sequelize.Op;
     date = date || toDate(new Date());
-    console.log(date);
     const result = await this.ctx.model.ReposNews.findAndCountAll({
       attributes: [ 'url', 'title', 'score', 'post_date', 'item_id' ],
       // TODO
@@ -379,7 +378,7 @@ class ReposService extends Service {
       },
     });
     if (!collection) {
-      this.ctx.throw(404, 'collection not found');
+      this.ctx.throw(404, 'Collection not found');
     }
     const repos = await this.ctx.model.CollectionRepos.findAll({
       include: [{
@@ -407,7 +406,7 @@ class ReposService extends Service {
       },
     });
     if (!category) {
-      this.ctx.throw(404, 'category not found');
+      this.ctx.throw(404, 'Category not found');
     }
     let foundCategoryId = -1;
     let childCategory = [];

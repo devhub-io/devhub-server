@@ -79,4 +79,15 @@ describe('test/app/service/api.test.js', () => {
     });
   });
 
+  describe('bearychatSendMessage', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext({});
+      app.mockHttpclient(env.BEARYCHAT_WEBHOOK, {
+        data: { code: 0, result: null },
+      });
+      const res = await ctx.service.api.bearychatSendMessage('hi');
+      assert(res);
+    });
+  });
+
 });

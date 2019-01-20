@@ -33,6 +33,18 @@ class ApiService extends Service {
     return false;
   }
 
+  async bearychatSendMessage(message) {
+    const res = await this.ctx.curl(env.BEARYCHAT_WEBHOOK, {
+      method: 'POST',
+      contentType: 'json',
+      data: {
+        text: message,
+      },
+      dataType: 'json',
+    });
+    return res.status === 200 && res.data.code === 0;
+  }
+
 }
 
 module.exports = ApiService;
