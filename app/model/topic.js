@@ -5,7 +5,7 @@ const constant = require('../constant');
 module.exports = app => {
   const { INTEGER, STRING, DATE } = app.Sequelize;
 
-  return app.model.define('topic', {
+  const Topic = app.model.define('topic', {
     id: {
       type: INTEGER(10).UNSIGNED,
       allowNull: false,
@@ -66,4 +66,10 @@ module.exports = app => {
       },
     },
   });
+
+  Topic.associate = function() {
+    app.model.Topic.hasMany(app.model.Collection);
+  };
+
+  return Topic;
 };

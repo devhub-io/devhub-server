@@ -23,12 +23,14 @@ module.exports = app => {
   // Queue
   app.queue = createQueue(app.config, app);
   app.queue.process(async function(job, done) {
+    const ctx = app.createAnonymousContext();
     try {
-      const ctx = app.createAnonymousContext();
-      await ctx.service.queue.processJob(job.data);
+      const state = await ctx.service.queue.processJob(job.data);
+      state ? ctx.service.queue.finishJob(job.data.data.jobId) : ctx.service.queue.failJob(job.data.data.jobId);
       done();
     } catch (e) {
       app.logger.error(`[system] Queue Error ${e}`);
+      ctx.service.queue.failJob(job.data.data.jobId);
       done(new Error(e));
     }
   });

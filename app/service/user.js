@@ -56,6 +56,7 @@ class UserService extends Service {
 
       await app.redis.set(`devhub:user:${id}:github:remaining`, remaining);
       await app.redis.expire(`devhub:user:${id}:github:remaining`, reset - timestamp > 0 ? reset - timestamp : 3600);
+      app.logger.info(`[system] Github API ID:${id} Remaining:${remaining}`);
     }
   }
 

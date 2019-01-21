@@ -82,8 +82,8 @@ class JobService extends Service {
               }
             }
           });
-          return true;
         }
+        return true;
       } catch (e) {
         app.logger.info(e.status);
         app.logger.info(e.message);
@@ -149,8 +149,8 @@ class JobService extends Service {
             repos.readme = text;
             repos.save();
           }
-          return true;
         }
+        return true;
       } catch (e) {
         app.logger.info(e.status);
         app.logger.info(e.message);
@@ -218,6 +218,7 @@ class JobService extends Service {
         });
       }
     }
+    return true;
   }
 
   async echo(data) {

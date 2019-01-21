@@ -90,4 +90,31 @@ describe('test/app/service/api.test.js', () => {
     });
   });
 
+  describe('wikipeidaSummery', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext({});
+      const title = 'Javascript';
+      const extract = 'JavaScript (), often abbreviated as JS, is a high-level, interpreted programming language';
+      app.mockHttpclient(`https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=${title}`, {
+        data: {
+          batchcomplete: '',
+          query: {
+            redirects:
+              [{ from: 'Javascript', to: 'JavaScript' }],
+            pages: {
+              9845: {
+                pageid: 9845,
+                ns: 0,
+                title: 'JavaScript',
+                extract,
+              },
+            },
+          },
+        },
+      });
+      const res = await ctx.service.api.wikipeidaSummery(title);
+      assert(res === extract);
+    });
+  });
+
 });

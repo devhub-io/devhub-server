@@ -45,6 +45,20 @@ class ApiService extends Service {
     return res.status === 200 && res.data.code === 0;
   }
 
+  async wikipeidaSummery(title) {
+    const res = await this.ctx.curl(`https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=${title}`, {
+      timeout: 60000,
+      dataType: 'json',
+    });
+    if (res.status === 200 && res.data.query) {
+      const key = Object.keys(res.data.query.pages);
+      if (key.length > 0) {
+        return res.data.query.pages[key[0]].extract;
+      }
+    }
+    return false;
+  }
+
 }
 
 module.exports = ApiService;

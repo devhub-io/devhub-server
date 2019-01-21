@@ -24,8 +24,9 @@ class EcosystemController extends Controller {
 
   async items() {
     const ctx = this.ctx;
-    const slug = ctx.params.slug;
-    this.ctx.body = await ctx.service.ecosystem.items(slug);
+    const topic_slug = ctx.params.topic_slug;
+    const collection_slug = ctx.params.collection_slug;
+    this.ctx.body = await ctx.service.ecosystem.items(topic_slug, collection_slug);
   }
 
 }

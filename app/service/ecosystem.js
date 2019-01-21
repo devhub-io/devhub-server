@@ -9,14 +9,16 @@ class EcosystemService extends Service {
     page = page >= 1000 ? 1000 : page;
     const offset = (page - 1) * limit;
     const result = await this.ctx.model.Topic.findAndCountAll({
+      attributes: [ 'id', 'title', 'slug', 'description', 'homepage', 'github', 'wiki' ],
       limit,
       offset,
       order: [
-        [ 'updated_at', 'DESC' ],
+        [ 'sort', 'ASC' ],
       ],
     });
     result.last_page = Math.ceil(result.count / limit);
     result.page = page;
+    // collections
     return result;
   }
 
@@ -85,11 +87,20 @@ class EcosystemService extends Service {
     return collections;
   }
 
-  async items(slug) {
+  async items(topic_slug, collection_slug) {
     const ctx = this.ctx;
+    const topic = await ctx.model.Topic.findOne({
+      where: {
+        slug: topic_slug,
+      },
+    });
+    if (!topic) {
+      this.ctx.throw(404, 'Ecosystem not found');
+    }
     const collection = await ctx.model.Collection.findOne({
       where: {
-        slug,
+        topic_id: topic.id,
+        slug: collection_slug,
       },
     });
     if (!collection) {
