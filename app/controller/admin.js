@@ -210,6 +210,24 @@ class HomeController extends Controller {
     }
   }
 
+  async queueReplay() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.queueReplay(data);
+  }
+
+  async queueDelete() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.queueDelete(data);
+  }
+
+  async fetch() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.fetch(data);
+  }
+
 }
 
 module.exports = HomeController;

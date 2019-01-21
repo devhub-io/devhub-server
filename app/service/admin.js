@@ -829,6 +829,18 @@ class AdminService extends Service {
     return res;
   }
 
+  async queueReplay(data) {
+    return this.ctx.service.queue.replayJob(data.id);
+  }
+
+  async queueDelete(data) {
+    return this.ctx.service.queue.finishJob(data.id);
+  }
+
+  async fetch(data) {
+    return this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: data.url } });
+  }
+
 }
 
 module.exports = AdminService;
