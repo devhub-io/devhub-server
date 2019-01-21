@@ -25,6 +25,11 @@ module.exports = {
           type: STRING(255),
           allowNull: false,
         },
+        screenshot: {
+          type: STRING(255),
+          allowNull: false,
+          defaultValue: '',
+        },
         sort: {
           type: INTEGER(6),
           allowNull: false,

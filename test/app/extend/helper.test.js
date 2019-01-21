@@ -35,6 +35,28 @@ describe('test/app/extend/helper.test.js', () => {
     });
   });
 
+  describe('randomString', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const n1 = ctx.helper.randomString(10);
+      assert(n1.length === 10);
+      const n2 = ctx.helper.randomString(10);
+      assert(n2 !== n1);
+      const n3 = ctx.helper.randomString(5);
+      assert(n3.length === 5);
+    });
+  });
+
+  describe('toSlug', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const n1 = ctx.helper.toSlug('Node.js');
+      assert(n1 === 'nodejs');
+      const n2 = ctx.helper.toSlug('Node js');
+      assert(n2 === 'nodejs');
+    });
+  });
+
   describe('isGithubRepos', () => {
     it('should work', async () => {
       const ctx = app.mockContext();

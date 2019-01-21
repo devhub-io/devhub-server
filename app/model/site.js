@@ -15,6 +15,7 @@ module.exports = app => {
     title: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
     },
     url: {
       type: STRING(255),
@@ -23,10 +24,17 @@ module.exports = app => {
     category: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
+    },
+    screenshot: {
+      type: STRING(255),
+      allowNull: false,
+      defaultValue: '',
     },
     sort: {
       type: INTEGER(6),
       allowNull: false,
+      defaultValue: 0,
     },
     status: {
       type: INTEGER(1),
@@ -36,10 +44,12 @@ module.exports = app => {
     icon: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
     },
     description: {
       type: STRING(255),
       allowNull: false,
+      defaultValue: '',
     },
     level: {
       type: INTEGER(4),

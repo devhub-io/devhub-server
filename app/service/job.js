@@ -4,6 +4,9 @@ const Service = require('egg').Service;
 const octokit = require('@octokit/rest')();
 const constant = require('../constant');
 const moment = require('moment');
+const puppeteer = require('puppeteer');
+const os = require('os');
+const fs = require('fs');
 
 class JobService extends Service {
 
@@ -54,39 +57,76 @@ class JobService extends Service {
     // Site
     const foundSite = ctx.helper.isSite(data.url);
     if (foundSite) {
-      // TODO crawler website
+      // crawler
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      page.setDefaultNavigationTimeout(60000);
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
+      await page.setViewport({
+        width: 1440,
+        height: 900,
+      });
+      await page.goto(data.url);
+      const title = await page.title();
+      const filename = ctx.helper.randomString(16);
+      const tmpFile = `${os.tmpdir()}/${filename}.png`;
+      await page.screenshot({ path: tmpFile });
+      await browser.close();
+      let screenshot = '';
+      if (fs.existsSync(tmpFile)) {
+        screenshot = await ctx.service.api.smmsImageUpload(tmpFile);
+      }
+
       const exists = await ctx.model.Site.unscoped().findOne({
         where: {
           url: data.url,
         },
       });
       if (exists) {
-        // TODO update
+        if (screenshot && screenshot !== '') {
+          exists.screenshot = screenshot;
+          await exists.save();
+        }
+        if (title && title !== '') {
+          exists.title = title;
+          await exists.save();
+        }
       } else {
         await ctx.model.Site.create({
-          title: '',
+          title: title || '',
           description: '',
           url: data.url,
-          level: '',
+          level: 1,
+          screenshot: screenshot || '',
         });
       }
       return true;
     }
 
     // Link
-    const foundLink = ctx.helper.isLink(data.url);
+    const foundLink = ctx.helper.isUrl(data.url);
     if (foundLink) {
-      // TODO crawler website
+      // crawler
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      page.setDefaultNavigationTimeout(60000);
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
+      await page.goto(data.url);
+      const title = await page.title();
+      await browser.close();
       const exists = await ctx.model.Link.unscoped().findOne({
         where: {
           url: data.url,
         },
       });
       if (exists) {
-        // TODO update
+        if (title && title !== '') {
+          exists.title = title;
+          await exists.save();
+        }
       } else {
         await ctx.model.Link.create({
-          title: '',
+          title: title || '',
           summery: '',
           source: '',
           url: data.url,

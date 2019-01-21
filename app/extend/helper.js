@@ -1,4 +1,6 @@
 'use strict';
+
+const crypto = require('crypto');
 const constant = require('../constant');
 
 module.exports = {
@@ -21,6 +23,15 @@ module.exports = {
     if (typeof str === 'number') return str;
     if (!str) return str;
     return parseInt(str, 10) || 0;
+  },
+
+  randomString(len) {
+    return crypto
+      .randomBytes(Math.ceil((len * 3) / 4))
+      .toString('base64')
+      .slice(0, len)
+      .replace(/\+/g, '0')
+      .replace(/\//g, '0');
   },
 
   toSlug(title) {

@@ -97,7 +97,7 @@ describe('test/app/controller/ecosystem.test.js', () => {
   });
 
   describe('GET /ecosystem/:slug/items', () => {
-    it('should work', async () => {
+    it.skip('should work', async () => {
       const topic = await app.factory.create('topic');
       const collection = await app.factory.create('collection',
         {

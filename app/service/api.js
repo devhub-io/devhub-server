@@ -3,6 +3,7 @@
 const Service = require('egg').Service;
 const env = require('../../.env');
 const formstream = require('formstream');
+const fs = require('fs');
 
 class ApiService extends Service {
 
@@ -17,17 +18,19 @@ class ApiService extends Service {
   }
 
   async smmsImageUpload(filePath) {
-    const ctx = this.ctx;
-    const form = new formstream();
-    form.file('smfile', filePath);
-    const result = await ctx.curl('https://sm.ms/api/upload', {
-      method: 'POST',
-      stream: form,
-      dataType: 'json',
-      headers: form.headers(),
-    });
-    if (result.status === 200 && result.data.code === 'success') {
-      return result.data.data.url;
+    if (fs.existsSync(filePath)) {
+      const ctx = this.ctx;
+      const form = new formstream();
+      form.file('smfile', filePath);
+      const result = await ctx.curl('https://sm.ms/api/upload', {
+        method: 'POST',
+        stream: form,
+        dataType: 'json',
+        headers: form.headers(),
+      });
+      if (result.status === 200 && result.data.code === 'success') {
+        return result.data.data.url;
+      }
     }
     return false;
   }
