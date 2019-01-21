@@ -382,6 +382,18 @@ class AdminService extends Service {
         id: data.id,
       },
     });
+
+    // Link Sync
+    if (data.wiki && data.wiki !== '') {
+      this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: data.wiki } });
+    }
+    if (data.homepage && data.homepage !== '') {
+      this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: data.homepage } });
+    }
+    if (data.github && data.github !== '') {
+      this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: data.github } });
+    }
+
     const res = await topic.update(data, {
       fields: [ 'title', 'slug', 'description', 'homepage', 'github', 'wiki', 'sort' ],
     });

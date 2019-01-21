@@ -7,6 +7,98 @@ const moment = require('moment');
 
 class JobService extends Service {
 
+  async linkFetch(data) {
+    const { ctx } = this;
+
+    // Github Developer
+    const foundDeveloper = data.url.match(constant.DEVELOPER_URL_REGEX);
+    if (foundDeveloper) {
+      await this.developerFetch(data);
+      return true;
+    }
+
+    // Github Repos
+    const foundRepos = data.url.match(constant.REPOS_URL_REGEX);
+    if (foundRepos) {
+      await this.reposFetch(data);
+      return true;
+    }
+
+    // Wiki
+    const foundWiki = data.url.match(constant.WIKIPEIDA_URL_REGEX);
+    if (foundWiki) {
+      const summery = await ctx.service.api.wikipeidaSummery(foundWiki[1]);
+      const exists = await ctx.model.Wiki.unscoped().findOne({
+        attributes: [ 'id' ],
+        where: {
+          url: data.url,
+        },
+      });
+      if (exists) {
+        exists.summary = summery;
+        exists.source = 'wikipeida';
+        await exists.save();
+      } else {
+        await ctx.model.Wiki.create({
+          title: foundWiki[1],
+          slug: ctx.helper.toSlug(foundWiki[1]),
+          summery,
+          source: 'wikipeida',
+          url: data.url,
+          status: 1,
+        });
+      }
+      return true;
+    }
+
+    // Site
+    const foundSite = ctx.helper.isSite(data.url);
+    if (foundSite) {
+      // TODO crawler website
+      const exists = await ctx.model.Site.unscoped().findOne({
+        where: {
+          url: data.url,
+        },
+      });
+      if (exists) {
+        // TODO update
+      } else {
+        await ctx.model.Site.create({
+          title: '',
+          description: '',
+          url: data.url,
+          level: '',
+        });
+      }
+      return true;
+    }
+
+    // Link
+    const foundLink = ctx.helper.isLink(data.url);
+    if (foundLink) {
+      // TODO crawler website
+      const exists = await ctx.model.Link.unscoped().findOne({
+        where: {
+          url: data.url,
+        },
+      });
+      if (exists) {
+        // TODO update
+      } else {
+        await ctx.model.Link.create({
+          title: '',
+          summery: '',
+          source: '',
+          url: data.url,
+          status: 0,
+        });
+      }
+      return true;
+    }
+
+    return false;
+  }
+
   async developerFetch(data) {
     const { app, ctx } = this;
     const found = data.url.match(constant.DEVELOPER_URL_REGEX);
@@ -71,9 +163,7 @@ class JobService extends Service {
                   });
                 ctx.service.user.updateUserGithubRemaining(id, headers);
 
-                const result = await app.curl(data.download_url, {
-                  timeout: 60000,
-                });
+                const result = await app.curl(data.download_url);
                 const text = result.data;
                 if (text !== null && text.length > 0) {
                   insert_repos.readme = text;
@@ -141,9 +231,7 @@ class JobService extends Service {
             });
           ctx.service.user.updateUserGithubRemaining(id, headers);
 
-          const result = await app.curl(data.download_url, {
-            timeout: 60000,
-          });
+          const result = await app.curl(data.download_url);
           const text = result.data;
           if (text !== null && text.length > 0) {
             repos.readme = text;
@@ -167,7 +255,6 @@ class JobService extends Service {
     const { ctx } = this;
     const res = await ctx.curl(`https://hacker-news.firebaseio.com/v0/item/${data.item_id}.json'`, {
       dataType: 'json',
-      timeout: 60000,
     });
     const itemData = res.data;
     let found;

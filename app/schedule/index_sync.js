@@ -17,7 +17,7 @@ class IndexSync extends Subscription {
 
     try {
       await app.elasticsearch.ping({
-        requestTimeout: 30000,
+        requestTimeout: 60000,
       });
 
       await app.elasticsearch.indices.create({

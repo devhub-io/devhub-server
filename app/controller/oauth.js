@@ -27,7 +27,6 @@ class HomeController extends Controller {
       method: 'POST',
       contentType: 'json',
       dataType: 'json',
-      timeout: 60000,
       data: {
         client_id: env.GITHUB_CLIENT_ID,
         client_secret: env.GITHUB_CLIENT_SECRET,
@@ -41,7 +40,6 @@ class HomeController extends Controller {
 
       const userResult = await app.curl('https://api.github.com/user', {
         dataType: 'json',
-        timeout: 60000,
         headers: {
           Authorization: `${tokenType} ${accessToken}`,
         },

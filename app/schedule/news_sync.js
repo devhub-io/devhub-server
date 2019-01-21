@@ -26,7 +26,6 @@ class NewsSync extends Subscription {
       try {
         const res = await ctx.curl(base + endpoints[endpointsKey], {
           dataType: 'json',
-          timeout: 60000,
         });
         items = res.data;
       } catch (e) {

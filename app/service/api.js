@@ -9,7 +9,6 @@ class ApiService extends Service {
   async librariesioReposSearch({ keywords, page = 1, limit = 10 }) {
     const res = await this.ctx.curl(`https://libraries.io/api/search?q=${keywords}&page=${page}&per_page=${limit}&api_key=${env.LIBRARIESIO_KEY}`, {
       dataType: 'json',
-      timeout: 60000,
     });
     if (res.status === 200) {
       return res.data;
@@ -47,7 +46,6 @@ class ApiService extends Service {
 
   async wikipeidaSummery(title) {
     const res = await this.ctx.curl(`https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=${title}`, {
-      timeout: 60000,
       dataType: 'json',
     });
     if (res.status === 200 && res.data.query) {

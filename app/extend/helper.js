@@ -23,6 +23,10 @@ module.exports = {
     return parseInt(str, 10) || 0;
   },
 
+  toSlug(title) {
+    return title.replace('.', '').replace(' ', '').toLowerCase();
+  },
+
   isGithubRepos(url) {
     return url.match(constant.REPOS_URL_REGEX);
   },
