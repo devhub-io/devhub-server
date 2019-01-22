@@ -27,7 +27,7 @@ class ReposService extends Service {
       await this.app.redis.set(`devhub:repos:${repos.id}:pv:${clientIP}`, 1);
       await this.app.redis.expire(`devhub:repos:${repos.id}:pv:${clientIP}`, 24 * 60 * 60);
       repos.view_number = repos.view_number + 1;
-      repos.save();
+      await repos.save();
     }
 
     const tags = await ctx.model.ReposTag.findAll({

@@ -11,6 +11,13 @@ class HomeController extends Controller {
     // console.log(this.ctx.isAuthenticated());
     // console.log(this.ctx.user);
 
+    // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://desktop.github.com/' } });
+    // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://desktop.github.com/terms/' } });
+    // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://github.com/desktop/desktop' } });
+    // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://github.com/desktop' } });
+    // const a = await this.ctx.service.api.smmsImageUpload(__dirname + '/node.png');
+    // console.log(a);
+
     this.ctx.body = this.config.app_name;
   }
 

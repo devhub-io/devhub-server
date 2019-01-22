@@ -17,7 +17,7 @@ module.exports = app => {
       defaultValue: '',
     },
     summary: {
-      type: STRING(1024),
+      type: STRING(2048),
       defaultValue: '',
     },
     source: {

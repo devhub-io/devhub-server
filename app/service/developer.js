@@ -23,7 +23,7 @@ class DeveloperService extends Service {
       await this.app.redis.set(`devhub:developer:${developer.id}:pv:${clientIP}`, 1);
       await this.app.redis.expire(`devhub:developer:${developer.id}:pv:${clientIP}`, 24 * 60 * 60);
       developer.view_number = developer.view_number + 1;
-      developer.save();
+      await developer.save();
     }
 
     const owner_repos = await ctx.model.Repos.findAll({

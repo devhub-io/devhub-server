@@ -301,7 +301,7 @@ class AdminService extends Service {
       },
     });
     repos.status = status;
-    const res = repos.save();
+    const res = await repos.save();
     return { affected: res };
   }
 
@@ -329,7 +329,7 @@ class AdminService extends Service {
       },
     });
     developer.status = status;
-    const res = developer.save();
+    const res = await developer.save();
     return { affected: res };
   }
 

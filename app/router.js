@@ -7,6 +7,7 @@ module.exports = app => {
   const { router, controller } = app;
   router.get('/', controller.home.index);
   router.get('/link', controller.home.link);
+
   // Repos
   router.get('/repos/home', controller.repos.home);
   router.get('/repos/search', controller.repos.search);
@@ -21,10 +22,13 @@ module.exports = app => {
   router.get('/news', controller.repos.news);
   router.get('/topics', controller.repos.topics);
   router.get('/topic/:topic', controller.repos.topicInPaginate);
+
   // Sites
   router.get('/sites', controller.repos.sites);
+
   // Category
   router.get('/category/top', controller.category.topColumn);
+
   // Developer
   router.get('/developer/list', controller.developer.list);
   router.get('/developer/:slug', controller.developer.find);

@@ -20,7 +20,7 @@ module.exports = {
           type: STRING,
         },
         summary: {
-          type: STRING(1024),
+          type: STRING(2048),
         },
         source: {
           type: STRING,

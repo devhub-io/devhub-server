@@ -30,7 +30,8 @@ class JobService extends Service {
     // Wiki
     const foundWiki = data.url.match(constant.WIKIPEIDA_URL_REGEX);
     if (foundWiki) {
-      const summery = await ctx.service.api.wikipeidaSummery(foundWiki[1]);
+      let summery = await ctx.service.api.wikipeidaSummery(foundWiki[1]);
+      summery = typeof summery === 'string' ? summery : '';
       const exists = await ctx.model.Wiki.unscoped().findOne({
         attributes: [ 'id' ],
         where: {
@@ -38,14 +39,14 @@ class JobService extends Service {
         },
       });
       if (exists) {
-        exists.summary = summery;
+        exists.summary = summery.substring(0, 2048);
         exists.source = 'wikipeida';
         await exists.save();
       } else {
         await ctx.model.Wiki.create({
           title: foundWiki[1],
           slug: ctx.helper.toSlug(foundWiki[1]),
-          summery,
+          summery: summery.substring(0, 2048),
           source: 'wikipeida',
           url: data.url,
           status: 1,
@@ -195,19 +196,19 @@ class JobService extends Service {
             });
             if (!exists) {
               if (repos.stargazers_count > 0) {
-                const insert_repos = await ctx.service.repos.createFromGithubAPI(id, repos);
+                const insertRepos = await ctx.service.repos.createFromGithubAPI(id, repos);
                 const { data, headers } = await octokit.repos
                   .getReadme({
-                    owner: insert_repos.owner,
-                    repo: insert_repos.repo,
+                    owner: insertRepos.owner,
+                    repo: insertRepos.repo,
                   });
                 ctx.service.user.updateUserGithubRemaining(id, headers);
 
                 const result = await app.curl(data.download_url);
                 const text = result.data;
                 if (text !== null && text.length > 0) {
-                  insert_repos.readme = text;
-                  insert_repos.save();
+                  insertRepos.readme = text;
+                  await insertRepos.save();
                 }
               }
             }
@@ -275,7 +276,7 @@ class JobService extends Service {
           const text = result.data;
           if (text !== null && text.length > 0) {
             repos.readme = text;
-            repos.save();
+            await repos.save();
           }
         }
         return true;
@@ -320,7 +321,7 @@ class JobService extends Service {
           reposNews.repos_id = repos.id;
         }
         reposNews.score = itemData.score;
-        reposNews.save();
+        await reposNews.save();
       } else {
         const repos = await ctx.model.Repos.findOne({
           where: {

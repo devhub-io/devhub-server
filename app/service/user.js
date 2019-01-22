@@ -39,9 +39,9 @@ class UserService extends Service {
     });
     if (existsUser) {
       service.access_token = user.accessToken;
-      service.save();
+      await service.save();
       existsUser.last_activated_at = new Date();
-      existsUser.save();
+      await existsUser.save();
       return existsUser;
     }
     return false;
