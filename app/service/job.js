@@ -151,6 +151,7 @@ class JobService extends Service {
         },
       });
       if (exists) {
+        // Update TODO
         app.logger.info('[system] DeveloperFetch Job Developer exists: ' + data.url);
         return false;
       }
@@ -238,6 +239,7 @@ class JobService extends Service {
         },
       });
       if (exists) {
+        // Update TODO
         app.logger.info('[system] ReposFetch Job Repos exists: ' + data.url);
         return false;
       }

@@ -21,7 +21,7 @@ module.exports = {
           unique: true,
         },
         description: {
-          type: STRING,
+          type: STRING(1024),
         },
         homepage: {
           type: STRING,

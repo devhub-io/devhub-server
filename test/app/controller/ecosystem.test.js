@@ -96,8 +96,8 @@ describe('test/app/controller/ecosystem.test.js', () => {
     });
   });
 
-  describe('GET /ecosystem/:slug/items', () => {
-    it.skip('should work', async () => {
+  describe('GET /ecosystem/:topic_slug/collection/:collection_slug/items', () => {
+    it('should work', async () => {
       const topic = await app.factory.create('topic');
       const collection = await app.factory.create('collection',
         {
@@ -108,25 +108,37 @@ describe('test/app/controller/ecosystem.test.js', () => {
           sort: 0,
           status: 1,
         });
-      for (let i = 0; i < 3; i++) {
+      const repos = await app.factory.create('repos');
+      const developer = await app.factory.create('developer');
+      const site = await app.factory.create('site');
+      const link = await app.factory.create('link');
+      const foreign_id = [ 0, repos.id, developer.id, site.id, link.id ];
+      const type = [ 'text', 'repos', 'developers', 'sites', 'links' ];
+      for (let i = 0; i < 5; i++) {
         await app.factory.create('collection_item',
           {
             collection_id: collection.id,
             title: `collection_${i}`,
-            type: 'text',
+            type: type[i],
             sort: i,
             status: 1,
+            foreign_id: foreign_id[i],
           });
       }
 
-      const res = await app.httpRequest().get(`/ecosystem/${collection.slug}/items`);
+      const res = await app.httpRequest().get(`/ecosystem/${topic.slug}/collection/${collection.slug}/items`);
       assert(res.status === 200);
-      assert(res.body.length === 3);
-      assert(res.body[0].title);
-      assert(res.body[0].type);
+      assert(Object.keys(res.body).length === 4);
+      assert(res.body.topic.id === topic.id);
+      assert(res.body.collection.id === collection.id);
+      assert(res.body.items);
+      assert(res.body.outline);
+      // TODO items assert
 
-      const res404 = await app.httpRequest().get('/ecosystem/notfound/items');
-      assert(res404.status === 404);
+      const resTopic404 = await app.httpRequest().get(`/ecosystem/${topic.slug}/collection/notfound/items`);
+      assert(resTopic404.status === 404);
+      const resCollection404 = await app.httpRequest().get('/ecosystem/notfound/collection/notfound/items');
+      assert(resCollection404.status === 404);
     });
   });
 

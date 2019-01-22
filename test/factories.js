@@ -69,7 +69,7 @@ module.exports = app => {
     rating: 0,
   });
 
-  // collection_repos TODO
+  // collection_repos
   factory.define('collection_repos', app.model.CollectionRepos, {
     collection_id: factory.sequence('CollectionRepos.collection_id', n => n),
     repos_id: factory.sequence('CollectionRepos.repos_id', n => n),

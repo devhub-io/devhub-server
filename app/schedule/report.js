@@ -12,8 +12,8 @@ class IndexSync extends Subscription {
   }
 
   async subscribe() {
-    const app = this.app;
-    const ctx = this.ctx;
+    // const app = this.app;
+    // const ctx = this.ctx;
 
     // queue TODO
 
