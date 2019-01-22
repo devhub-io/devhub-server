@@ -172,6 +172,12 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemCollectionItems(query);
   }
 
+  async ecosystemCollectionItemSwitch() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionItemSwitch(data);
+  }
+
   async ecosystemCollectionItemCreate() {
     const ctx = this.ctx;
     const data = ctx.request.body;
@@ -226,6 +232,18 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     const data = ctx.request.body;
     ctx.body = await ctx.service.admin.fetch(data);
+  }
+
+  async ecosystemCollectionSwitch() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionSwitch(data);
+  }
+
+  async ecosystemCollectionMove() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionMove(data);
   }
 
 }

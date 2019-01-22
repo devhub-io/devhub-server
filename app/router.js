@@ -67,11 +67,14 @@ module.exports = app => {
   router.post('/admin/ecosystem/switch', jwt, admin, controller.admin.ecosystemSwitch);
   router.post('/admin/ecosystem/edit', jwt, admin, controller.admin.ecosystemEdit);
   router.post('/admin/ecosystem/create', jwt, admin, controller.admin.ecosystemCreate);
+  router.post('/admin/ecosystem/collection/switch', jwt, admin, controller.admin.ecosystemCollectionSwitch);
+  router.post('/admin/ecosystem/collection/move', jwt, admin, controller.admin.ecosystemCollectionMove);
   router.post('/admin/ecosystem/collection/create', jwt, admin, controller.admin.ecosystemCollectionCreate);
   router.post('/admin/ecosystem/collection/edit', jwt, admin, controller.admin.ecosystemCollectionEdit);
   router.post('/admin/ecosystem/collection/delete', jwt, admin, controller.admin.ecosystemCollectionDelete);
   router.get('/admin/ecosystem/collections', jwt, admin, controller.admin.ecosystemCollections);
   router.get('/admin/ecosystem/collection/items', jwt, admin, controller.admin.ecosystemCollectionItems);
+  router.post('/admin/ecosystem/collection/item/switch', jwt, admin, controller.admin.ecosystemCollectionItemSwitch);
   router.post('/admin/ecosystem/collection/item/create', jwt, admin, controller.admin.ecosystemCollectionItemCreate);
   router.post('/admin/ecosystem/collection/item/edit', jwt, admin, controller.admin.ecosystemCollectionItemEdit);
   router.post('/admin/ecosystem/collection/item/delete', jwt, admin, controller.admin.ecosystemCollectionItemDelete);

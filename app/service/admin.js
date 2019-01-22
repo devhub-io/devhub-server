@@ -279,7 +279,7 @@ class AdminService extends Service {
 
   async reposSwitch({ id, status }) {
     const Op = this.app.Sequelize.Op;
-    const res = await this.ctx.model.Repos.update(
+    const res = await this.ctx.model.Repos.unscoped().update(
       {
         status,
       },
@@ -288,7 +288,6 @@ class AdminService extends Service {
           id: {
             [Op.in]: id,
           },
-          status: status === 1 ? 0 : 1,
         },
       });
     return { affected: res };
@@ -307,7 +306,7 @@ class AdminService extends Service {
 
   async developerSwitch({ id, status }) {
     const Op = this.app.Sequelize.Op;
-    const res = await this.ctx.model.Developer.update(
+    const res = await this.ctx.model.Developer.unscoped().update(
       {
         status,
       },
@@ -316,7 +315,6 @@ class AdminService extends Service {
           id: {
             [Op.in]: id,
           },
-          status: status === 1 ? 0 : 1,
         },
       });
     return { affected: res };
@@ -361,7 +359,7 @@ class AdminService extends Service {
 
   async ecosystemSwitch({ id, status }) {
     const Op = this.app.Sequelize.Op;
-    const res = await this.ctx.model.Topic.update(
+    const res = await this.ctx.model.Topic.unscoped().update(
       {
         status,
       },
@@ -370,7 +368,6 @@ class AdminService extends Service {
           id: {
             [Op.in]: id,
           },
-          status: status === 1 ? 0 : 1,
         },
       });
     return { affected: res };
@@ -485,6 +482,19 @@ class AdminService extends Service {
     });
 
     return items;
+  }
+
+  async ecosystemCollectionItemSwitch(data) {
+    const res = await this.ctx.model.CollectionItem.unscoped().update(
+      {
+        status: data.status,
+      },
+      {
+        where: {
+          collection_id: data.collection_id,
+        },
+      });
+    return { affected: res };
   }
 
   async ecosystemCollectionItemCreate(data) {
@@ -839,6 +849,38 @@ class AdminService extends Service {
 
   async fetch(data) {
     return this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: data.url } });
+  }
+
+  async ecosystemCollectionSwitch(data) {
+    const Op = this.app.Sequelize.Op;
+    const res = await this.ctx.model.Collection.unscoped().update(
+      {
+        status: data.status,
+      },
+      {
+        where: {
+          id: {
+            [Op.in]: data.id,
+          },
+        },
+      });
+    return { affected: res };
+  }
+
+  async ecosystemCollectionMove(data) {
+    const Op = this.app.Sequelize.Op;
+    const res = await this.ctx.model.Collection.unscoped().update(
+      {
+        parent_id: data.parent_id,
+      },
+      {
+        where: {
+          id: {
+            [Op.in]: data.id,
+          },
+        },
+      });
+    return { affected: res };
   }
 
 }
