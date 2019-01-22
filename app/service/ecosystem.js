@@ -44,20 +44,11 @@ class EcosystemService extends Service {
         collectionIndex[collections[i].topic_id] = [ collections[i] ];
       }
     }
-    const rows = [];
+    result.rows = JSON.parse(JSON.stringify(result.rows));
     for (let i = 0; i < result.rows.length; i++) {
-      rows.push({
-        id: result.rows[i].id,
-        title: result.rows[i].title,
-        slug: result.rows[i].slug,
-        description: result.rows[i].description,
-        homepage: result.rows[i].homepage,
-        github: result.rows[i].github,
-        wiki: result.rows[i].wiki,
-        collections: collectionIndex[result.rows[i].id],
-      });
+      result.rows[i].collections = collectionIndex[result.rows[i].id];
     }
-    result.rows = rows;
+
     return result;
   }
 
@@ -130,6 +121,7 @@ class EcosystemService extends Service {
   }
 
   async items(topic_slug, collection_slug) {
+    const Op = this.app.Sequelize.Op;
     const ctx = this.ctx;
     const topic = await ctx.model.Topic.findOne({
       attributes: [ 'id', 'title', 'slug' ],
@@ -164,7 +156,8 @@ class EcosystemService extends Service {
       await collection.save();
     }
 
-    const items = await ctx.model.CollectionItem.findAll({
+    // items
+    let items = await ctx.model.CollectionItem.findAll({
       where: {
         collection_id: collection.id,
       },
@@ -172,6 +165,99 @@ class EcosystemService extends Service {
         [ 'sort', 'ASC' ],
       ],
     });
+    const typeItemsId = {
+      repos: [],
+      developers: [],
+      sites: [],
+      links: [],
+    };
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type === 'repos') {
+        typeItemsId.repos.push(items[i].foreign_id);
+      }
+      if (items[i].type === 'developers') {
+        typeItemsId.developers.push(items[i].foreign_id);
+      }
+      if (items[i].type === 'sites') {
+        typeItemsId.sites.push(items[i].foreign_id);
+      }
+      if (items[i].type === 'links') {
+        typeItemsId.links.push(items[i].foreign_id);
+      }
+    }
+    items = JSON.parse(JSON.stringify(items));
+    const typeItemsIndex = {
+      repos: {},
+      developers: {},
+      sites: {},
+      links: {},
+    };
+    if (typeItemsId.repos.length > 0) {
+      const repos = await this.ctx.model.Repos.findAll({
+        attributes: [ 'id', 'title', 'slug', 'cover', 'description', 'stargazers_count', 'owner', 'repo' ],
+        where: {
+          id: {
+            [Op.in]: typeItemsId.repos,
+          },
+        },
+      });
+      for (let i = 0; i < repos.length; i++) {
+        typeItemsIndex.repos[repos[i].id] = repos[i];
+      }
+    }
+    if (typeItemsId.developers.length > 0) {
+      const developers = await this.ctx.model.Developer.findAll({
+        attributes: [ 'id', 'login', 'name', 'avatar_url', 'type' ],
+        where: {
+          id: {
+            [Op.in]: typeItemsId.developers,
+          },
+        },
+      });
+      for (let i = 0; i < developers.length; i++) {
+        typeItemsIndex.developers[developers[i].id] = developers[i];
+      }
+    }
+    if (typeItemsId.sites.length > 0) {
+      const sites = await this.ctx.model.Site.findAll({
+        attributes: [ 'id', 'title', 'url', 'description', 'screenshot' ],
+        where: {
+          id: {
+            [Op.in]: typeItemsId.sites,
+          },
+        },
+      });
+      for (let i = 0; i < sites.length; i++) {
+        typeItemsIndex.sites[sites[i].id] = sites[i];
+      }
+    }
+    if (typeItemsId.links.length > 0) {
+      const links = await this.ctx.model.Link.findAll({
+        attributes: [ 'id', 'title', 'summary', 'source', 'url' ],
+        where: {
+          id: {
+            [Op.in]: typeItemsId.links,
+          },
+        },
+      });
+      for (let i = 0; i < links.length; i++) {
+        typeItemsIndex.links[links[i].id] = links[i];
+      }
+    }
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type === 'repos') {
+        items[i].foreign = typeItemsIndex.repos[items[i].foreign_id];
+      }
+      if (items[i].type === 'developers') {
+        items[i].foreign = typeItemsIndex.developers[items[i].foreign_id];
+      }
+      if (items[i].type === 'sites') {
+        items[i].foreign = typeItemsIndex.sites[items[i].foreign_id];
+      }
+      if (items[i].type === 'links') {
+        items[i].foreign = typeItemsIndex.links[items[i].foreign_id];
+      }
+    }
 
     return { topic, collection, items, outline };
   }
