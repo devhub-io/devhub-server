@@ -48,7 +48,7 @@ describe('test/app/controller/ecosystem.test.js', () => {
 
       const res = await app.httpRequest().get(`/ecosystem/${topic.slug}`);
       assert(res.status === 200);
-      assert(Object.keys(res.body).length === 3);
+      assert(Object.keys(res.body).length === 4);
       assert(res.body.topic.slug === topic.slug);
       assert(res.body.topic.title);
       assert(res.body.topic.description);
@@ -62,6 +62,8 @@ describe('test/app/controller/ecosystem.test.js', () => {
       assert(res.body.collections.length === 1);
       assert(res.body.collections[0].title);
       assert(res.body.collections[0].slug);
+
+      // TODO
 
       const res404 = await app.httpRequest().get('/ecosystem/notfound');
       assert(res404.status === 404);

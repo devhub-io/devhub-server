@@ -883,6 +883,46 @@ class AdminService extends Service {
     return { affected: res };
   }
 
+  async ecosystemAttributes({ id }) {
+    return await this.ctx.model.TopicAttribute.findAll({
+      where: {
+        topic_id: id,
+      },
+      order: [
+        [ 'sort', 'ASC' ],
+      ],
+    });
+  }
+
+  async ecosystemAttributeCreate(data) {
+    return await this.ctx.model.TopicAttribute.create(
+      data,
+      {
+        fields: [ 'key', 'value', 'topic_id', 'sort' ],
+      });
+  }
+
+  async ecosystemAttributeEdit(data) {
+    const attribute = await this.ctx.model.TopicAttribute.findOne({
+      where: {
+        id: data.id,
+      },
+    });
+    const res = await attribute.update(data, {
+      fields: [ 'key', 'value', 'topic_id', 'sort' ],
+    });
+    return { affected: res };
+  }
+
+  async ecosystemAttributeDelete(data) {
+    return await this.ctx.model.TopicAttribute.destroy({
+      where: {
+        id: data.id,
+      },
+      limit: 1,
+    });
+  }
+
 }
 
 module.exports = AdminService;

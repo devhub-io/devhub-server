@@ -91,7 +91,17 @@ class EcosystemService extends Service {
     collections = JSON.parse(JSON.stringify(collections));
     collections = arrayToTree(collections);
 
-    return { topic, wiki, collections };
+    const attributes = await ctx.model.TopicAttribute.findAll({
+      attributes: [ 'id', 'key', 'value' ],
+      where: {
+        topic_id: topic.id,
+      },
+      order: [
+        [ 'sort', 'ASC' ],
+      ],
+    });
+
+    return { topic, wiki, collections, attributes };
   }
 
   async collections(slug) {

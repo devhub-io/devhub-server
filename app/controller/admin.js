@@ -178,6 +178,30 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemCollectionItemSwitch(data);
   }
 
+  async ecosystemAttributes() {
+    const ctx = this.ctx;
+    const query = { id: ctx.query.id };
+    ctx.body = await ctx.service.admin.ecosystemAttributes(query);
+  }
+
+  async ecosystemAttributeCreate() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemAttributeCreate(data);
+  }
+
+  async ecosystemAttributeEdit() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemAttributeEdit(data);
+  }
+
+  async ecosystemAttributeDelete() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemAttributeDelete(data);
+  }
+
   async ecosystemCollectionItemCreate() {
     const ctx = this.ctx;
     const data = ctx.request.body;
