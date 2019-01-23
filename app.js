@@ -10,7 +10,7 @@ module.exports = app => {
   // Error
   app.on('error', err => {
     // report error
-    if (err.status !== 404) {
+    if (err.status !== 404 && err.status !== 401) {
       const rollbar = new Rollbar({
         accessToken: env.ROLLBAR_ACCESS_TOKEN,
         captureUncaught: true,
@@ -33,6 +33,10 @@ module.exports = app => {
       ctx.service.queue.failJob(job.data.data.jobId);
       done(new Error(e));
     }
+  });
+  app.queue.on('failed', function(job, err) {
+    // A job failed with reason `err`!
+    app.logger.warn(`[system] Queue failed: ${job} ${err}`);
   });
 
   // ES

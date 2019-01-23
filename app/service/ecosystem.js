@@ -5,7 +5,7 @@ const arrayToTree = require('array-to-tree');
 
 class EcosystemService extends Service {
 
-  async topics({ limit = 5, page = 1 }) {
+  async topics({ limit, page }) {
     const Op = this.app.Sequelize.Op;
     page = page >= 1000 ? 1000 : page;
     const offset = (page - 1) * limit;

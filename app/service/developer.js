@@ -66,7 +66,7 @@ class DeveloperService extends Service {
     return { developer, owner_repos, contribute_repos, developer_languages };
   }
 
-  async list({ limit = 5, page = 1, type = 'User' }) {
+  async list({ limit, page, type }) {
     const Op = this.app.Sequelize.Op;
     page = page >= 1000 ? 1000 : page;
     const offset = (page - 1) * limit;
@@ -96,7 +96,7 @@ class DeveloperService extends Service {
   async createFromGithubAPI(data) {
     const login = data.login;
 
-    const find = await this.ctx.model.Developer.findOne({
+    const find = await this.ctx.model.Developer.unscoped().findOne({
       attributes: [ 'id' ],
       where: {
         login,

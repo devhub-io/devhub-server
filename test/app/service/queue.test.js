@@ -16,6 +16,8 @@ describe('test/app/service/queue.test.js', () => {
       const ctx = app.mockContext({});
       const result = await ctx.service.queue.processJob({ job: 'echo', data: { text: 'hi' } });
       assert(result === 'hi');
+      const result2 = await ctx.service.queue.processJob({ job: 'noFunction', data: { text: 'hi' } });
+      assert(result2 === false);
     });
   });
 
@@ -38,6 +40,8 @@ describe('test/app/service/queue.test.js', () => {
       const queueJob = await app.factory.create('queue_job');
       const res = await ctx.service.queue.failJob(queueJob.id);
       assert(res);
+      const res2 = await ctx.service.queue.failJob(999999);
+      assert(res2 === false);
     });
   });
 

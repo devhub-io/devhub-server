@@ -8,7 +8,7 @@ describe('test/app/service/api.test.js', () => {
   describe('librariesioReposSearch', () => {
     it('should work', async () => {
       const ctx = app.mockContext({});
-      const query = { keywords: '', page: 1, limit: 10 };
+      const query = { keywords: 'node', page: 1, limit: 10 };
       app.mockHttpclient(`https://libraries.io/api/search?q=${query.keywords}&page=${query.page}&per_page=${query.limit}&api_key=${env.LIBRARIESIO_KEY}`, {
         data: [{
           name: 'egg',
@@ -50,6 +50,14 @@ describe('test/app/service/api.test.js', () => {
       });
       const res = await ctx.service.api.librariesioReposSearch(query);
       assert(res.length === 1);
+
+      const query2 = { keywords: 'node' };
+      app.mockHttpclient(`https://libraries.io/api/search?q=${query.keywords}&page=${query.page}&per_page=${query.limit}&api_key=${env.LIBRARIESIO_KEY}`, {
+        data: [],
+        status: 404,
+      });
+      const resErr = await ctx.service.api.librariesioReposSearch(query2);
+      assert(resErr.length === 0);
     });
   });
 
@@ -76,6 +84,8 @@ describe('test/app/service/api.test.js', () => {
       });
       const res = await ctx.service.api.smmsImageUpload(__filename);
       assert(res);
+      const resErr = await ctx.service.api.smmsImageUpload(__dirname + '/404.file');
+      assert(resErr === false);
     });
   });
 
@@ -114,6 +124,12 @@ describe('test/app/service/api.test.js', () => {
       });
       const res = await ctx.service.api.wikipeidaSummery(title);
       assert(res === extract);
+      app.mockHttpclient(`https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=${title}`, {
+        data: {},
+        status: 404,
+      });
+      const resErr = await ctx.service.api.wikipeidaSummery(title);
+      assert(resErr === false);
     });
   });
 

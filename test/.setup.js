@@ -43,4 +43,6 @@ afterEach(async () => {
   // } catch (e) {
   //   app.logger.info(e.message);
   // }
+  // clear queue
+  app.queue.clean(0);
 });

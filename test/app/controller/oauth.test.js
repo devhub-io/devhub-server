@@ -1,16 +1,24 @@
 'use strict';
 
-const { app } = require('egg-mock/bootstrap');
+const { app, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/controller/oauth.test.js', () => {
 
-  it('should GET /passport/github', () => {
+  it('should GET /passport/github', async () => {
+    const res = await app.httpRequest()
+      .get('/passport/github');
+    assert(res.status === 302);
+
     return app.httpRequest()
-      .get('/passport/github')
+      .get('/passport/github?source=' + encodeURIComponent('http://demo.dev'))
       .expect(302);
   });
 
-  it('should GET /passport/github/callback', () => {
+  it('should GET /passport/github/callback', async () => {
+    const res = await app.httpRequest()
+      .get('/passport/github/callback?code=123456');
+    assert(res.status === 302);
+
     app.mockHttpclient('https://github.com/login/oauth/access_token', {
       data: {
         token_type: 'bearer',
@@ -35,7 +43,7 @@ describe('test/app/controller/oauth.test.js', () => {
                 displayName: 'mock displayName' } } },
     });
     return app.httpRequest()
-      .get('/passport/github/callback?code=123456')
+      .get('/passport/github/callback?code=123456&source=' + encodeURIComponent('http://demo.dev'))
       .expect(302);
   });
 

@@ -6,7 +6,7 @@ class DeveloperController extends Controller {
 
   async list() {
     const ctx = this.ctx;
-    const query = { limit: ctx.helper.toInt(ctx.query.limit), page: ctx.helper.toInt(ctx.query.page) || 1, type: ctx.query.type || 'User' };
+    const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1, type: ctx.query.type || 'User' };
     this.ctx.body = await ctx.service.developer.list(query);
   }
 

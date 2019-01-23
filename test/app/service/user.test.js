@@ -62,4 +62,19 @@ describe('test/app/service/user.test.js', () => {
     });
   });
 
+  describe('updateUserGithubRemaining', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext({});
+      const id = 1;
+      const headers = {
+        'x-ratelimit-reset': 1548232095,
+        'x-ratelimit-remaining': 4999,
+      };
+      const res = await ctx.service.user.updateUserGithubRemaining(id, headers);
+      assert(res);
+      const res2 = await ctx.service.user.updateUserGithubRemaining(id, {});
+      assert(res2 === false);
+    });
+  });
+
 });

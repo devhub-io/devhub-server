@@ -1,7 +1,8 @@
 'use strict';
 
-const { app, assert } = require('egg-mock/bootstrap');
 const jwt = require('jsonwebtoken');
+const queryString = require('querystring');
+const { app, assert } = require('egg-mock/bootstrap');
 const env = require('../../../.env');
 
 describe('test/app/controller/admin.test.js', () => {
@@ -9,10 +10,17 @@ describe('test/app/controller/admin.test.js', () => {
   it('should GET /admin', async () => {
     const user = await app.factory.create('user');
     const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const res = await app.httpRequest()
+      .get('/admin')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const user2 = await app.factory.create('user');
+    const token2 = jwt.sign({ sub: user2.id }, env.JWT_SECRET);
     return app.httpRequest()
       .get('/admin')
-      .set({ Authorization: `bearer ${token}` })
-      .expect(200);
+      .set({ Authorization: `bearer ${token2}` })
+      .expect(401);
   });
 
   it('should GET /admin/users', async () => {
@@ -339,7 +347,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.rows[0].title);
 
     const resSearch = await app.httpRequest()
-      .get(`/admin/ecosystems?limit=1&page=1&sort_type=sort&slug=${topics[0].slug}&status=${topics[0].status}}`)
+      .get(`/admin/ecosystems?limit=1&sort_type=sort&slug=${topics[0].slug}&status=${topics[0].status}}`)
       .set({ Authorization: `bearer ${token}` });
     assert(resSearch.status === 200);
     assert(resSearch.body.page === 1);
@@ -801,6 +809,110 @@ describe('test/app/controller/admin.test.js', () => {
       .set({ Authorization: `bearer ${token}` });
     assert(items2Res.status === 200);
     assert(items2Res.body.length === 6);
+  });
+
+  it('should GET /admin/api/search', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const resDevelopers = await app.httpRequest()
+      .get('/admin/api/search?' + queryString.stringify({
+        type: 'developers',
+        keywords: 'abc',
+      }))
+      .set({ Authorization: `bearer ${token}` });
+    assert(resDevelopers.status === 200);
+    const resRepos = await app.httpRequest()
+      .get('/admin/api/search?' + queryString.stringify({
+        type: 'repos',
+        keywords: 'abc',
+      }))
+      .set({ Authorization: `bearer ${token}` });
+    assert(resRepos.status === 200);
+    const resEmpty = await app.httpRequest()
+      .get('/admin/api/search')
+      .set({ Authorization: `bearer ${token}` });
+    assert(resEmpty.status === 200);
+  });
+
+  it('should POST /admin/queue/replay', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const job = app.factory.create('queue_job');
+
+    const res = await app.httpRequest()
+      .post('/admin/queue/replay')
+      .send({
+        id: job.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+  });
+
+  it('should POST /admin/queue/delete', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const job = app.factory.create('queue_job');
+
+    const res = await app.httpRequest()
+      .post('/admin/queue/delete')
+      .send({
+        id: job.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+  });
+
+  it('should POST /admin/fetch', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+
+    const res = await app.httpRequest()
+      .post('/admin/fetch')
+      .send({
+        url: 'https://example.com',
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+  });
+
+  it('should POST /admin/ecosystem/collection/switch', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const collection1 = await app.factory.create('collection');
+    const collection2 = await app.factory.create('collection');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/switch')
+      .send({ id: [ collection1.id, collection2.id ], status: 0 })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.affected);
+  });
+
+  it('should POST /admin/ecosystem/collection/move', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const collection1 = await app.factory.create('collection');
+    const collection2 = await app.factory.create('collection');
+    const collection3 = await app.factory.create('collection');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/move')
+      .send({ id: [ collection2.id, collection3.id ], parent_id: collection1.id })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.affected);
+  });
+
+  it('should POST /admin/ecosystem/collection/item/switch', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const collectionItem1 = await app.factory.create('collection_item');
+    const collectionItem2 = await app.factory.create('collection_item');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/switch')
+      .send({ id: [ collectionItem1.id, collectionItem2.id ], status: 0 })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.affected);
   });
 
 });

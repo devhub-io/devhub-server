@@ -107,7 +107,7 @@ class ReposService extends Service {
   // Hottest -> stargazers_count
   // Newest -> repos_created_at
   // Trend -> repos_updated_at
-  async list({ limit = 5, page = 1, order = 'stargazers_count' }) {
+  async list({ limit, page, order }) {
     page = page >= 1000 ? 1000 : page;
     const offset = (page - 1) * limit;
     const result = await this.ctx.model.Repos.findAndCountAll({
@@ -141,7 +141,7 @@ class ReposService extends Service {
     return await this.ctx.model.Repos.count();
   }
 
-  async search({ keyword, limit = 10, page = 1 }) {
+  async search({ keyword, limit, page }) {
     const app = this.app;
     try {
       const result = await app.elasticsearch.search({
@@ -215,7 +215,7 @@ class ReposService extends Service {
     });
   }
 
-  async topicInPaginate({ limit = 5, page = 1, topic }) {
+  async topicInPaginate({ limit, page, topic }) {
     const topicExplan = await this.ctx.model.TopicExplain.findOne({
       attributes: [[ 'explain', 'text' ]],
       where: {
@@ -321,7 +321,7 @@ class ReposService extends Service {
     const repo = data.name;
     const slug = `${owner}-${repo}`;
 
-    const find = await this.ctx.model.Repos.findOne({
+    const find = await this.ctx.model.Repos.unscoped().findOne({
       attributes: [ 'id' ],
       where: {
         slug,
