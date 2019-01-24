@@ -219,6 +219,7 @@ class JobService extends Service {
       } catch (e) {
         app.logger.info(e.status);
         app.logger.info(e.message);
+        console.log(e);
 
         if ('headers' in e) {
           ctx.service.user.updateUserGithubRemaining(id, e.headers);
@@ -307,14 +308,14 @@ class JobService extends Service {
       found = null;
     }
     if (found) {
-      const reposNews = await ctx.model.ReposNews.findOne({
+      const reposNews = await ctx.model.ReposNews.unscoped().findOne({
         where: {
           url: itemData.url,
           item_id: itemData.id,
         },
       });
       if (reposNews) {
-        const repos = await ctx.model.Repos.findOne({
+        const repos = await ctx.model.Repos.unscoped().findOne({
           where: {
             slug: `${found[1]}-${found[2]}`,
           },
@@ -325,7 +326,7 @@ class JobService extends Service {
         reposNews.score = itemData.score;
         await reposNews.save();
       } else {
-        const repos = await ctx.model.Repos.findOne({
+        const repos = await ctx.model.Repos.unscoped().findOne({
           where: {
             slug: `${found[1]}-${found[2]}`,
           },

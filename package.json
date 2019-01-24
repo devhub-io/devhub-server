@@ -26,7 +26,6 @@
     "sitemap": "^2.1.0"
   },
   "devDependencies": {
-    "faker": "^4.1.0",
     "autod": "^3.0.1",
     "autod-egg": "^1.0.0",
     "egg-bin": "^4.3.5",
@@ -35,6 +34,8 @@
     "eslint": "^4.11.0",
     "eslint-config-egg": "^6.0.0",
     "factory-girl": "^5.0.4",
+    "faker": "^4.1.0",
+    "nock": "^10.0.6",
     "sequelize-cli": "^5.4.0",
     "webstorm-disable-index": "^1.2.0"
   },
