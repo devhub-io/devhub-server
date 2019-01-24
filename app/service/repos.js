@@ -354,8 +354,38 @@ class ReposService extends Service {
       owner,
       repo,
       cover: data.owner.avatar_url || '',
-      // fork: TODO
+      fork: data.fork,
     });
+  }
+
+  async updateFromGithubAPI(id, data) {
+    const find = await this.ctx.model.Repos.unscoped().findOne({
+      attributes: [ 'id' ],
+      where: {
+        id,
+      },
+    });
+
+    if (find) {
+      await find.update({
+        title: data.name,
+        description: data.description !== undefined && data.description !== null ? data.description.substring(0, 254) : '',
+        language: data.language || '',
+        homepage: data.homepage || '',
+        stargazers_count: data.stargazers_count || 0,
+        watchers_count: data.watchers_count || 0,
+        open_issues_count: data.open_issues_count || 0,
+        forks_count: data.forks_count || 0,
+        subscribers_count: data.subscribers_count || 0,
+        repos_created_at: data.created_at,
+        repos_updated_at: data.updated_at,
+        fetched_at: new Date(),
+        cover: data.owner.avatar_url || '',
+        fork: data.fork,
+      });
+      return find;
+    }
+    return false;
   }
 
   async category({ limit = 5, page = 1, slug }) {

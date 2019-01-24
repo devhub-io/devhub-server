@@ -67,6 +67,9 @@ module.exports = app => {
   router.post('/admin/ecosystem/switch', jwt, admin, controller.admin.ecosystemSwitch);
   router.post('/admin/ecosystem/edit', jwt, admin, controller.admin.ecosystemEdit);
   router.post('/admin/ecosystem/create', jwt, admin, controller.admin.ecosystemCreate);
+  router.get('/admin/ecosystem/source', jwt, admin, controller.admin.ecosystemSource);
+  router.post('/admin/ecosystem/source/create', jwt, admin, controller.admin.ecosystemSourceCreate);
+  router.post('/admin/ecosystem/source/delete', jwt, admin, controller.admin.ecosystemSourceDelete);
   router.get('/admin/ecosystem/attributes', jwt, admin, controller.admin.ecosystemAttributes);
   router.post('/admin/ecosystem/attribute/create', jwt, admin, controller.admin.ecosystemAttributeCreate);
   router.post('/admin/ecosystem/attribute/edit', jwt, admin, controller.admin.ecosystemAttributeEdit);
@@ -83,6 +86,7 @@ module.exports = app => {
   router.post('/admin/ecosystem/collection/item/edit', jwt, admin, controller.admin.ecosystemCollectionItemEdit);
   router.post('/admin/ecosystem/collection/item/delete', jwt, admin, controller.admin.ecosystemCollectionItemDelete);
   router.post('/admin/ecosystem/collection/fetch', jwt, admin, controller.admin.ecosystemCollectionFetch);
+  router.post('/admin/ecosystem/collection/crawler', jwt, admin, controller.admin.ecosystemCollectionCrawler);
   router.get('/admin/api/search', jwt, admin, controller.admin.apiSearch);
   router.post('/admin/queue/replay', jwt, admin, controller.admin.queueReplay);
   router.post('/admin/queue/delete', jwt, admin, controller.admin.queueDelete);

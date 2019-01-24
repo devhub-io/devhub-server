@@ -344,7 +344,7 @@ class AdminService extends Service {
     if (sort_type !== '') {
       order.push([ sort_type, 'DESC' ]);
     } else {
-      order.push([ 'id', 'DESC' ]);
+      order.push([ 'sort', 'ASC' ]);
     }
     const result = await this.ctx.model.Topic.unscoped().findAndCountAll({
       where,
@@ -579,7 +579,6 @@ class AdminService extends Service {
 
   async ecosystemCollectionFetch(data) {
     if (data.text && data.text !== '') {
-      // Cache TODO
       const topic_id = data.topic_id;
       // Insert Collections
       const collectionTokens = this.lexerCollectionToken(data.text);
@@ -883,6 +882,34 @@ class AdminService extends Service {
     return { affected: res };
   }
 
+  async ecosystemSource({ id }) {
+    return await this.ctx.model.TopicSource.findAll({
+      where: {
+        topic_id: id,
+      },
+      order: [
+        [ 'updated_at', 'DESC' ],
+      ],
+    });
+  }
+
+  async ecosystemSourceCreate(data) {
+    return await this.ctx.model.TopicSource.create(
+      data,
+      {
+        fields: [ 'source', 'url', 'topic_id' ],
+      });
+  }
+
+  async ecosystemSourceDelete(data) {
+    return await this.ctx.model.TopicSource.destroy({
+      where: {
+        id: data.id,
+      },
+      limit: 1,
+    });
+  }
+
   async ecosystemAttributes({ id }) {
     return await this.ctx.model.TopicAttribute.findAll({
       where: {
@@ -921,6 +948,28 @@ class AdminService extends Service {
       },
       limit: 1,
     });
+  }
+
+  async ecosystemCollectionCrawler(data) {
+    const { app, ctx } = this;
+    app.logger.info(data);
+    const readme = await ctx.helper.remember('awesome-repos:readme', 60 * 60, async function() {
+      const res = await app.curl('https://raw.githubusercontent.com/bayandin/awesome-awesomeness/master/README.md');
+      if (res.status === 200) {
+        return res.data;
+      }
+      throw Error('Download fail readme');
+    });
+    if (typeof readme === 'string') {
+      const found = readme.match(/(?:\[(.*?)\]\((.*?)\))/ig);
+      found.forEach(i => {
+        const match = i.match(/(?:\[(.*?)\]\((.*?)\))/i);
+        if (match) {
+          ctx.service.queue.addJob({ queue: 'awesomeListFetch', payload: { title: match[1], url: match[2] } });
+        }
+      });
+    }
+    return true;
   }
 
 }

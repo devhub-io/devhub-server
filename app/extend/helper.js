@@ -12,7 +12,20 @@ module.exports = {
       await this.app.redis.expire(`devhub:${key}`, ttl);
       return res;
     }
-    return JSON.parse(cache);
+    try {
+      return JSON.parse(cache);
+    } catch (e) {
+      return cache;
+    }
+  },
+
+  async setCache(key, ttl, value) {
+    await this.app.redis.set(`devhub:${key}`, value);
+    return await this.app.redis.expire(`devhub:${key}`, ttl);
+  },
+
+  async getCache(key) {
+    return await this.app.redis.get(`devhub:${key}`);
   },
 
   ip() {

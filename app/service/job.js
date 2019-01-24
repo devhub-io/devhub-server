@@ -144,18 +144,6 @@ class JobService extends Service {
     const { app, ctx } = this;
     const found = data.url.match(constant.DEVELOPER_URL_REGEX);
     if (found) {
-      const exists = await ctx.model.Developer.unscoped().findOne({
-        attributes: [ 'id' ],
-        where: {
-          login: found[1],
-        },
-      });
-      if (exists) {
-        // Update TODO
-        app.logger.info('[system] DeveloperFetch Job Developer exists: ' + data.url);
-        return false;
-      }
-
       const id = await ctx.service.user.selectUserId();
       if (id === null || id === undefined || id === 0 || id === '') {
         app.logger.info('[system] DeveloperFetch Job not UserId');
@@ -177,7 +165,20 @@ class JobService extends Service {
 
         ctx.service.user.updateUserGithubRemaining(id, headers);
 
-        const developer = await ctx.service.developer.createFromGithubAPI(data);
+        let developer = await ctx.model.Developer.unscoped().findOne({
+          attributes: [ 'id' ],
+          where: {
+            login: found[1],
+          },
+        });
+        if (developer) {
+          // update
+          developer = await ctx.service.developer.updateFromGithubAPI(developer.id, data);
+        } else {
+          // create
+          developer = await ctx.service.developer.createFromGithubAPI(data);
+        }
+
         if (developer) {
           const { data, headers } = await octokit.repos
             .listForUser({
@@ -233,18 +234,6 @@ class JobService extends Service {
     const { app, ctx } = this;
     const found = data.url.match(constant.REPOS_URL_REGEX);
     if (found) {
-      const exists = await ctx.model.Repos.unscoped().findOne({
-        attributes: [ 'id' ],
-        where: {
-          slug: `${found[1]}-${found[2]}`,
-        },
-      });
-      if (exists) {
-        // Update TODO
-        app.logger.info('[system] ReposFetch Job Repos exists: ' + data.url);
-        return false;
-      }
-
       const id = await ctx.service.user.selectUserId();
       if (id === null || id === undefined || id === 0 || id === '') {
         app.logger.info('[system] ReposFetch Job not UserId');
@@ -266,7 +255,20 @@ class JobService extends Service {
           });
         ctx.service.user.updateUserGithubRemaining(id, headers);
 
-        const repos = await ctx.service.repos.createFromGithubAPI(id, data);
+        let repos = await ctx.model.Repos.unscoped().findOne({
+          attributes: [ 'id' ],
+          where: {
+            slug: `${found[1]}-${found[2]}`,
+          },
+        });
+        if (repos) {
+          // update
+          repos = await ctx.service.repos.updateFromGithubAPI(repos.id, data);
+        } else {
+          // create
+          repos = await ctx.service.repos.createFromGithubAPI(id, data);
+        }
+
         if (repos) {
           const { data, headers } = await octokit.repos
             .getReadme({
@@ -274,6 +276,9 @@ class JobService extends Service {
               repo: found[2],
             });
           ctx.service.user.updateUserGithubRemaining(id, headers);
+
+          // Cache readme_url
+          await ctx.helper.setCache(`repos:${repos.id}:readme_url`, 7 * 24 * 60 * 60, data.download_url);
 
           const result = await app.curl(data.download_url);
           const text = result.data;
@@ -350,6 +355,67 @@ class JobService extends Service {
       }
     }
     return true;
+  }
+
+  async awesomeListFetch(data) {
+    if (this.linkFetch(data)) {
+      const { app, ctx } = this;
+      const found = data.url.match(constant.REPOS_URL_REGEX);
+      if (found) {
+        const existsRepos = await ctx.model.Repos.unscoped().findOne({
+          attributes: [ 'id', 'readme' ],
+          where: {
+            slug: `${found[1]}-${found[2]}`,
+          },
+        });
+        if (existsRepos) {
+          // readme
+          let readme = '';
+          if (typeof existsRepos.readme === 'string' && existsRepos.readme.length > 0) {
+            readme = existsRepos.readme;
+          } else {
+            const cacheReadmeUrl = await ctx.helper.getCache(`repos:${existsRepos.id}:readme_url`);
+            if (cacheReadmeUrl) {
+              const result = await app.curl(cacheReadmeUrl);
+              const text = result.status === 200 && result.data;
+              if (text !== null && text.length > 0) {
+                readme = text;
+              }
+            }
+          }
+          // topic
+          const source = await ctx.model.TopicSource.findOne({
+            where: {
+              source: 'Awesome List',
+              url: data.url,
+            },
+          });
+          let topic_id = 0;
+          if (source) {
+            topic_id = source.topic_id;
+          } else {
+            const topic = await ctx.model.Topic.create({
+              title: data.title,
+              slug: ctx.helper.toSlug(data.title),
+              sort: 0,
+              status: 0,
+            });
+            await ctx.model.TopicSource.create({
+              topic_id: topic.id,
+              source: 'Awesome List',
+              url: data.url,
+            });
+            topic_id = topic.id;
+          }
+          // import
+          if (topic_id > 0) {
+            await ctx.service.admin.ecosystemCollectionFetch({ topic_id, text: readme });
+          }
+
+        }
+      }
+    }
+    return false;
   }
 
   async echo(data) {

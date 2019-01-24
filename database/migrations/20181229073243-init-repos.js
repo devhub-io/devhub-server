@@ -149,6 +149,11 @@ module.exports = {
           type: STRING(255),
           allowNull: false,
         },
+        fork: {
+          type: INTEGER(1),
+          allowNull: false,
+          defaultValue: 0,
+        },
       },
       {
         engine: 'InnoDB',

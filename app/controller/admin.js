@@ -178,6 +178,24 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemCollectionItemSwitch(data);
   }
 
+  async ecosystemSource() {
+    const ctx = this.ctx;
+    const query = { id: ctx.query.id };
+    ctx.body = await ctx.service.admin.ecosystemSource(query);
+  }
+
+  async ecosystemSourceCreate() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemSourceCreate(data);
+  }
+
+  async ecosystemSourceDelete() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemSourceDelete(data);
+  }
+
   async ecosystemAttributes() {
     const ctx = this.ctx;
     const query = { id: ctx.query.id };
@@ -268,6 +286,12 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     const data = ctx.request.body;
     ctx.body = await ctx.service.admin.ecosystemCollectionMove(data);
+  }
+
+  async ecosystemCollectionCrawler() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemCollectionCrawler(data);
   }
 
 }

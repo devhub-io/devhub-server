@@ -149,6 +149,11 @@ module.exports = app => {
       allowNull: false,
       defaultValue: '',
     },
+    fork: {
+      type: INTEGER(1),
+      allowNull: false,
+      defaultValue: 0,
+    },
   }, {
     tableName: 'repos',
     defaultScope: {

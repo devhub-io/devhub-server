@@ -129,6 +129,39 @@ class DeveloperService extends Service {
     });
   }
 
+  async updateFromGithubAPI(id, data) {
+    const find = await this.ctx.model.Developer.unscoped().findOne({
+      attributes: [ 'id' ],
+      where: {
+        id,
+      },
+    });
+
+    if (find) {
+      await find.update({
+        avatar_url: data.avatar_url,
+        html_url: data.html_url,
+        type: data.type,
+        site_admin: data.site_admin,
+        name: data.name || '',
+        company: data.company || '',
+        blog: data.blog || '',
+        location: data.location || '',
+        email: data.email || '',
+        public_repos: data.public_repos,
+        public_gists: data.public_gists,
+        followers: data.followers,
+        following: data.following,
+        site_created_at: data.created_at,
+        site_updated_at: data.updated_at,
+        fetched_at: new Date(),
+        analytics_at: new Date(),
+      });
+      return find;
+    }
+    return false;
+  }
+
 }
 
 module.exports = DeveloperService;
