@@ -48,7 +48,10 @@ module.exports = {
   },
 
   toSlug(title) {
-    return title.replace('.', '').replace(' ', '').toLowerCase();
+    if (typeof title === 'string') {
+      return title.replace('.', '').replace(' ', '-').toLowerCase();
+    }
+    return title;
   },
 
   isGithubRepos(url) {
@@ -65,6 +68,20 @@ module.exports = {
 
   isUrl(text) {
     return text.match(/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/i);
+  },
+
+  parseMsg(action, payload = {}, metadata = {}) {
+    const meta = Object.assign({}, {
+      timestamp: Date.now(),
+    }, metadata);
+
+    return {
+      meta,
+      data: {
+        action,
+        payload,
+      },
+    };
   },
 
 };

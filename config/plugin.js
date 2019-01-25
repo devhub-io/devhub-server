@@ -32,3 +32,8 @@ exports.passportJwt = {
   enable: true,
   package: 'egg-passport-jwt',
 };
+
+exports.io = {
+  enable: true,
+  package: 'egg-socket.io',
+};

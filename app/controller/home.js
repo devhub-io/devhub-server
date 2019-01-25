@@ -17,6 +17,7 @@ class HomeController extends Controller {
     // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://github.com/desktop' } });
     // const a = await this.ctx.service.api.smmsImageUpload(__dirname + '/node.png');
     // console.log(a);
+    // this.service.message.send({ type: 'error', message: 'error' });
 
     this.ctx.body = this.config.app_name;
   }

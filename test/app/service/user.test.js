@@ -31,7 +31,7 @@ describe('test/app/service/user.test.js', () => {
       assert(nullUserId === null);
       assert(nullUserToken === null);
 
-      const token = '4796692f0e48d6584ef15764cda9581f599eceed';
+      const token = '123456';
       const user = await app.factory.create('repos', {
         email: 'demo@email.local',
         password: 'abc',

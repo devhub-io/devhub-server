@@ -20,7 +20,7 @@ class QueueService extends Service {
     });
     if (queueJob) {
       payload.jobId = queueJob.id;
-      await this.app.queue.add({ job: queue, data: payload });
+      await this.app.queue.add({ job: queue, data: payload }, { delay: 1000 });
       return true;
     }
     return false;
@@ -59,7 +59,7 @@ class QueueService extends Service {
     if (queueJob) {
       const payload = JSON.parse(queueJob.payload);
       payload.jobId = queueJob.id;
-      await this.app.queue.add({ job: queueJob.queue, data: payload });
+      await this.app.queue.add({ job: queueJob.queue, data: payload }, { delay: 1000 });
       queueJob.attempts = queueJob.attempts + 1;
       await queueJob.save();
       return true;

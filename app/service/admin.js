@@ -399,7 +399,7 @@ class AdminService extends Service {
 
   async ecosystemCreate(data) {
     const title = data.title || '';
-    data.slug = title.replace(' ', '-').toLowerCase();
+    data.slug = this.ctx.helper.toSlug(title);
     return await this.ctx.model.Topic.create(
       data,
       {
@@ -409,7 +409,7 @@ class AdminService extends Service {
 
   async ecosystemCollectionCreate(data) {
     const title = data.title || '';
-    data.slug = title.replace(' ', '-').toLowerCase();
+    data.slug = this.ctx.helper.toSlug(title);
     return await this.ctx.model.Collection.create(
       data,
       {

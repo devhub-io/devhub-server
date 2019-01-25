@@ -145,7 +145,7 @@ class JobService extends Service {
     const found = data.url.match(constant.DEVELOPER_URL_REGEX);
     if (found) {
       const id = await ctx.service.user.selectUserId();
-      if (id === null || id === undefined || id === 0 || id === '') {
+      if (typeof id !== 'number') {
         app.logger.info('[system] DeveloperFetch Job not UserId');
         return false;
       }
@@ -220,7 +220,6 @@ class JobService extends Service {
       } catch (e) {
         app.logger.info(e.status);
         app.logger.info(e.message);
-        console.log(e);
 
         if ('headers' in e) {
           ctx.service.user.updateUserGithubRemaining(id, e.headers);
@@ -235,7 +234,7 @@ class JobService extends Service {
     const found = data.url.match(constant.REPOS_URL_REGEX);
     if (found) {
       const id = await ctx.service.user.selectUserId();
-      if (id === null || id === undefined || id === 0 || id === '') {
+      if (typeof id !== 'number') {
         app.logger.info('[system] ReposFetch Job not UserId');
         return false;
       }

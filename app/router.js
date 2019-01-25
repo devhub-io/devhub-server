@@ -4,7 +4,8 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller } = app;
+  const { router, controller, io } = app;
+  // Home
   router.get('/', controller.home.index);
   router.get('/link', controller.home.link);
 
@@ -87,9 +88,13 @@ module.exports = app => {
   router.post('/admin/ecosystem/collection/item/delete', jwt, admin, controller.admin.ecosystemCollectionItemDelete);
   router.post('/admin/ecosystem/collection/fetch', jwt, admin, controller.admin.ecosystemCollectionFetch);
   router.post('/admin/ecosystem/collection/crawler', jwt, admin, controller.admin.ecosystemCollectionCrawler);
-  router.get('/admin/api/search', jwt, admin, controller.admin.apiSearch);
   router.post('/admin/queue/replay', jwt, admin, controller.admin.queueReplay);
   router.post('/admin/queue/delete', jwt, admin, controller.admin.queueDelete);
+  router.get('/admin/api/search', jwt, admin, controller.admin.apiSearch);
   router.post('/admin/fetch', jwt, admin, controller.admin.fetch);
+
+  // Socket.io
+  io.of('/').route('server', io.controller.default.ping);
+  io.of('/').route('exchange', io.controller.nsp.exchange);
 
 };

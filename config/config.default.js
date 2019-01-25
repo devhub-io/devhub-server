@@ -122,5 +122,15 @@ module.exports = appInfo => {
     },
   };
 
+  exports.io = {
+    init: { }, // passed to engine.io
+    namespace: {
+      '/': {
+        connectionMiddleware: [ 'auth' ],
+        packetMiddleware: [],
+      },
+    },
+  };
+
   return config;
 };

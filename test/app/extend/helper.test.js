@@ -15,6 +15,17 @@ describe('test/app/extend/helper.test.js', () => {
     });
   });
 
+
+  describe('Cache', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const res = await ctx.helper.setCache('test', 120, 'hi');
+      assert(res);
+      const get = await ctx.helper.getCache('test');
+      assert(get === 'hi');
+    });
+  });
+
   describe('ip', () => {
     it('should work', async () => {
       const ctx = app.mockContext();
@@ -53,7 +64,9 @@ describe('test/app/extend/helper.test.js', () => {
       const n1 = ctx.helper.toSlug('Node.js');
       assert(n1 === 'nodejs');
       const n2 = ctx.helper.toSlug('Node js');
-      assert(n2 === 'nodejs');
+      assert(n2 === 'node-js');
+      const n3 = ctx.helper.toSlug(1);
+      assert(n3 === 1);
     });
   });
 
@@ -113,6 +126,21 @@ describe('test/app/extend/helper.test.js', () => {
       assert(n6 === null);
       const n7 = ctx.helper.isUrl('www.github.com/demo.html');
       assert(n7 === null);
+    });
+  });
+
+  describe('parseMsg', () => {
+    it('should work', async () => {
+      const ctx = app.mockContext();
+      const n1 = ctx.helper.parseMsg('message');
+      assert(n1.meta.timestamp);
+      assert(n1.data.action === 'message');
+      assert(n1.data.payload);
+      const n2 = ctx.helper.parseMsg('demo', { url: 'http://demo.url' }, { status: 200 });
+      assert(n2.meta.timestamp);
+      assert(n2.meta.status === 200);
+      assert(n2.data.action === 'demo');
+      assert(n2.data.payload.url === 'http://demo.url');
     });
   });
 

@@ -15,6 +15,7 @@
     "egg-redis": "^2.3.0",
     "egg-scripts": "^2.5.0",
     "egg-sequelize": "^4.2.0",
+    "egg-socket.io": "^4.1.5",
     "elasticsearch": "^15.3.0",
     "formstream": "^1.1.0",
     "markdown-toc": "^1.2.0",
@@ -43,10 +44,10 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-devhub-server",
+    "start": "egg-scripts start --sticky --daemon --title=egg-server-devhub-server",
     "stop": "egg-scripts stop --title=egg-server-devhub-server",
     "restart": "npm run stop && npm run start",
-    "dev": "egg-bin dev",
+    "dev": "egg-bin dev --sticky",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "NODE_ENV=test npx sequelize db:migrate && egg-bin test",

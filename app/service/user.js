@@ -80,7 +80,7 @@ class UserService extends Service {
 
       app.logger.info(`[system] Job use UserID: ${randomId}`);
 
-      return parseInt(randomId);
+      return ctx.helper.toInt(randomId);
     }
 
     const Op = app.Sequelize.Op;
