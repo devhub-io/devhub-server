@@ -36,6 +36,10 @@ class ApiService extends Service {
   }
 
   async bearychatSendMessage(message) {
+    if (process.env.NODE_ENV === 'test') {
+      // TODO
+      return true;
+    }
     const res = await this.ctx.curl(env.BEARYCHAT_WEBHOOK, {
       method: 'POST',
       contentType: 'json',

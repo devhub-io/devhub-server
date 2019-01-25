@@ -27,12 +27,12 @@ module.exports = app => {
     try {
       const state = await ctx.service.queue.processJob(job.data);
       state ? ctx.service.queue.finishJob(job.data.data.jobId) : ctx.service.queue.failJob(job.data.data.jobId);
-      ctx.service.message.send({ type: 'success', message: `[system] Queue Done ${JSON.stringify(job.data)}` });
+      ctx.service.message.send({ type: 'success', title: 'Queue Done', message: `${JSON.stringify(job.data)}` });
       done();
     } catch (e) {
       app.logger.error(`[system] Queue Error ${e}`);
       ctx.service.queue.failJob(job.data.data.jobId);
-      ctx.service.message.send({ type: 'error', message: `[system] Queue Error ${e}, ${JSON.stringify(job.data)}` });
+      ctx.service.message.send({ type: 'error', title: 'Queue Error', message: `${e}, ${JSON.stringify(job.data)}` });
       done(new Error(e));
     }
   });

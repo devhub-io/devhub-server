@@ -67,6 +67,42 @@ class QueueService extends Service {
     return false;
   }
 
+  async cleanFailJob() {
+    const Op = this.app.Sequelize.Op;
+    return await this.ctx.model.QueueJob.destroy({
+      where: {
+        attempts: {
+          [Op.gt]: 5,
+        },
+      },
+    });
+  }
+
+  async cleanRepeatJob() {
+    const Op = this.app.Sequelize.Op;
+    const ctx = this.ctx;
+    const repeatJobs = await this.ctx.model.QueueJob.findAll({
+      attributes: [
+        'id',
+        'payload',
+        [ this.app.Sequelize.literal('count(id)'), 'number' ],
+      ],
+      group: [ 'payload' ],
+      having: this.app.Sequelize.literal('count(id) > 1'),
+    });
+    for (let i = 0; i < repeatJobs.length; i++) {
+      await ctx.model.QueueJob.destroy({
+        where: {
+          id: {
+            [Op.gt]: repeatJobs[i].id,
+          },
+          payload: repeatJobs[i].payload,
+        },
+      });
+    }
+    return repeatJobs;
+  }
+
 }
 
 module.exports = QueueService;

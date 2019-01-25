@@ -66,6 +66,9 @@ class IndexSync extends Subscription {
       app.logger.info(`[system] Index Sync page ${page}`);
     }
 
+    // Push message
+    await ctx.service.api.bearychatSendMessage('[system] Index Sync Done!');
+
     return true;
   }
 }

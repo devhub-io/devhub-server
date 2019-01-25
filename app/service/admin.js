@@ -729,13 +729,23 @@ class AdminService extends Service {
 
         if (found) {
           const analyzeText = await this.analyzeItemText(tokens[i].text);
-          await this.ctx.model.CollectionItem.create({
-            collection_id: found.id,
-            title: (analyzeText.title || tokens[i].text).substring(0, 255),
-            type: analyzeText.type || 'text',
-            sort: i,
-            foreign_id: analyzeText.foreign_id || 0,
+          const itemExists = await this.ctx.model.CollectionItem.unscoped().findOne({
+            where: {
+              collection_id: found.id,
+              title: (analyzeText.title || tokens[i].text).substring(0, 255),
+              type: analyzeText.type || 'text',
+              foreign_id: analyzeText.foreign_id || 0,
+            },
           });
+          if (!itemExists) {
+            await this.ctx.model.CollectionItem.create({
+              collection_id: found.id,
+              title: (analyzeText.title || tokens[i].text).substring(0, 255),
+              type: analyzeText.type || 'text',
+              sort: i,
+              foreign_id: analyzeText.foreign_id || 0,
+            });
+          }
         }
       }
     }
@@ -763,7 +773,6 @@ class AdminService extends Service {
             res.type = 'repos';
             res.title = `${owner}/${repo}`;
           } else {
-            // TODO
             res.foreign_id = 0;
             res.type = 'repos';
             res.title = text;
@@ -954,7 +963,9 @@ class AdminService extends Service {
     const { app, ctx } = this;
     app.logger.info(data);
     const readme = await ctx.helper.remember('awesome-repos:readme', 60 * 60, async function() {
-      const res = await app.curl('https://raw.githubusercontent.com/bayandin/awesome-awesomeness/master/README.md');
+      const res = await app.curl('https://raw.githubusercontent.com/bayandin/awesome-awesomeness/master/README.md', {
+        dataType: 'text',
+      });
       if (res.status === 200) {
         return res.data;
       }
@@ -970,6 +981,141 @@ class AdminService extends Service {
       });
     }
     return true;
+  }
+
+  async ecosystemCollectionItemsCheck() {
+    const Op = this.app.Sequelize.Op;
+    const { ctx } = this;
+    // repos
+    const reposItems = await ctx.model.CollectionItem.unscoped().findAll({
+      attributes: [ 'id', 'title', 'foreign_id' ],
+      where: {
+        type: 'repos',
+        foreign_id: 0,
+        title: {
+          [Op.ne]: '',
+        },
+      },
+    });
+    for (let i = 0; i < reposItems.length; i++) {
+      const found = reposItems[i].title.match(/(?:\[(.*?)\]\((.*?)\))/i);
+      if (found) {
+        const reposFound = ctx.helper.isGithubRepos(found[2]);
+        if (reposFound) {
+          const repos = await ctx.model.Repos.unscoped().findOne({
+            attributes: [ 'id', 'title' ],
+            where: {
+              slug: `${reposFound[1]}-${reposFound[2]}`,
+            },
+          });
+          if (repos) {
+            reposItems[i].foreign_id = repos.id;
+            reposItems[i].title = repos.title;
+            await reposItems[i].save();
+          } else {
+            await ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: found[2] } });
+          }
+        }
+      }
+    }
+    // developers
+    const developersItems = await ctx.model.CollectionItem.unscoped().findAll({
+      attributes: [ 'id', 'title', 'foreign_id' ],
+      where: {
+        type: 'developers',
+        foreign_id: 0,
+        title: {
+          [Op.ne]: '',
+        },
+      },
+    });
+    for (let i = 0; i < developersItems.length; i++) {
+      const found = developersItems[i].title.match(/(?:\[(.*?)\]\((.*?)\))/i);
+      if (found) {
+        const developerFound = ctx.helper.isGithubDeveloper(found[2]);
+        if (developerFound) {
+          const developer = await ctx.model.Developer.unscoped().findOne({
+            attributes: [ 'id', 'login', 'name' ],
+            where: {
+              login: `${developerFound[1]}`,
+            },
+          });
+          if (developer) {
+            developersItems[i].foreign_id = developer.id;
+            developersItems[i].title = `${developer.login} (${developer.name})`;
+            await developersItems[i].save();
+          } else {
+            await ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: found[2] } });
+          }
+        }
+      }
+    }
+    // sites
+    const sitesItems = await ctx.medel.CollectionItem.unscoped().findAll({
+      attributes: [ 'id', 'title', 'foreign_id' ],
+      where: {
+        type: 'sites',
+        foreign_id: 0,
+        title: {
+          [Op.ne]: '',
+        },
+      },
+    });
+    for (let i = 0; i < sitesItems.length; i++) {
+      const found = sitesItems[i].title.match(/(?:\[(.*?)\]\((.*?)\))/i);
+      if (found) {
+        const siteFound = ctx.helper.isSite(found[2]);
+        if (siteFound) {
+          const site = await ctx.model.Site.unscoped().findOne({
+            attributes: [ 'id', 'title' ],
+            where: {
+              url: found[2],
+            },
+          });
+          if (site) {
+            sitesItems[i].foreign_id = site.id;
+            sitesItems[i].title = typeof site.title === 'string' && site.title.length > 0 ? site.title : found[1];
+            await sitesItems[i].save();
+          } else {
+            await ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: found[2] } });
+          }
+        }
+      }
+    }
+    // links
+    const linksItems = await ctx.medel.CollectionItem.unscoped().findAll({
+      attributes: [ 'id', 'title', 'foreign_id' ],
+      where: {
+        type: 'links',
+        foreign_id: 0,
+        title: {
+          [Op.ne]: '',
+        },
+      },
+    });
+    for (let i = 0; i < linksItems.length; i++) {
+      const found = linksItems[i].title.match(/(?:\[(.*?)\]\((.*?)\))/i);
+      if (found) {
+        const linkFound = ctx.helper.isUrl(found[2]);
+        if (linkFound) {
+          const link = await ctx.model.Link.unscoped().findOne({
+            attributes: [ 'id', 'title' ],
+            where: {
+              url: found[2],
+            },
+          });
+          if (link) {
+            linksItems[i].foreign_id = link.id;
+            linksItems[i].title = typeof link.title === 'string' && link.title.length > 0 ? link.title : found[1];
+            await linksItems[i].save();
+          } else {
+            await ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: found[2] } });
+          }
+        }
+      }
+    }
+
+    return { reposItems, developersItems, sitesItems, linksItems };
   }
 
 }

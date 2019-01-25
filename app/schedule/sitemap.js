@@ -15,7 +15,7 @@ class Sitemap extends Subscription {
 
   async subscribe() {
     // const app = this.app;
-    // const ctx = this.ctx;
+    const ctx = this.ctx;
     // TODO
     const hostname = 'https://devhub.io';
     const sitemap = sm.createSitemap({
@@ -41,6 +41,9 @@ class Sitemap extends Subscription {
       xslUrl: 'https://example.com/style.xsl', // optional
     });
     fs.writeFileSync('./sitemap.xml', smi.toString());
+
+    // Push message
+    await ctx.service.api.bearychatSendMessage('[system] Create Sitemap Done!');
 
     return true;
   }

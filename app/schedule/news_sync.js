@@ -12,6 +12,7 @@ class NewsSync extends Subscription {
   }
 
   async subscribe() {
+    // const app = this.app;
     const ctx = this.ctx;
     const base = 'https://hacker-news.firebaseio.com';
     const endpoints = {
@@ -40,6 +41,9 @@ class NewsSync extends Subscription {
         }
       }
     }
+
+    // Push message
+    await ctx.service.api.bearychatSendMessage('[system] News Sync Done!');
 
     return newsCount;
   }
