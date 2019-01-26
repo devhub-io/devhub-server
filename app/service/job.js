@@ -146,7 +146,7 @@ class JobService extends Service {
     if (found) {
       const id = await ctx.service.user.selectUserId();
       if (typeof id !== 'number') {
-        app.logger.info('[system] DeveloperFetch Job not UserId');
+        app.logger.info('[system] DeveloperFetch Job #NotUserId');
         return false;
       }
 
@@ -218,8 +218,7 @@ class JobService extends Service {
         }
         return true;
       } catch (e) {
-        app.logger.info(e.status);
-        app.logger.info(e.message);
+        app.logger.warn(e);
 
         if ('headers' in e) {
           ctx.service.user.updateUserGithubRemaining(id, e.headers);
@@ -235,7 +234,7 @@ class JobService extends Service {
     if (found) {
       const id = await ctx.service.user.selectUserId();
       if (typeof id !== 'number') {
-        app.logger.info('[system] ReposFetch Job not UserId');
+        app.logger.info('[system] ReposFetch Job #NotUserId');
         return false;
       }
 
@@ -288,8 +287,7 @@ class JobService extends Service {
         }
         return true;
       } catch (e) {
-        app.logger.info(e.status);
-        app.logger.info(e.message);
+        app.logger.warn(e);
 
         if ('headers' in e) {
           ctx.service.user.updateUserGithubRemaining(id, e.headers);

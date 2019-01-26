@@ -915,4 +915,168 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.affected);
   });
 
+  it('should GET /admin/ecosystem/attributes', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    const attribute = await app.factory.create('topic_attribute', {
+      topic_id: topic.id,
+      key: 'hi',
+      value: 'demo',
+    });
+    const res = await app.httpRequest()
+      .get(`/admin/ecosystem/attributes?id=${topic.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.length === 1);
+    assert(res.body[0].id === attribute.id);
+    assert(res.body[0].key === attribute.key);
+    assert(res.body[0].value === attribute.value);
+  });
+
+  it('should POST /admin/ecosystem/attribute/create', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    const attribute = await app.httpRequest()
+      .post('/admin/ecosystem/attribute/create')
+      .send({
+        topic_id: topic.id,
+        key: 'demo',
+        value: 'demo',
+      })
+      .set({ Authorization: `bearer ${token}` });
+
+    const res = await app.httpRequest()
+      .get(`/admin/ecosystem/attributes?id=${topic.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.length === 1);
+    assert(res.body[0].id === attribute.body.id);
+    assert(res.body[0].key === attribute.body.key);
+    assert(res.body[0].value === attribute.body.value);
+  });
+
+  it('should POST /admin/ecosystem/attribute/edit', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const attribute = await app.factory.create('topic_attribute');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/attribute/edit')
+      .send({
+        id: attribute.id,
+        key: 'edit',
+        value: 'edit',
+      })
+      .set({ Authorization: `bearer ${token}` });
+
+    assert(res.status === 200);
+    assert(res.body.affected.id === attribute.id);
+    assert(res.body.affected.key === 'edit');
+    assert(res.body.affected.value === 'edit');
+  });
+
+  it('should POST /admin/ecosystem/attribute/delete', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic_id = 1;
+    const attribute = await app.factory.create('topic_attribute', {
+      topic_id,
+      key: 'topic_1',
+      value: 'demo',
+    });
+    const resStart = await app.httpRequest()
+      .get(`/admin/ecosystem/attributes?id=${topic_id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body.length === 1);
+
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/attribute/delete')
+      .send({
+        id: attribute.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const resEnd = await app.httpRequest()
+      .get(`/admin/ecosystem/attributes?id=${topic_id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resEnd.status === 200);
+    assert(resEnd.body.length === 0);
+  });
+
+
+  it('should GET /admin/ecosystem/source', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    const source = await app.factory.create('topic_source', {
+      topic_id: topic.id,
+      source: 'hi',
+      url: 'demo',
+    });
+    const res = await app.httpRequest()
+      .get(`/admin/ecosystem/source?id=${topic.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.length === 1);
+    assert(res.body[0].id === source.id);
+    assert(res.body[0].source === source.source);
+    assert(res.body[0].url === source.url);
+  });
+
+  it('should POST /admin/ecosystem/source/create', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.create('topic');
+    const source = await app.httpRequest()
+      .post('/admin/ecosystem/source/create')
+      .send({
+        topic_id: topic.id,
+        source: 'demo',
+        url: 'demo',
+      })
+      .set({ Authorization: `bearer ${token}` });
+
+    const res = await app.httpRequest()
+      .get(`/admin/ecosystem/source?id=${topic.id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.length === 1);
+    assert(res.body[0].id === source.body.id);
+    assert(res.body[0].source === source.body.source);
+    assert(res.body[0].url === source.body.url);
+  });
+
+  it('should POST /admin/ecosystem/source/delete', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic_id = 1;
+    const source = await app.factory.create('topic_source', {
+      topic_id,
+      source: 'source_1',
+      url: 'demo',
+    });
+    const resStart = await app.httpRequest()
+      .get(`/admin/ecosystem/source?id=${topic_id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body.length === 1);
+
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/source/delete')
+      .send({
+        id: source.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const resEnd = await app.httpRequest()
+      .get(`/admin/ecosystem/source?id=${topic_id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resEnd.status === 200);
+    assert(resEnd.body.length === 0);
+  });
+
 });

@@ -190,7 +190,8 @@ class ReposService extends Service {
         return { rows, count, last_page, page };
       }
     } catch (e) {
-      app.logger.warn(`[system] Search ${e.message}`);
+      app.logger.warn('[system] Search Error');
+      app.logger.warn(e);
     }
     return { rows: [], count: 0, last_page: 1, page: 1 };
   }

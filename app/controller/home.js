@@ -19,7 +19,7 @@ class HomeController extends Controller {
     // console.log(a);
     // this.service.message.send({ type: 'error', message: 'error' });
 
-    this.ctx.body = this.config.app_name;
+    this.ctx.body = this.config.name;
   }
 
   async link() {

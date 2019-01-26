@@ -326,4 +326,22 @@ module.exports = app => {
     updated_at: new Date(),
   });
 
+  // topic_source
+  factory.define('topic_source', app.model.TopicSource, {
+    topic_id: factory.sequence('TopicSource.topic_id', n => n),
+    source: 'Awesome List',
+    url: faker.internet.url,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // topic_attributes
+  factory.define('topic_attribute', app.model.TopicAttribute, {
+    topic_id: factory.sequence('TopicAttribute.topic_id', n => n),
+    key: factory.sequence('TopicAttribute.key', n => `key_${n}`),
+    value: 'value...',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
 };

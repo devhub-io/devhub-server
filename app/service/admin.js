@@ -961,7 +961,7 @@ class AdminService extends Service {
 
   async ecosystemCollectionCrawler(data) {
     const { app, ctx } = this;
-    app.logger.info(data);
+    app.logger.debug(data);
     const readme = await ctx.helper.remember('awesome-repos:readme', 60 * 60, async function() {
       const res = await app.curl('https://raw.githubusercontent.com/bayandin/awesome-awesomeness/master/README.md', {
         dataType: 'text',
@@ -1051,7 +1051,7 @@ class AdminService extends Service {
       }
     }
     // sites
-    const sitesItems = await ctx.medel.CollectionItem.unscoped().findAll({
+    const sitesItems = await ctx.model.CollectionItem.unscoped().findAll({
       attributes: [ 'id', 'title', 'foreign_id' ],
       where: {
         type: 'sites',
@@ -1083,7 +1083,7 @@ class AdminService extends Service {
       }
     }
     // links
-    const linksItems = await ctx.medel.CollectionItem.unscoped().findAll({
+    const linksItems = await ctx.model.CollectionItem.unscoped().findAll({
       attributes: [ 'id', 'title', 'foreign_id' ],
       where: {
         type: 'links',

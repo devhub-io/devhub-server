@@ -5,9 +5,6 @@ const env = require('../.env.js');
 module.exports = appInfo => {
   const config = exports = {};
 
-  // app
-  config.app_name = 'devhub';
-
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1545906655111_6691';
 
@@ -15,7 +12,7 @@ module.exports = appInfo => {
   config.middleware = [];
 
   // ORM
-  config.sequelize = {
+  exports.sequelize = {
     dialect: 'mysql',
     host: env.DB_HOST,
     port: env.DB_PORT,

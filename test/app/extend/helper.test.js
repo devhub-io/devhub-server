@@ -65,8 +65,10 @@ describe('test/app/extend/helper.test.js', () => {
       assert(n1 === 'nodejs');
       const n2 = ctx.helper.toSlug('Node js');
       assert(n2 === 'node-js');
-      const n3 = ctx.helper.toSlug(1);
-      assert(n3 === 1);
+      const n3 = ctx.helper.toSlug('A demo    .test....js');
+      assert(n3 === 'a-demo-testjs');
+      const n4 = ctx.helper.toSlug(1);
+      assert(n4 === 1);
     });
   });
 

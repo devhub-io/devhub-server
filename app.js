@@ -30,15 +30,12 @@ module.exports = app => {
       ctx.service.message.send({ type: 'success', title: 'Queue Done', message: `${JSON.stringify(job.data)}` });
       done();
     } catch (e) {
-      app.logger.error(`[system] Queue Error ${e}`);
+      app.logger.error('[system] Queue Error');
+      app.logger.error(e);
       ctx.service.queue.failJob(job.data.data.jobId);
       ctx.service.message.send({ type: 'error', title: 'Queue Error', message: `${e}, ${JSON.stringify(job.data)}` });
       done(new Error(e));
     }
-  });
-  app.queue.on('failed', function(job, err) {
-    // A job failed with reason `err`!
-    app.logger.warn(`[system] Queue failed: ${job} ${err}`);
   });
 
   // ES

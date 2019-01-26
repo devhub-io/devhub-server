@@ -34,6 +34,8 @@ afterEach(async () => {
     app.model.Article.destroy({ truncate: true, force: true }),
     app.model.Link.destroy({ truncate: true, force: true }),
     app.model.QueueJob.destroy({ truncate: true, force: true }),
+    app.model.TopicSource.destroy({ truncate: true, force: true }),
+    app.model.TopicAttribute.destroy({ truncate: true, force: true }),
   ]);
   // clear redis after each test case
   await app.redis.flushdb();

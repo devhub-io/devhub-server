@@ -24,7 +24,8 @@ class IndexSync extends Subscription {
         index: app.config.elasticsearch.index,
       });
     } catch (e) {
-      app.logger.warn(`[system] Index Sync ${e.message}`);
+      app.logger.warn('[system] Index Sync Error');
+      app.logger.warn(e);
     }
 
     const count = await ctx.model.Repos.count();
@@ -60,7 +61,8 @@ class IndexSync extends Subscription {
           body: bulk,
         });
       } catch (e) {
-        app.logger.warn(`[system] Index Sync ${e.message}`);
+        app.logger.warn('[system] Index Sync Error');
+        app.logger.warn(e);
       }
 
       app.logger.info(`[system] Index Sync page ${page}`);

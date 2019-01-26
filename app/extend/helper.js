@@ -49,7 +49,11 @@ module.exports = {
 
   toSlug(title) {
     if (typeof title === 'string') {
-      return title.replace('.', '').replace(' ', '-').toLowerCase();
+      return title
+        .replace(/\./g, '')
+        .replace(/\s/g, '-')
+        .replace(/\-+/g, '-')
+        .toLowerCase();
     }
     return title;
   },

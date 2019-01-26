@@ -56,7 +56,7 @@ class UserService extends Service {
 
       await app.redis.set(`devhub:user:${id}:github:remaining`, remaining);
       await app.redis.expire(`devhub:user:${id}:github:remaining`, reset - timestamp > 0 ? reset - timestamp : 3600);
-      app.logger.info(`[system] Github API ID:${id} Remaining:${remaining}`);
+      app.logger.info(`[system] Github API #UserID:${id} Remaining:${remaining}`);
       return true;
     }
     return false;
@@ -78,7 +78,7 @@ class UserService extends Service {
       }
       const randomId = availableId[Math.floor(Math.random() * availableId.length)];
 
-      app.logger.info(`[system] Job use UserID: ${randomId}`);
+      app.logger.info(`[system] Job use #UserID: ${randomId}`);
 
       return ctx.helper.toInt(randomId);
     }
@@ -100,7 +100,7 @@ class UserService extends Service {
         app.redis.sadd('devhub:user:github:id', i.user_id);
       });
 
-      app.logger.info(`[system] Job use UserID: ${services[0].user_id}`);
+      app.logger.info(`[system] Job use #UserID: ${services[0].user_id}`);
 
       return services[0].user_id;
     }
