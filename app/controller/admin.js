@@ -309,6 +309,27 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemAnalytics();
   }
 
+  async feedback() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.status = ctx.query.status || '';
+    query.sort_type = ctx.query.sort_type || '';
+    query.tags = ctx.query.tags || '';
+    ctx.body = await ctx.service.admin.feedback(query);
+  }
+
+  async feedbackSwitch() {
+    const ctx = this.ctx;
+    const query = { id: ctx.request.body.id, status: ctx.helper.toInt(ctx.request.body.status) };
+    ctx.body = await ctx.service.admin.feedbackSwitch(query);
+  }
+
+  async feedbackDelete() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.feedbackDelete(data);
+  }
+
 }
 
 module.exports = HomeController;

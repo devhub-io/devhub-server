@@ -10,7 +10,7 @@ module.exports = app => {
   // Error
   app.on('error', err => {
     // report error
-    if (err.status !== 404 && err.status !== 401) {
+    if (err.status !== 404 && err.status !== 401 && err.status !== 422) {
       const rollbar = new Rollbar({
         accessToken: env.ROLLBAR_ACCESS_TOKEN,
         captureUncaught: true,

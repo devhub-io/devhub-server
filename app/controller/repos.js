@@ -111,7 +111,7 @@ class ReposController extends Controller {
       recommendation: ctx.request.body.recommendation || 0,
       documentation: ctx.request.body.documentation || 0,
       user_agent: ctx.request.headers['user-agent'],
-      ip: ctx.helper.ip(),
+      ip: ctx.helper.getIP(),
     };
     const status = await ctx.service.repos.review(query);
     ctx.body = { status };

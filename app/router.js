@@ -24,6 +24,9 @@ module.exports = app => {
   router.get('/topics', controller.repos.topics);
   router.get('/topic/:topic', controller.repos.topicInPaginate);
 
+  // Feedback
+  router.post('/feedback', controller.home.feedback);
+
   // Sites
   router.get('/sites', controller.repos.sites);
 
@@ -95,6 +98,9 @@ module.exports = app => {
   router.get('/admin/website/analytics', controller.admin.websiteAnalytics);
   router.get('/admin/user/analytics', controller.admin.userAnalytics);
   router.get('/admin/ecosystem/analytics', controller.admin.ecosystemAnalytics);
+  router.get('/admin/feedback', jwt, admin, controller.admin.feedback);
+  router.post('/admin/feedback/switch', jwt, admin, controller.admin.feedbackSwitch);
+  router.post('/admin/feedback/delete', jwt, admin, controller.admin.feedbackDelete);
 
   // Socket.io
   io.of('/').route('server', io.controller.default.ping);

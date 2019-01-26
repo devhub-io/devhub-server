@@ -429,11 +429,11 @@ class AdminService extends Service {
     return { affected: res };
   }
 
-  async ecosystemCollectionDelete(data) {
+  async ecosystemCollectionDelete({ id }) {
     const childCollection = await this.ctx.model.Collection.unscoped().findOne({
       attributes: [ 'id' ],
       where: {
-        parent_id: data.id,
+        parent_id: id,
       },
     });
     if (childCollection) {
@@ -442,7 +442,7 @@ class AdminService extends Service {
     const items = await this.ctx.model.CollectionItem.unscoped().findOne({
       attributes: [ 'id' ],
       where: {
-        collection_id: data.id,
+        collection_id: id,
       },
     });
     if (items) {
@@ -450,7 +450,7 @@ class AdminService extends Service {
     }
     return await this.ctx.model.Collection.unscoped().destroy({
       where: {
-        id: data.id,
+        id,
       },
       limit: 1,
     });
@@ -568,10 +568,10 @@ class AdminService extends Service {
     return { affected: res };
   }
 
-  async ecosystemCollectionItemDelete(data) {
+  async ecosystemCollectionItemDelete({ id }) {
     return await this.ctx.model.CollectionItem.unscoped().destroy({
       where: {
-        id: data.id,
+        id,
       },
       limit: 1,
     });
@@ -847,44 +847,44 @@ class AdminService extends Service {
     return res;
   }
 
-  async queueReplay(data) {
-    return this.ctx.service.queue.replayJob(data.id);
+  async queueReplay({ id }) {
+    return this.ctx.service.queue.replayJob(id);
   }
 
-  async queueDelete(data) {
-    return this.ctx.service.queue.finishJob(data.id);
+  async queueDelete({ id }) {
+    return this.ctx.service.queue.finishJob(id);
   }
 
-  async fetch(data) {
-    return this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: data.url } });
+  async fetch({ url }) {
+    return this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url } });
   }
 
-  async ecosystemCollectionSwitch(data) {
+  async ecosystemCollectionSwitch({ id, status }) {
     const Op = this.app.Sequelize.Op;
     const res = await this.ctx.model.Collection.unscoped().update(
       {
-        status: data.status,
+        status,
       },
       {
         where: {
           id: {
-            [Op.in]: data.id,
+            [Op.in]: id,
           },
         },
       });
     return { affected: res };
   }
 
-  async ecosystemCollectionMove(data) {
+  async ecosystemCollectionMove({ parent_id, id }) {
     const Op = this.app.Sequelize.Op;
     const res = await this.ctx.model.Collection.unscoped().update(
       {
-        parent_id: data.parent_id,
+        parent_id,
       },
       {
         where: {
           id: {
-            [Op.in]: data.id,
+            [Op.in]: id,
           },
         },
       });
@@ -910,10 +910,10 @@ class AdminService extends Service {
       });
   }
 
-  async ecosystemSourceDelete(data) {
+  async ecosystemSourceDelete({ id }) {
     return await this.ctx.model.TopicSource.destroy({
       where: {
-        id: data.id,
+        id,
       },
       limit: 1,
     });
@@ -950,10 +950,10 @@ class AdminService extends Service {
     return { affected: res };
   }
 
-  async ecosystemAttributeDelete(data) {
+  async ecosystemAttributeDelete({ id }) {
     return await this.ctx.model.TopicAttribute.destroy({
       where: {
-        id: data.id,
+        id,
       },
       limit: 1,
     });
@@ -1126,6 +1126,58 @@ class AdminService extends Service {
   async ecosystemAnalytics() {
     const count = await this.ctx.model.Topic.count();
     return { count };
+  }
+
+  async feedback({ limit, page, tags, status, sort_type }) {
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (tags !== '') {
+      where.tags = tags;
+    }
+    if (status !== '') {
+      where.status = status;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'status', 'ASC' ]);
+      order.push([ 'updated_at', 'DESC' ]);
+    }
+    const result = await this.ctx.model.Feedback.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
+  async feedbackSwitch({ id, status }) {
+    const Op = this.app.Sequelize.Op;
+    const res = await this.ctx.model.Feedback.unscoped().update(
+      {
+        status,
+      },
+      {
+        where: {
+          id: {
+            [Op.in]: id,
+          },
+        },
+      });
+    return { affected: res };
+  }
+
+  async feedbackDelete({ id }) {
+    return await this.ctx.model.Feedback.destroy({
+      where: {
+        id,
+      },
+      limit: 1,
+    });
   }
 
 }

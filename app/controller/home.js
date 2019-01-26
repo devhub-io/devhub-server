@@ -29,13 +29,32 @@ class HomeController extends Controller {
       await this.ctx.model.LinkClick.create({
         target: url,
         referer: this.ctx.request.get('referer'),
-        ip: this.ctx.helper.ip(),
+        ip: this.ctx.helper.getIP(),
         user_agent: this.ctx.request.get('user-agent'),
         clicked_at: new Date(),
       });
       this.ctx.redirect(url, 302);
     } else {
       this.ctx.redirect('/', 302);
+    }
+  }
+
+  async feedback() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.validate({
+      email: {
+        type: 'email',
+      },
+      message: {
+        type: 'string',
+      },
+    });
+    const feedback = await ctx.service.user.feedback(data);
+    if (feedback) {
+      ctx.body = { message: 'Feedback sent!' };
+    } else {
+      ctx.body = { message: 'Feedback failure!' };
     }
   }
 

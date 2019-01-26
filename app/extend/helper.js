@@ -28,7 +28,7 @@ module.exports = {
     return await this.app.redis.get(`devhub:${key}`);
   },
 
-  ip() {
+  getIP() {
     return this.ctx.ips.length > 0 ? this.ctx.ips[this.ctx.ips.length - 1] : this.ctx.ip;
   },
 

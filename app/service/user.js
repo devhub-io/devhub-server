@@ -127,6 +127,18 @@ class UserService extends Service {
     });
   }
 
+  async feedback(data) {
+    data.ip = this.ctx.helper.getIP();
+    if (data.properties) {
+      data.properties = JSON.stringify(data.properties);
+    }
+    return await this.ctx.model.Feedback.create(
+      data,
+      {
+        fields: [ 'message', 'email', 'user_id', 'tags', 'ip', 'properties' ],
+      });
+  }
+
 }
 
 module.exports = UserService;
