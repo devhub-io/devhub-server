@@ -1118,6 +1118,16 @@ class AdminService extends Service {
     return { reposItems, developersItems, sitesItems, linksItems };
   }
 
+  async userAnalytics() {
+    const count = await this.ctx.model.User.count();
+    return { count };
+  }
+
+  async ecosystemAnalytics() {
+    const count = await this.ctx.model.Topic.count();
+    return { count };
+  }
+
 }
 
 module.exports = AdminService;

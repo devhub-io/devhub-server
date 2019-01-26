@@ -92,6 +92,9 @@ module.exports = app => {
   router.post('/admin/queue/delete', jwt, admin, controller.admin.queueDelete);
   router.get('/admin/api/search', jwt, admin, controller.admin.apiSearch);
   router.post('/admin/fetch', jwt, admin, controller.admin.fetch);
+  router.get('/admin/website/analytics', controller.admin.websiteAnalytics);
+  router.get('/admin/user/analytics', controller.admin.userAnalytics);
+  router.get('/admin/ecosystem/analytics', controller.admin.ecosystemAnalytics);
 
   // Socket.io
   io.of('/').route('server', io.controller.default.ping);

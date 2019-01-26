@@ -4,6 +4,7 @@ const Service = require('egg').Service;
 const env = require('../../.env');
 const formstream = require('formstream');
 const fs = require('fs');
+const queryString = require('querystring');
 
 class ApiService extends Service {
 
@@ -60,6 +61,23 @@ class ApiService extends Service {
       if (key.length > 0) {
         return res.data.query.pages[key[0]].extract;
       }
+    }
+    return false;
+  }
+
+  async cloudflareDashboard() {
+    const query = {
+      since: '-43200',
+    };
+    const res = await this.app.curl(`https://api.cloudflare.com/client/v4/zones/${env.CLOUDFLARE_ZONE_ID}/analytics/dashboard?${queryString.stringify(query)}`, {
+      dataType: 'json',
+      headers: {
+        'X-Auth-Email': env.CLOUDFLARE_AUTH_EMAIL,
+        'X-Auth-Key': env.CLOUDFLARE_KEY,
+      },
+    });
+    if (res.status === 200) {
+      return res.data.result;
     }
     return false;
   }

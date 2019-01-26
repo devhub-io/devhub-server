@@ -294,6 +294,21 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemCollectionCrawler(data);
   }
 
+  async websiteAnalytics() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.api.cloudflareDashboard();
+  }
+
+  async userAnalytics() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.admin.userAnalytics();
+  }
+
+  async ecosystemAnalytics() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.admin.ecosystemAnalytics();
+  }
+
 }
 
 module.exports = HomeController;
