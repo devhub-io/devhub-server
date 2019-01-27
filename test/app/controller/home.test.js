@@ -36,4 +36,18 @@ describe('test/app/controller/home.test.js', () => {
       .expect(302);
   });
 
+  it('should POST /feedback', async () => {
+    return await app.httpRequest()
+      .post('/feedback')
+      .type('form')
+      .send({
+        message: 'hi',
+        email: 'demo@email.test',
+      })
+      .expect(200)
+      .expect({
+        message: 'Feedback sent!',
+      });
+  });
+
 });

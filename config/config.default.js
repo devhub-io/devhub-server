@@ -1,5 +1,6 @@
 'use strict';
 
+const Redis = require('ioredis');
 const env = require('../.env.js');
 
 module.exports = appInfo => {
@@ -9,7 +10,26 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1545906655111_6691';
 
   // add your config here
-  config.middleware = [];
+  config.middleware = [ 'ratelimit' ];
+
+  // RateLimit
+  config.ratelimit = {
+    db: new Redis({
+      port: env.REDIS_PORT,
+      host: env.REDIS_HOST,
+      password: env.REDIS_PASSWORD,
+      db: 2,
+    }),
+    duration: 60000,
+    id: ctx => ctx.ip,
+    headers: {
+      remaining: 'x-ratelimit-remaining',
+      reset: 'x-ratelimit-reset',
+      total: 'x-ratelimit-limit',
+    },
+    max: 60,
+    disableHeader: false,
+  };
 
   // ORM
   exports.sequelize = {

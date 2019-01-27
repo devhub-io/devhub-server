@@ -19,6 +19,7 @@
     "egg-validate": "^2.0.2",
     "elasticsearch": "^15.3.0",
     "formstream": "^1.1.0",
+    "koa-ratelimit": "^4.1.2",
     "markdown-toc": "^1.2.0",
     "marked": "^0.6.0",
     "moment": "^2.23.0",
