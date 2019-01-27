@@ -1079,4 +1079,70 @@ describe('test/app/controller/admin.test.js', () => {
     assert(resEnd.body.length === 0);
   });
 
+  it('should GET /admin/feedback', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const feedback = await app.factory.createMany('feedback', 3);
+    const res = await app.httpRequest()
+      .get('/admin/feedback?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].message);
+    assert(res.body.rows[0].email);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/feedback?limit=1&sort_type=created_at&tags=${feedback[0].tags}&status=${feedback[0].status}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === feedback[0].id);
+    assert(resSearch.body.rows[0].message === feedback[0].message);
+    assert(resSearch.body.rows[0].email === feedback[0].email);
+  });
+
+  it('should POST /admin/feedback/switch', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const feedback = await app.factory.create('feedback');
+    const res = await app.httpRequest()
+      .post('/admin/feedback/switch')
+      .send({ id: [ feedback.id ], status: 2 })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.affected);
+  });
+
+  it('should POST /admin/feedback/delete', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const feedback = await app.factory.create('feedback');
+    const resStart = await app.httpRequest()
+      .get('/admin/feedback')
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body.count === 1);
+
+    const res = await app.httpRequest()
+      .post('/admin/feedback/delete')
+      .send({
+        id: feedback.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const resEnd = await app.httpRequest()
+      .get('/admin/feedback')
+      .set({ Authorization: `bearer ${token}` });
+    assert(resEnd.status === 200);
+    assert(resEnd.body.count === 0);
+  });
+
 });

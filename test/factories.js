@@ -344,4 +344,14 @@ module.exports = app => {
     updated_at: new Date(),
   });
 
+  // feedback
+  factory.define('feedback', app.model.Feedback, {
+    message: 'hi',
+    email: 'demo@email.test',
+    tags: factory.sequence('Feedback.tags', n => `tags_${n}`),
+    status: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
 };
