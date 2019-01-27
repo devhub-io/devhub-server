@@ -1145,4 +1145,35 @@ describe('test/app/controller/admin.test.js', () => {
     assert(resEnd.body.count === 0);
   });
 
+  it('should GET /admin/ecosystem/analytics', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic = await app.factory.createMany('topic', 2);
+    const resStart = await app.httpRequest()
+      .get('/admin/ecosystem/analytics')
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body.count === topic.length);
+  });
+
+  it('should GET /admin/user/analytics', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const resStart = await app.httpRequest()
+      .get('/admin/user/analytics')
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body.count === 1);
+  });
+
+  it('should GET /admin/website/analytics', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const resStart = await app.httpRequest()
+      .get('/admin/website/analytics')
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body);
+  });
+
 });

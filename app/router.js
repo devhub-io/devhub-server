@@ -103,7 +103,6 @@ module.exports = app => {
   router.post('/admin/feedback/delete', jwt, admin, controller.admin.feedbackDelete);
 
   // Socket.io
-  io.of('/').route('server', io.controller.default.ping);
-  io.of('/').route('exchange', io.controller.nsp.exchange);
+  io.of('/').route('ping', io.controller.default.ping);
 
 };
