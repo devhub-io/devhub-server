@@ -3,7 +3,7 @@
 module.exports = app => {
   const { INTEGER, STRING } = app.Sequelize;
 
-  const Topic = app.model.define('repos_topic', {
+  const ReposTopic = app.model.define('repos_topic', {
     repos_id: {
       type: INTEGER(11),
       allowNull: false,
@@ -17,7 +17,7 @@ module.exports = app => {
     tableName: 'repos_topics',
     timestamps: false,
   });
-  Topic.removeAttribute('id');
+  ReposTopic.removeAttribute('id');
 
-  return Topic;
+  return ReposTopic;
 };

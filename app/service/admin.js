@@ -222,6 +222,52 @@ class AdminService extends Service {
     return result;
   }
 
+  async click({ limit, page, target, sort_type }) {
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (target !== '') {
+      where.target = target;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'clicked_at', 'DESC' ]);
+    }
+    const result = await this.ctx.model.LinkClick.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
+  async vote({ limit, page, repos_id, sort_type }) {
+    const offset = (page - 1) * limit;
+    const where = {};
+    if (repos_id !== '') {
+      where.repos_id = repos_id;
+    }
+    const order = [];
+    if (sort_type !== '') {
+      order.push([ sort_type, 'DESC' ]);
+    } else {
+      order.push([ 'updated_at', 'DESC' ]);
+    }
+    const result = await this.ctx.model.ReposVote.unscoped().findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
   async repos({ limit, page, slug, status, sort_type }) {
     const offset = (page - 1) * limit;
     const where = {};
@@ -392,7 +438,7 @@ class AdminService extends Service {
     }
 
     const res = await topic.update(data, {
-      fields: [ 'title', 'slug', 'description', 'homepage', 'github', 'wiki', 'sort' ],
+      fields: [ 'title', 'slug', 'description', 'homepage', 'github', 'wiki', 'sort', 'status' ],
     });
     return { affected: res };
   }
@@ -917,6 +963,21 @@ class AdminService extends Service {
       },
       limit: 1,
     });
+  }
+
+  async ecosystemSourceFetch({ id }) {
+    const source = await this.ctx.model.TopicSource.findOne({
+      where: {
+        id,
+      },
+    });
+    if (source) {
+      if (source.source === 'Awesome List') {
+        this.ctx.service.queue.addJob({ queue: 'awesomeListFetch', payload: { title: '', url: source.url } });
+        return true;
+      }
+    }
+    return false;
   }
 
   async ecosystemAttributes({ id }) {

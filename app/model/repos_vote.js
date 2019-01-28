@@ -3,7 +3,7 @@
 module.exports = app => {
   const { INTEGER, STRING, DATE } = app.Sequelize;
 
-  return app.model.define('repos_vote', {
+  const ReposVote = app.model.define('repos_vote', {
     repos_id: {
       type: INTEGER(11),
       allowNull: false,
@@ -41,4 +41,7 @@ module.exports = app => {
   }, {
     tableName: 'repos_vote',
   });
+  ReposVote.removeAttribute('id');
+
+  return ReposVote;
 };

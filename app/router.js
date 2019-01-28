@@ -61,6 +61,8 @@ module.exports = app => {
   router.get('/admin/wiki', jwt, admin, controller.admin.wiki);
   router.get('/admin/news', jwt, admin, controller.admin.news);
   router.get('/admin/articles', jwt, admin, controller.admin.articles);
+  router.get('/admin/click', jwt, admin, controller.admin.click);
+  router.get('/admin/vote', jwt, admin, controller.admin.vote);
   router.get('/admin/repos', jwt, admin, controller.admin.repos);
   router.post('/admin/repos/switch', jwt, admin, controller.admin.reposSwitch);
   router.post('/admin/repos/edit', jwt, admin, controller.admin.reposEdit);
@@ -74,6 +76,7 @@ module.exports = app => {
   router.get('/admin/ecosystem/source', jwt, admin, controller.admin.ecosystemSource);
   router.post('/admin/ecosystem/source/create', jwt, admin, controller.admin.ecosystemSourceCreate);
   router.post('/admin/ecosystem/source/delete', jwt, admin, controller.admin.ecosystemSourceDelete);
+  router.post('/admin/ecosystem/source/fetch', jwt, admin, controller.admin.ecosystemSourceFetch);
   router.get('/admin/ecosystem/attributes', jwt, admin, controller.admin.ecosystemAttributes);
   router.post('/admin/ecosystem/attribute/create', jwt, admin, controller.admin.ecosystemAttributeCreate);
   router.post('/admin/ecosystem/attribute/edit', jwt, admin, controller.admin.ecosystemAttributeEdit);

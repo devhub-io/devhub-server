@@ -72,6 +72,22 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.articles(query);
   }
 
+  async click() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.target = ctx.query.target || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.click(query);
+  }
+
+  async vote() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.repos_id = ctx.query.repos_id || '';
+    query.sort_type = ctx.query.sort_type || '';
+    ctx.body = await ctx.service.admin.vote(query);
+  }
+
   async repos() {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1 };
@@ -194,6 +210,12 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     const data = ctx.request.body;
     ctx.body = await ctx.service.admin.ecosystemSourceDelete(data);
+  }
+
+  async ecosystemSourceFetch() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.ecosystemSourceFetch(data);
   }
 
   async ecosystemAttributes() {

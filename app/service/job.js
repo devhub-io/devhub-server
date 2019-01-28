@@ -10,32 +10,32 @@ const fs = require('fs');
 
 class JobService extends Service {
 
-  async linkFetch(data) {
+  async linkFetch({ url }) {
     const { ctx } = this;
 
     // Github Developer
-    const foundDeveloper = data.url.match(constant.DEVELOPER_URL_REGEX);
+    const foundDeveloper = url.match(constant.DEVELOPER_URL_REGEX);
     if (foundDeveloper) {
-      await this.developerFetch(data);
+      await this.developerFetch({ url });
       return true;
     }
 
     // Github Repos
-    const foundRepos = data.url.match(constant.REPOS_URL_REGEX);
+    const foundRepos = url.match(constant.REPOS_URL_REGEX);
     if (foundRepos) {
-      await this.reposFetch(data);
+      await this.reposFetch({ url });
       return true;
     }
 
     // Wiki
-    const foundWiki = data.url.match(constant.WIKIPEIDA_URL_REGEX);
+    const foundWiki = url.match(constant.WIKIPEIDA_URL_REGEX);
     if (foundWiki) {
       let summery = await ctx.service.api.wikipeidaSummery(foundWiki[1]);
       summery = typeof summery === 'string' ? summery : '';
       const exists = await ctx.model.Wiki.unscoped().findOne({
         attributes: [ 'id' ],
         where: {
-          url: data.url,
+          url,
         },
       });
       if (exists) {
@@ -48,7 +48,7 @@ class JobService extends Service {
           slug: ctx.helper.toSlug(foundWiki[1]),
           summery: summery.substring(0, 2048),
           source: 'wikipeida',
-          url: data.url,
+          url,
           status: 1,
         });
       }
@@ -56,7 +56,7 @@ class JobService extends Service {
     }
 
     // Site
-    const foundSite = ctx.helper.isSite(data.url);
+    const foundSite = ctx.helper.isSite(url);
     if (foundSite) {
       // crawler
       const browser = await puppeteer.launch();
@@ -67,7 +67,7 @@ class JobService extends Service {
         width: 1440,
         height: 900,
       });
-      await page.goto(data.url);
+      await page.goto(url);
       const title = await page.title();
       const filename = ctx.helper.randomString(16);
       const tmpFile = `${os.tmpdir()}/${filename}.png`;
@@ -80,7 +80,7 @@ class JobService extends Service {
 
       const exists = await ctx.model.Site.unscoped().findOne({
         where: {
-          url: data.url,
+          url,
         },
       });
       if (exists) {
@@ -96,7 +96,7 @@ class JobService extends Service {
         await ctx.model.Site.create({
           title: title || '',
           description: '',
-          url: data.url,
+          url,
           level: 1,
           screenshot: screenshot || '',
         });
@@ -105,19 +105,19 @@ class JobService extends Service {
     }
 
     // Link
-    const foundLink = ctx.helper.isUrl(data.url);
+    const foundLink = ctx.helper.isUrl(url);
     if (foundLink) {
       // crawler
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       page.setDefaultNavigationTimeout(60000);
       await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
-      await page.goto(data.url);
+      await page.goto(url);
       const title = await page.title();
       await browser.close();
       const exists = await ctx.model.Link.unscoped().findOne({
         where: {
-          url: data.url,
+          url,
         },
       });
       if (exists) {
@@ -130,7 +130,7 @@ class JobService extends Service {
           title: title || '',
           summery: '',
           source: '',
-          url: data.url,
+          url,
           status: 0,
         });
       }
@@ -140,9 +140,9 @@ class JobService extends Service {
     return false;
   }
 
-  async developerFetch(data) {
+  async developerFetch({ url }) {
     const { app, ctx } = this;
-    const found = data.url.match(constant.DEVELOPER_URL_REGEX);
+    const found = url.match(constant.DEVELOPER_URL_REGEX);
     if (found) {
       const id = await ctx.service.user.selectUserId();
       if (typeof id !== 'number') {
@@ -208,8 +208,8 @@ class JobService extends Service {
 
                 const result = await app.curl(data.download_url);
                 const text = result.data;
-                if (text !== null && text.length > 0) {
-                  insertRepos.readme = text;
+                if (typeof text === 'string' && text.length > 0) {
+                  insertRepos.readme = text.substring(0, 65534);
                   await insertRepos.save();
                 }
               }
@@ -228,9 +228,9 @@ class JobService extends Service {
     }
   }
 
-  async reposFetch(data) {
+  async reposFetch({ url }) {
     const { app, ctx } = this;
-    const found = data.url.match(constant.REPOS_URL_REGEX);
+    const found = url.match(constant.REPOS_URL_REGEX);
     if (found) {
       const id = await ctx.service.user.selectUserId();
       if (typeof id !== 'number') {
@@ -280,8 +280,8 @@ class JobService extends Service {
 
           const result = await app.curl(data.download_url);
           const text = result.data;
-          if (text !== null && text.length > 0) {
-            repos.readme = text;
+          if (typeof text === 'string' && text.length > 0) {
+            repos.readme = text.substring(0, 65534);
             await repos.save();
           }
         }
@@ -297,9 +297,9 @@ class JobService extends Service {
     }
   }
 
-  async newsFetch(data) {
+  async newsFetch({ id }) {
     const { ctx } = this;
-    const res = await ctx.curl(`https://hacker-news.firebaseio.com/v0/item/${data.item_id}.json'`, {
+    const res = await ctx.curl(`https://hacker-news.firebaseio.com/v0/item/${id}.json'`, {
       dataType: 'json',
     });
     const itemData = res.data;
@@ -354,10 +354,10 @@ class JobService extends Service {
     return true;
   }
 
-  async awesomeListFetch(data) {
-    if (this.linkFetch(data)) {
+  async awesomeListFetch({ title, url }) {
+    if (this.linkFetch({ url })) {
       const { app, ctx } = this;
-      const found = data.url.match(constant.REPOS_URL_REGEX);
+      const found = url.match(constant.REPOS_URL_REGEX);
       if (found) {
         const existsRepos = await ctx.model.Repos.unscoped().findOne({
           attributes: [ 'id', 'readme' ],
@@ -375,8 +375,8 @@ class JobService extends Service {
             if (cacheReadmeUrl) {
               const result = await app.curl(cacheReadmeUrl);
               const text = result.status === 200 && result.data;
-              if (text !== null && text.length > 0) {
-                readme = text;
+              if (typeof text === 'string' && text.length > 0) {
+                readme = text.substring(0, 65534);
               }
             }
           }
@@ -384,7 +384,7 @@ class JobService extends Service {
           const source = await ctx.model.TopicSource.findOne({
             where: {
               source: 'Awesome List',
-              url: data.url,
+              url,
             },
           });
           let topic_id = 0;
@@ -392,15 +392,15 @@ class JobService extends Service {
             topic_id = source.topic_id;
           } else {
             const topic = await ctx.model.Topic.create({
-              title: data.title,
-              slug: ctx.helper.toSlug(data.title),
+              title,
+              slug: ctx.helper.toSlug(title),
               sort: 0,
               status: 0,
             });
             await ctx.model.TopicSource.create({
               topic_id: topic.id,
               source: 'Awesome List',
-              url: data.url,
+              url,
             });
             topic_id = topic.id;
           }
@@ -415,8 +415,8 @@ class JobService extends Service {
     return false;
   }
 
-  async echo(data) {
-    return data.text;
+  async echo({ text }) {
+    return text;
   }
 
 }

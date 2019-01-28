@@ -336,7 +336,7 @@ class ReposService extends Service {
       user_id: id,
       title: data.name,
       slug,
-      description: data.description !== undefined && data.description !== null ? data.description.substring(0, 254) : '',
+      description: typeof data.description === 'string' ? data.description.substring(0, 254) : '',
       language: data.language || '',
       homepage: data.homepage || '',
       github: data.html_url || '',
@@ -370,7 +370,7 @@ class ReposService extends Service {
     if (find) {
       await find.update({
         title: data.name,
-        description: data.description !== undefined && data.description !== null ? data.description.substring(0, 254) : '',
+        description: typeof data.description === 'string' ? data.description.substring(0, 254) : '',
         language: data.language || '',
         homepage: data.homepage || '',
         stargazers_count: data.stargazers_count || 0,

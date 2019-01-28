@@ -34,7 +34,7 @@ class NewsSync extends Subscription {
       }
       for (let i = 0; i < items.length; i++) {
         try {
-          ctx.service.queue.addJob({ queue: 'newsFetch', payload: { item_id: items[i] } });
+          ctx.service.queue.addJob({ queue: 'newsFetch', payload: { id: items[i] } });
           newsCount = newsCount + 1;
         } catch (e) {
           this.app.logger.error(e);
