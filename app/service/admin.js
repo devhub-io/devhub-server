@@ -623,19 +623,26 @@ class AdminService extends Service {
     });
   }
 
-  async ecosystemCollectionFetch(data) {
-    if (data.text && data.text !== '') {
-      const topic_id = data.topic_id;
+  async ecosystemCollectionImport({ topic_id, url, text }) {
+    if (typeof url === 'string' && url.length > 0) {
+      await this.ctx.model.TopicSource.create({
+        topic_id,
+        source: 'Awesome List',
+        url,
+      });
+      this.ctx.service.queue.addJob({ queue: 'awesomeListFetch', payload: { title: '', url } });
+    }
+    if (typeof text === 'string' && text.length > 0) {
       // Insert Collections
-      const collectionTokens = this.lexerCollectionToken(data.text);
+      const collectionTokens = this.lexerCollectionToken(text);
       await this.insertCollections(topic_id, collectionTokens);
 
       // Insert Items
-      const itemTokens = this.lexerItemTokens(data.text);
+      const itemTokens = this.lexerItemTokens(text);
       await this.insertCollectionItems(topic_id, itemTokens);
     }
 
-    return data;
+    return { topic_id, url, text };
   }
 
   lexerCollectionToken(md) {

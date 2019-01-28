@@ -260,10 +260,10 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemCollectionItemDelete(data);
   }
 
-  async ecosystemCollectionFetch() {
+  async ecosystemCollectionImport() {
     const ctx = this.ctx;
     const data = ctx.request.body;
-    ctx.body = await ctx.service.admin.ecosystemCollectionFetch(data);
+    ctx.body = await ctx.service.admin.ecosystemCollectionImport(data);
   }
 
   async apiSearch() {
