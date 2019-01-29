@@ -66,9 +66,11 @@ module.exports = app => {
   router.get('/admin/repos', jwt, admin, controller.admin.repos);
   router.post('/admin/repos/switch', jwt, admin, controller.admin.reposSwitch);
   router.post('/admin/repos/edit', jwt, admin, controller.admin.reposEdit);
+  router.post('/admin/repos/enable', jwt, admin, controller.admin.reposEnable);
   router.get('/admin/developers', jwt, admin, controller.admin.developers);
   router.post('/admin/developer/switch', jwt, admin, controller.admin.developerSwitch);
   router.post('/admin/developer/edit', jwt, admin, controller.admin.developerEdit);
+  router.post('/admin/developer/enable', jwt, admin, controller.admin.developerEnable);
   router.get('/admin/ecosystems', jwt, admin, controller.admin.ecosystems);
   router.post('/admin/ecosystem/switch', jwt, admin, controller.admin.ecosystemSwitch);
   router.post('/admin/ecosystem/edit', jwt, admin, controller.admin.ecosystemEdit);

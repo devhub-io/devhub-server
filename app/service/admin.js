@@ -4,6 +4,7 @@ const Service = require('egg').Service;
 const arrayToTree = require('array-to-tree');
 const toc = require('markdown-toc');
 const marked = require('marked');
+const constant = require('../constant');
 
 class AdminService extends Service {
 
@@ -350,6 +351,19 @@ class AdminService extends Service {
     return { affected: res };
   }
 
+  async reposEnable() {
+    const res = await this.ctx.model.Repos.unscoped().update(
+      {
+        status: constant.ENABLE,
+      },
+      {
+        where: {
+          status: 0,
+        },
+      });
+    return { affected: res };
+  }
+
   async developerSwitch({ id, status }) {
     const Op = this.app.Sequelize.Op;
     const res = await this.ctx.model.Developer.unscoped().update(
@@ -374,6 +388,19 @@ class AdminService extends Service {
     });
     developer.status = status;
     const res = await developer.save();
+    return { affected: res };
+  }
+
+  async developerEnable() {
+    const res = await this.ctx.model.Developer.unscoped().update(
+      {
+        status: constant.ENABLE,
+      },
+      {
+        where: {
+          status: 0,
+        },
+      });
     return { affected: res };
   }
 

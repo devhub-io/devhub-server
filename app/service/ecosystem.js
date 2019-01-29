@@ -204,7 +204,7 @@ class EcosystemService extends Service {
     };
     if (typeItemsId.repos.length > 0) {
       const repos = await this.ctx.model.Repos.findAll({
-        attributes: [ 'id', 'title', 'slug', 'cover', 'description', 'stargazers_count', 'owner', 'repo' ],
+        attributes: [ 'id', 'title', 'slug', 'cover', 'description', 'stargazers_count', 'owner', 'repo', 'repos_updated_at' ],
         where: {
           id: {
             [Op.in]: typeItemsId.repos,
@@ -217,7 +217,7 @@ class EcosystemService extends Service {
     }
     if (typeItemsId.developers.length > 0) {
       const developers = await this.ctx.model.Developer.findAll({
-        attributes: [ 'id', 'login', 'name', 'avatar_url', 'type' ],
+        attributes: [ 'id', 'login', 'name', 'avatar_url', 'type', 'site_updated_at' ],
         where: {
           id: {
             [Op.in]: typeItemsId.developers,
@@ -230,7 +230,7 @@ class EcosystemService extends Service {
     }
     if (typeItemsId.sites.length > 0) {
       const sites = await this.ctx.model.Site.findAll({
-        attributes: [ 'id', 'title', 'url', 'description', 'screenshot' ],
+        attributes: [ 'id', 'title', 'url', 'description', 'screenshot', 'updated_at' ],
         where: {
           id: {
             [Op.in]: typeItemsId.sites,
@@ -243,7 +243,7 @@ class EcosystemService extends Service {
     }
     if (typeItemsId.links.length > 0) {
       const links = await this.ctx.model.Link.findAll({
-        attributes: [ 'id', 'title', 'summary', 'source', 'url' ],
+        attributes: [ 'id', 'title', 'summary', 'source', 'url', 'updated_at' ],
         where: {
           id: {
             [Op.in]: typeItemsId.links,

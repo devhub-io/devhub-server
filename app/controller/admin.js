@@ -109,6 +109,11 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.reposEdit(query);
   }
 
+  async reposEnable() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.admin.reposEnable();
+  }
+
   async developers() {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1 };
@@ -129,6 +134,11 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     const query = { id: ctx.helper.toInt(ctx.request.body.id), status: ctx.helper.toInt(ctx.request.body.status) };
     ctx.body = await ctx.service.admin.developerEdit(query);
+  }
+
+  async developerEnable() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.admin.developerEnable();
   }
 
   async ecosystems() {
