@@ -543,6 +543,10 @@ class AdminService extends Service {
     return { affected: res };
   }
 
+  async ecosystemCollectionItemCheck() {
+    return await this.ecosystemCollectionItemsCheck();
+  }
+
   async ecosystemCollectionItemCreate(data) {
     if (data.type === 'repos') {
       const repos = await this.ctx.model.Repos.unscoped().findOne({

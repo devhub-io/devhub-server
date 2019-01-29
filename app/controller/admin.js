@@ -194,6 +194,11 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.ecosystemCollectionItemSwitch(data);
   }
 
+  async ecosystemCollectionItemCheck() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.admin.ecosystemCollectionItemCheck();
+  }
+
   async ecosystemSource() {
     const ctx = this.ctx;
     const query = { id: ctx.query.id };
