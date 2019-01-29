@@ -72,7 +72,7 @@ class QueueService extends Service {
     return await this.ctx.model.QueueJob.destroy({
       where: {
         attempts: {
-          [Op.gt]: 5,
+          [Op.gt]: 2,
         },
       },
     });

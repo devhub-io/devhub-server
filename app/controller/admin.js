@@ -286,10 +286,32 @@ class HomeController extends Controller {
     ctx.body = await ctx.service.admin.queueReplay(data);
   }
 
+  async queueReplayAll() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.admin.queueReplayAll();
+  }
+
   async queueDelete() {
     const ctx = this.ctx;
     const data = ctx.request.body;
     ctx.body = await ctx.service.admin.queueDelete(data);
+  }
+
+  async queueBullCounts() {
+    const ctx = this.ctx;
+    ctx.body = await ctx.service.admin.queueBullCounts();
+  }
+
+  async queueBullClean() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.queueBullClean(data);
+  }
+
+  async queueSystemClean() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.queueSystemClean(data);
   }
 
   async fetch() {

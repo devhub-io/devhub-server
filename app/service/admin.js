@@ -901,11 +901,57 @@ class AdminService extends Service {
   }
 
   async queueReplay({ id }) {
-    return this.ctx.service.queue.replayJob(id);
+    id.forEach(i => {
+      this.ctx.service.queue.replayJob(i);
+    });
+    return true;
+  }
+
+  async queueReplayAll() {
+    const ctx = this.ctx;
+    const Op = this.app.Sequelize.Op;
+    const jobs = await ctx.model.QueueJob.findAll({
+      attributes: [ 'id' ],
+      where: {
+        attempts: {
+          [Op.lte]: 2,
+        },
+      },
+    });
+    for (let i = 0; i < jobs.length; i++) {
+      await ctx.service.queue.replayJob(jobs[i].id);
+    }
+    return true;
   }
 
   async queueDelete({ id }) {
     return this.ctx.service.queue.finishJob(id);
+  }
+
+  async queueBullCounts() {
+    return await this.app.queue.getJobCounts();
+  }
+
+  async queueBullClean({ type }) {
+    if (type === 'all') {
+      await this.app.queue.clean(0, 'completed');
+      await this.app.queue.clean(0, 'wait');
+      await this.app.queue.clean(0, 'active');
+      await this.app.queue.clean(0, 'delayed');
+      await this.app.queue.clean(0, 'failed');
+      return true;
+    }
+    return await this.app.queue.clean(0, type);
+  }
+
+  async queueSystemClean({ type }) {
+    if (type === 'failed') {
+      return await this.ctx.service.queue.cleanFailJob();
+    }
+    if (type === 'repeat') {
+      return await this.ctx.service.queue.cleanRepeatJob();
+    }
+    return false;
   }
 
   async fetch({ url }) {
