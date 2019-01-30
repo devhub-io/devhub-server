@@ -101,7 +101,20 @@ class ReposService extends Service {
     });
     related = tempRelated;
 
-    return { repos, tags, contributors, languages, badges, questions, news, packages, topics, dependencies, related };
+    // Star
+    let user_id = -1;
+    if (ctx.isAuthenticated()) {
+      user_id = ctx.user.id;
+    }
+    const star = await ctx.model.UserStar.findOne({
+      where: {
+        user_id,
+        type: 'repos',
+        foreign_id: repos.id,
+      },
+    });
+
+    return { repos, tags, contributors, languages, badges, questions, news, packages, topics, dependencies, related, star };
   }
 
   // Hottest -> stargazers_count

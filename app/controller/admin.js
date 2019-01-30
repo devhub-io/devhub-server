@@ -2,7 +2,7 @@
 
 const Controller = require('egg').Controller;
 
-class HomeController extends Controller {
+class AdminController extends Controller {
 
   async users() {
     const ctx = this.ctx;
@@ -391,4 +391,4 @@ class HomeController extends Controller {
 
 }
 
-module.exports = HomeController;
+module.exports = AdminController;

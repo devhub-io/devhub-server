@@ -139,6 +139,49 @@ class UserService extends Service {
       });
   }
 
+  async star({ user_id, type, foreign_id, star }) {
+    if (star) {
+      const star = await this.ctx.model.UserStar.findOne({
+        where: {
+          user_id,
+          type,
+          foreign_id,
+        },
+      });
+      if (!star) {
+        return await this.ctx.model.UserStar.create(
+          {
+            user_id,
+            type,
+            foreign_id,
+          });
+      }
+      return false;
+    }
+    return await this.ctx.model.UserStar.destroy({
+      where: {
+        user_id,
+        type,
+        foreign_id,
+      },
+      limit: 1,
+    });
+  }
+
+  async stars({ limit, page }) {
+    const offset = (page - 1) * limit;
+    const result = await this.ctx.model.UserStar.findAndCountAll({
+      limit,
+      offset,
+      order: [
+        [ 'updated_at', 'DESC' ],
+      ],
+    });
+    result.last_page = Math.ceil(result.count / limit);
+    result.page = page;
+    return result;
+  }
+
 }
 
 module.exports = UserService;

@@ -4,7 +4,7 @@ const Controller = require('egg').Controller;
 const jwt = require('jsonwebtoken');
 const env = require('../../.env');
 
-class HomeController extends Controller {
+class OauthController extends Controller {
 
   async github() {
     const ctx = this.ctx;
@@ -76,4 +76,4 @@ class HomeController extends Controller {
 
 }
 
-module.exports = HomeController;
+module.exports = OauthController;

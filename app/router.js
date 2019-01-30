@@ -5,6 +5,8 @@
  */
 module.exports = app => {
   const { router, controller, io } = app;
+  const check = app.middleware.check();
+
   // Home
   router.get('/', controller.home.index);
   router.get('/link', controller.home.link);
@@ -18,7 +20,7 @@ module.exports = app => {
   router.get('/repos/recommend', controller.repos.recommend);
   router.get('/repos/category/:slug', controller.repos.category);
   router.post('/repos/:slug/review', controller.repos.review);
-  router.get('/repos/:slug', controller.repos.find);
+  router.get('/repos/:slug', check, controller.repos.find);
   router.get('/count', controller.repos.count);
   router.get('/news', controller.repos.news);
   router.get('/topics', controller.repos.topics);
@@ -46,6 +48,10 @@ module.exports = app => {
   // Check
   const jwt = app.passport.authenticate('jwt', { session: false, successReturnToOrRedirect: null });
   router.get('/auth', jwt, controller.home.index);
+
+  // User
+  router.post('/star', jwt, controller.user.star);
+  router.get('/stars', jwt, controller.user.stars);
 
   // Oauth
   router.get('/passport/github', controller.oauth.github);
