@@ -465,7 +465,7 @@ describe('test/app/service/job.test.js', () => {
   });
 
   describe('News Fetch', () => {
-    it('should work', async () => {
+    it.skip('should work', async () => {
       await app.factory.create('repos', {
         title: 'repos_2',
         category_id: 0,

@@ -5,20 +5,6 @@ const Controller = require('egg').Controller;
 class HomeController extends Controller {
 
   async index() {
-    // this.app.queue.add({ job: 'reposFetch', data: { url: 'https://github.com/heroku/hatchet' } });
-    // this.app.queue.add({ job: 'developerFetch', data: { url: 'https://github.com/sysatom' } });
-    // console.log(this.app.passport);
-    // console.log(this.ctx.isAuthenticated());
-    // console.log(this.ctx.user);
-
-    // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://desktop.github.com/' } });
-    // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://desktop.github.com/terms/' } });
-    // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://github.com/desktop/desktop' } });
-    // this.ctx.service.queue.addJob({ queue: 'linkFetch', payload: { url: 'https://github.com/desktop' } });
-    // const a = await this.ctx.service.api.smmsImageUpload(__dirname + '/node.png');
-    // console.log(a);
-    // this.service.message.send({ type: 'error', message: 'error' });
-
     this.ctx.body = this.config.name;
   }
 
@@ -50,12 +36,8 @@ class HomeController extends Controller {
         type: 'string',
       },
     });
-    const feedback = await ctx.service.user.feedback(data);
-    if (feedback) {
-      ctx.body = { message: 'Feedback sent!' };
-    } else {
-      ctx.body = { message: 'Feedback failure!' };
-    }
+    await ctx.service.user.feedback(data);
+    ctx.body = { message: 'Feedback sent!' };
   }
 
 }

@@ -337,6 +337,16 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body.affected);
   });
 
+  it('should POST /admin/repos/enable', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    await app.factory.create('repos');
+    const res = await app.httpRequest()
+      .post('/admin/repos/enable')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+  });
+
   it('should GET /admin/developers', async () => {
     const user = await app.factory.create('user');
     const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
@@ -388,6 +398,16 @@ describe('test/app/controller/admin.test.js', () => {
       .set({ Authorization: `bearer ${token}` });
     assert(res.status === 200);
     assert(res.body.affected);
+  });
+
+  it('should POST /admin/developer/enable', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    await app.factory.create('developer');
+    const res = await app.httpRequest()
+      .post('/admin/developer/enable')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
   });
 
   it('should GET /admin/ecosystems', async () => {
@@ -871,6 +891,64 @@ describe('test/app/controller/admin.test.js', () => {
     assert(items2Res.body.length === 6);
   });
 
+  it('should POST /admin/ecosystem/collection/crawler', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    await app.factory.create('repos', {
+      title: 'webtorrent',
+      category_id: 0,
+      slug: 'feross-webtorrent',
+      readme: 'readme',
+      description: 'description',
+      language: 'javascript',
+      homepage: '',
+      github: 'https://github.com/feross/webtorrent',
+      stargazers_count: 1,
+      watchers_count: 2,
+      open_issues_count: 3,
+      forks_count: 4,
+      subscribers_count: 5,
+      issue_response: 6,
+      status: 1,
+      repos_created_at: new Date(),
+      repos_updated_at: new Date(),
+      fetched_at: new Date(),
+      analytics_at: new Date(),
+      user_id: 0,
+      is_recommend: 1,
+      trends: '0,15,50,63,0,35,0,53',
+      owner: 'feross',
+      repo: 'webtorrent',
+      cover: '',
+      document_url: '',
+    });
+
+    app.mockHttpclient('https://raw.githubusercontent.com/bayandin/awesome-awesomeness/master/README.md', {
+      data: '## Demo\n' +
+        '\n' +
+        '### Mad science\n' +
+        '\n' +
+        '- [webtorrent](https://github.com/feross/webtorrent) - Streaming torrent client for Node.js and the browser.\n' +
+        '\n' +
+        '### Community\n' +
+        '\n' +
+        '- [Gitter](https://gitter.im/nodejs/node)\n' +
+        '- [`#node.js` on Freenode](http://webchat.freenode.net/?channels=node.js)\n' +
+        '- [Stack Overflow](http://stackoverflow.com/questions/tagged/node.js)\n' +
+        '- Module Requests & Ideas\n' +
+        '- [nodebots](http://nodebots.io) - Robots powered by JavaScript.\n' +
+        '- [Node Weekly](http://nodeweekly.com) - Weekly e-mail round-up of Node.js news and articles.\n' +
+        '\n' +
+        '## Books\n' +
+        '# Articles\n',
+    });
+
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/crawler')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+  });
+
   it('should GET /admin/api/search', async () => {
     const user = await app.factory.create('user');
     const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
@@ -897,13 +975,24 @@ describe('test/app/controller/admin.test.js', () => {
   it('should POST /admin/queue/replay', async () => {
     const user = await app.factory.create('user');
     const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
-    const job = app.factory.create('queue_job');
+    const job = await app.factory.create('queue_job');
 
     const res = await app.httpRequest()
       .post('/admin/queue/replay')
       .send({
         id: [ job.id ],
       })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+  });
+
+  it('should POST /admin/queue/replay/all', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    await app.factory.create('queue_job');
+
+    const res = await app.httpRequest()
+      .post('/admin/queue/replay/all')
       .set({ Authorization: `bearer ${token}` });
     assert(res.status === 200);
   });
@@ -920,6 +1009,63 @@ describe('test/app/controller/admin.test.js', () => {
       })
       .set({ Authorization: `bearer ${token}` });
     assert(res.status === 200);
+  });
+
+  it('should GET /admin/queue/bull/counts', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const res = await app.httpRequest()
+      .get('/admin/queue/bull/counts')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.completed === 0);
+    assert(res.body.failed === 0);
+    assert(res.body.delayed === 0);
+  });
+
+  it('should GET /admin/queue/bull/clean', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const res = await app.httpRequest()
+      .post('/admin/queue/bull/clean')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const resAll = await app.httpRequest()
+      .post('/admin/queue/bull/clean')
+      .send({
+        type: 'all',
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(resAll.status === 200);
+  });
+
+  it('should GET /admin/queue/system/clean', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const resFailed = await app.httpRequest()
+      .post('/admin/queue/system/clean')
+      .send({
+        type: 'failed',
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(resFailed.status === 200);
+
+    const resRepeat = await app.httpRequest()
+      .post('/admin/queue/system/clean')
+      .send({
+        type: 'repeat',
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(resRepeat.status === 200);
+
+    const resOther = await app.httpRequest()
+      .post('/admin/queue/system/clean')
+      .send({
+        type: 'other',
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(resOther.status === 200);
   });
 
   it('should POST /admin/fetch', async () => {
@@ -973,6 +1119,17 @@ describe('test/app/controller/admin.test.js', () => {
       .set({ Authorization: `bearer ${token}` });
     assert(res.status === 200);
     assert(res.body.affected);
+  });
+
+  it('should POST /admin/ecosystem/collection/item/check', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    await app.factory.create('collection_item');
+    await app.factory.create('collection_item');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/collection/item/check')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
   });
 
   it('should GET /admin/ecosystem/attributes', async () => {
@@ -1107,6 +1264,27 @@ describe('test/app/controller/admin.test.js', () => {
     assert(res.body[0].id === source.body.id);
     assert(res.body[0].source === source.body.source);
     assert(res.body[0].url === source.body.url);
+  });
+
+  it('should POST /admin/ecosystem/source/fetch', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const topic_source = await app.factory.create('topic_source');
+    const res = await app.httpRequest()
+      .post('/admin/ecosystem/source/fetch')
+      .send({
+        id: topic_source.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const resNot = await app.httpRequest()
+      .post('/admin/ecosystem/source/fetch')
+      .send({
+        id: 999,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(resNot.status === 200);
   });
 
   it('should POST /admin/ecosystem/source/delete', async () => {
