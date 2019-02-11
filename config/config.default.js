@@ -27,7 +27,7 @@ module.exports = appInfo => {
       reset: 'x-ratelimit-reset',
       total: 'x-ratelimit-limit',
     },
-    max: 120,
+    max: 240,
     disableHeader: false,
   };
 

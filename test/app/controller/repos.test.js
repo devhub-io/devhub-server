@@ -380,7 +380,7 @@ describe('test/app/controller/repos.test.js', () => {
 
       const res = await app.httpRequest().get(`/repos/${repos.slug}`);
       assert(res.status === 200);
-      assert(Object.keys(res.body).length === 11);
+      assert(Object.keys(res.body).length === 12);
       assert(res.body.repos.slug === repos.slug);
       assert(res.body.repos.title);
       assert(res.body.repos.description);

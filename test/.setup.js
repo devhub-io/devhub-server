@@ -25,8 +25,6 @@ afterEach(async () => {
     app.model.ReposLanguage.destroy({ truncate: true, force: true }),
     app.model.User.destroy({ truncate: true, force: true }),
     app.model.Service.destroy({ truncate: true, force: true }),
-    app.model.ReposVote.destroy({ truncate: true, force: true }),
-    app.model.LinkClick.destroy({ truncate: true, force: true }),
     app.model.Topic.destroy({ truncate: true, force: true }),
     app.model.Collection.destroy({ truncate: true, force: true }),
     app.model.CollectionItem.destroy({ truncate: true, force: true }),
@@ -37,6 +35,8 @@ afterEach(async () => {
     app.model.TopicSource.destroy({ truncate: true, force: true }),
     app.model.TopicAttribute.destroy({ truncate: true, force: true }),
     app.model.Feedback.destroy({ truncate: true, force: true }),
+    app.model.ReposVote.destroy({ truncate: true, force: true }),
+    app.model.LinkClick.destroy({ truncate: true, force: true }),
   ]);
   // clear redis after each test case
   await app.redis.flushdb();

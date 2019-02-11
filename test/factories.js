@@ -301,6 +301,27 @@ module.exports = app => {
     updated_at: new Date(),
   });
 
+  // click
+  factory.define('link_click', app.model.LinkClick, {
+    ip: faker.internet.ip,
+    target: faker.internet.url,
+    referer: faker.internet.url,
+    user_agent: faker.internet.userAgent,
+    clicked_at: new Date(),
+  });
+
+  // vote
+  factory.define('repos_vote', app.model.ReposVote, {
+    repos_id: factory.sequence('ReposVote.repos_id', n => n),
+    reliable: 1,
+    recommendation: 1,
+    documentation: 1,
+    ip: faker.internet.ip,
+    user_agent: faker.internet.userAgent,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
   // links
   factory.define('link', app.model.Link, {
     title: factory.sequence('Link.title', n => `wiki_${n}`),

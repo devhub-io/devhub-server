@@ -224,6 +224,66 @@ describe('test/app/controller/admin.test.js', () => {
     assert(resSearch.body.rows[0].url === articles[0].url);
   });
 
+  it('should GET /admin/click', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const click = await app.factory.createMany('link_click', 3);
+    const res = await app.httpRequest()
+      .get('/admin/click?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].id);
+    assert(res.body.rows[0].target);
+    assert(res.body.rows[0].referer);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/click?limit=1&sort_type=clicked_at&target=${click[0].target}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].id === click[0].id);
+    assert(resSearch.body.rows[0].target === click[0].target);
+    assert(resSearch.body.rows[0].referer === click[0].referer);
+  });
+
+  it('should GET /admin/vote', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const vote = await app.factory.createMany('repos_vote', 3);
+    const res = await app.httpRequest()
+      .get('/admin/vote?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].repos_id);
+    assert(res.body.rows[0].reliable);
+    assert(res.body.rows[0].recommendation);
+    assert(res.body.rows[0].documentation);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/vote?limit=1&sort_type=updated_at&repos_id=${vote[0].repos_id}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].repos_id === vote[0].repos_id);
+    assert(resSearch.body.rows[0].reliable === vote[0].reliable);
+    assert(resSearch.body.rows[0].recommendation === vote[0].recommendation);
+    assert(resSearch.body.rows[0].documentation === vote[0].documentation);
+  });
+
   it('should GET /admin/repos', async () => {
     const user = await app.factory.create('user');
     const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
@@ -690,7 +750,7 @@ describe('test/app/controller/admin.test.js', () => {
     assert(resEnd.body.length === 0);
   });
 
-  it('should POST /admin/ecosystem/collection/fetch', async () => {
+  it('should POST /admin/ecosystem/collection/import', async () => {
     const user = await app.factory.create('user');
     const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
     const topic = await app.factory.create('topic');
@@ -766,7 +826,7 @@ describe('test/app/controller/admin.test.js', () => {
     });
 
     const res = await app.httpRequest()
-      .post('/admin/ecosystem/collection/fetch')
+      .post('/admin/ecosystem/collection/import')
       .send({
         topic_id: topic.id,
         text: '## Demo\n' +
@@ -842,7 +902,7 @@ describe('test/app/controller/admin.test.js', () => {
     const res = await app.httpRequest()
       .post('/admin/queue/replay')
       .send({
-        id: job.id,
+        id: [ job.id ],
       })
       .set({ Authorization: `bearer ${token}` });
     assert(res.status === 200);
