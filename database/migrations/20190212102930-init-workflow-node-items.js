@@ -13,6 +13,10 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true,
         },
+        user_id: {
+          type: INTEGER(10).UNSIGNED,
+          defaultValue: 0,
+        },
         node_id: {
           type: INTEGER(10).UNSIGNED,
           allowNull: false,

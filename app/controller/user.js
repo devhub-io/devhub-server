@@ -14,6 +14,7 @@ class UserController extends Controller {
   async stars() {
     const ctx = this.ctx;
     const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.user_id = ctx.user.id;
     ctx.body = await ctx.service.user.stars(query);
   }
 

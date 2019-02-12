@@ -218,6 +218,7 @@ module.exports = app => {
     name: factory.sequence('User.name', n => `name_${n}`),
     email: factory.sequence('User.email', n => `email_${n}@email.local`),
     password: 'abc',
+    avatar: faker.image.avatar,
     created_at: new Date(),
     updated_at: new Date(),
     last_activated_at: new Date(),
@@ -371,6 +372,38 @@ module.exports = app => {
     email: 'demo@email.test',
     tags: factory.sequence('Feedback.tags', n => `tags_${n}`),
     status: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // workflow
+  factory.define('workflow', app.model.Workflow, {
+    title: 'workflow',
+    description: 'description',
+    user_id: 1,
+    view_number: 0,
+    status: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // workflow_node
+  factory.define('workflow_node', app.model.WorkflowNode, {
+    title: 'node',
+    description: 'description',
+    workflow_id: 1,
+    next_id: 0,
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
+  // workflow_node_item
+  factory.define('workflow_node_item', app.model.WorkflowNodeItem, {
+    title: 'item',
+    node_id: 1,
+    type: 'repos',
+    foreign_id: 1,
+    sort: 0,
     created_at: new Date(),
     updated_at: new Date(),
   });

@@ -168,9 +168,12 @@ class UserService extends Service {
     });
   }
 
-  async stars({ limit, page }) {
+  async stars({ limit, page, user_id }) {
     const offset = (page - 1) * limit;
     const result = await this.ctx.model.UserStar.findAndCountAll({
+      where: {
+        user_id,
+      },
       limit,
       offset,
       order: [

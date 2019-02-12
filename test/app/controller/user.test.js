@@ -15,13 +15,11 @@ describe('test/app/controller/user.test.js', () => {
       .set({ Authorization: `bearer ${token}` })
       .type('form')
       .send({
-        user_id: user.id,
         type: 'repos',
         foreign_id: 1,
         star: 1,
       });
     assert(resStar.status === 200);
-    assert(resStar.status);
 
     const res = await app.httpRequest()
       .get('/stars')
@@ -42,15 +40,13 @@ describe('test/app/controller/user.test.js', () => {
       .set({ Authorization: `bearer ${token}` })
       .type('form')
       .send({
-        user_id: user.id,
         type: 'repos',
         foreign_id: 1,
         star: 1,
       });
     assert(resStar.status === 200);
-    assert(resStar.status);
 
-    const resUnstar = await app.httpRequest()
+    const resUnStar = await app.httpRequest()
       .post('/star')
       .set({ Authorization: `bearer ${token}` })
       .type('form')
@@ -60,8 +56,7 @@ describe('test/app/controller/user.test.js', () => {
         foreign_id: 1,
         star: 0,
       });
-    assert(resUnstar.status === 200);
-    assert(resUnstar.status);
+    assert(resUnStar.status === 200);
   });
 
 });

@@ -49,6 +49,19 @@ module.exports = app => {
   const jwt = app.passport.authenticate('jwt', { session: false, successReturnToOrRedirect: null });
   router.get('/auth', jwt, controller.home.index);
 
+  // Workflow
+  router.get('/workflow', controller.workflow.workflow);
+  router.get('/workflow/:id', controller.workflow.workflowFind);
+  router.post('/workflow/create', jwt, controller.workflow.workflowCreate);
+  router.post('/workflow/edit', jwt, controller.workflow.workflowEdit);
+  router.post('/workflow/delete', jwt, controller.workflow.workflowDelete);
+  router.post('/workflow/node/create', jwt, controller.workflow.workflowNodeCreate);
+  router.post('/workflow/node/edit', jwt, controller.workflow.workflowNodeEdit);
+  router.post('/workflow/node/delete', jwt, controller.workflow.workflowNodeDelete);
+  router.post('/workflow/node/item/create', jwt, controller.workflow.workflowNodeItemCreate);
+  router.post('/workflow/node/item/edit', jwt, controller.workflow.workflowNodeItemEdit);
+  router.post('/workflow/node/item/delete', jwt, controller.workflow.workflowNodeItemDelete);
+
   // User
   router.post('/star', jwt, controller.user.star);
   router.get('/stars', jwt, controller.user.stars);

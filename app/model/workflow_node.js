@@ -1,7 +1,5 @@
 'use strict';
 
-const constant = require('../constant');
-
 module.exports = app => {
   const { INTEGER, STRING, DATE } = app.Sequelize;
 
@@ -12,7 +10,15 @@ module.exports = app => {
       primaryKey: true,
       autoIncrement: true,
     },
+    user_id: {
+      type: INTEGER(10).UNSIGNED,
+      defaultValue: 0,
+    },
     workflow_id: {
+      type: INTEGER(10).UNSIGNED,
+      defaultValue: 0,
+    },
+    next_id: {
       type: INTEGER(10).UNSIGNED,
       defaultValue: 0,
     },
@@ -21,10 +27,6 @@ module.exports = app => {
     },
     description: {
       type: STRING(1024),
-    },
-    next_id: {
-      type: INTEGER(10).UNSIGNED,
-      defaultValue: 0,
     },
     created_at: {
       type: DATE,
@@ -35,11 +37,6 @@ module.exports = app => {
       allowNull: true,
     },
   }, {
-    tableName: 'collection_items',
-    defaultScope: {
-      where: {
-        status: constant.ENABLE,
-      },
-    },
+    tableName: 'workflow_nodes',
   });
 };

@@ -13,15 +13,15 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true,
         },
+        user_id: {
+          type: INTEGER(10).UNSIGNED,
+          defaultValue: 0,
+        },
         title: {
           type: STRING,
         },
         description: {
           type: STRING(1024),
-        },
-        user_id: {
-          type: INTEGER(10).UNSIGNED,
-          defaultValue: 0,
         },
         view_number: {
           type: INTEGER(11),
@@ -31,7 +31,7 @@ module.exports = {
         status: {
           type: INTEGER(4),
           allowNull: false,
-          defaultValue: 0,
+          defaultValue: 1,
         },
         created_at: {
           type: DATE,

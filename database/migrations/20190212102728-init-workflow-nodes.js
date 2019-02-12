@@ -13,7 +13,15 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true,
         },
+        user_id: {
+          type: INTEGER(10).UNSIGNED,
+          defaultValue: 0,
+        },
         workflow_id: {
+          type: INTEGER(10).UNSIGNED,
+          defaultValue: 0,
+        },
+        next_id: {
           type: INTEGER(10).UNSIGNED,
           defaultValue: 0,
         },
@@ -22,10 +30,6 @@ module.exports = {
         },
         description: {
           type: STRING(1024),
-        },
-        next_id: {
-          type: INTEGER(10).UNSIGNED,
-          defaultValue: 0,
         },
         created_at: {
           type: DATE,

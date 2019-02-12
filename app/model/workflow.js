@@ -5,22 +5,22 @@ const constant = require('../constant');
 module.exports = app => {
   const { INTEGER, STRING, DATE } = app.Sequelize;
 
-  return app.model.define('workflow_node_item', {
+  return app.model.define('workflow', {
     id: {
       type: INTEGER(10).UNSIGNED,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
+    user_id: {
+      type: INTEGER(10).UNSIGNED,
+      defaultValue: 0,
+    },
     title: {
       type: STRING,
     },
     description: {
       type: STRING(1024),
-    },
-    user_id: {
-      type: INTEGER(10).UNSIGNED,
-      defaultValue: 0,
     },
     view_number: {
       type: INTEGER(11),
@@ -30,7 +30,7 @@ module.exports = app => {
     status: {
       type: INTEGER(4),
       allowNull: false,
-      defaultValue: 0,
+      defaultValue: 1,
     },
     created_at: {
       type: DATE,
@@ -41,7 +41,7 @@ module.exports = app => {
       allowNull: true,
     },
   }, {
-    tableName: 'collection_items',
+    tableName: 'workflow',
     defaultScope: {
       where: {
         status: constant.ENABLE,
