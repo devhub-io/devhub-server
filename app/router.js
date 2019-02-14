@@ -65,6 +65,7 @@ module.exports = app => {
   // User
   router.post('/star', jwt, controller.user.star);
   router.get('/stars', jwt, controller.user.stars);
+  router.get('/user', jwt, controller.user.info);
 
   // Oauth
   router.get('/passport/github', controller.oauth.github);

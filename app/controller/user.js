@@ -18,6 +18,12 @@ class UserController extends Controller {
     ctx.body = await ctx.service.user.stars(query);
   }
 
+  async info() {
+    const ctx = this.ctx;
+    const id = ctx.user.id;
+    ctx.body = await ctx.service.user.find(id);
+  }
+
 }
 
 module.exports = UserController;

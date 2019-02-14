@@ -185,6 +185,15 @@ class UserService extends Service {
     return result;
   }
 
+  async find(id) {
+    return await this.ctx.model.User.findOne({
+      attributes: [ 'id', 'name', 'email', 'avatar', 'last_activated_at' ],
+      where: {
+        id,
+      },
+    });
+  }
+
 }
 
 module.exports = UserService;

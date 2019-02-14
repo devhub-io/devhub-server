@@ -59,4 +59,19 @@ describe('test/app/controller/user.test.js', () => {
     assert(resUnStar.status === 200);
   });
 
+  it('should GET /user', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+
+    const res = await app.httpRequest()
+      .get('/user')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.id === user.id);
+    assert(res.body.name === user.name);
+    assert(res.body.email === user.email);
+    assert(res.body.avatar === user.avatar);
+    assert(res.body.last_activated_at);
+  });
+
 });
