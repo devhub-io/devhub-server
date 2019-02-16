@@ -219,7 +219,7 @@ describe('test/app/controller/workflow.test.js', () => {
       assert(resNode.body.id);
 
       const resNodeEdit = await app.httpRequest()
-        .post('/workflow/node/create')
+        .post('/workflow/node/edit')
         .set({ Authorization: `bearer ${token}` })
         .type('form')
         .send({
