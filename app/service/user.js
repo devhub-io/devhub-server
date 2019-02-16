@@ -169,6 +169,7 @@ class UserService extends Service {
   }
 
   async stars({ limit, page, user_id }) {
+    const Op = this.app.Sequelize.Op;
     const offset = (page - 1) * limit;
     const result = await this.ctx.model.UserStar.findAndCountAll({
       where: {
@@ -182,6 +183,37 @@ class UserService extends Service {
     });
     result.last_page = Math.ceil(result.count / limit);
     result.page = page;
+
+    const typeItemsId = {
+      repos: [],
+    };
+    for (let i = 0; i < result.rows.length; i++) {
+      if (result.rows[i].type === 'repos') {
+        typeItemsId.repos.push(result.rows[i].foreign_id);
+      }
+    }
+    result.rows = JSON.parse(JSON.stringify(result.rows));
+    const typeItemsIndex = {
+      repos: {},
+    };
+    if (typeItemsId.repos.length > 0) {
+      const repos = await this.ctx.model.Repos.findAll({
+        attributes: [ 'id', 'title', 'slug', 'cover', 'description', 'stargazers_count', 'owner', 'repo', 'repos_updated_at' ],
+        where: {
+          id: {
+            [Op.in]: typeItemsId.repos,
+          },
+        },
+      });
+      for (let i = 0; i < repos.length; i++) {
+        typeItemsIndex.repos[repos[i].id] = repos[i];
+      }
+    }
+    for (let i = 0; i < result.rows.length; i++) {
+      if (result.rows[i].type === 'repos') {
+        result.rows[i].foreign = typeItemsIndex.repos[result.rows[i].foreign_id];
+      }
+    }
     return result;
   }
 
