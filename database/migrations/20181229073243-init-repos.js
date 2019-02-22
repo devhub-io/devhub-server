@@ -89,12 +89,12 @@ module.exports = {
         repos_updated_at: {
           type: DATE,
           allowNull: false,
-          defaultValue: '0000-00-00 00:00:00',
+          defaultValue: '1000-01-01 00:00:00',
         },
         fetched_at: {
           type: DATE,
           allowNull: false,
-          defaultValue: '0000-00-00 00:00:00',
+          defaultValue: '1000-01-01 00:00:00',
         },
         created_at: {
           type: DATE,

@@ -8,7 +8,7 @@ module.exports = () => {
   config.sequelize = {
     dialect: 'mysql',
     host: env.DB_TEST_HOST,
-    port: env.DB_PORT,
+    port: env.DB_TEST_PORT,
     database: env.DB_TEST_DATABASE,
     username: env.DB_TEST_USERNAME,
     password: env.DB_TEST_PASSWORD,
@@ -16,9 +16,9 @@ module.exports = () => {
 
   exports.redis = {
     client: {
-      port: env.REDIS_PORT,
-      host: env.REDIS_HOST,
-      password: env.REDIS_PASSWORD,
+      port: env.REDIS_TEST_PORT,
+      host: env.REDIS_TEST_HOST,
+      password: env.REDIS_TEST_PASSWORD,
       db: 1,
     },
   };

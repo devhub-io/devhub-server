@@ -65,6 +65,8 @@
     "type": "git",
     "url": ""
   },
-  "author": "",
-  "license": "MIT"
+  "author": "sysatom",
+  "egg": {
+    "declarations": true
+  }
 }

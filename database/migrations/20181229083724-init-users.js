@@ -50,7 +50,7 @@ module.exports = {
         last_activated_at: {
           type: DATE,
           allowNull: false,
-          defaultValue: '0000-00-00 00:00:00',
+          defaultValue: '1000-01-01 00:00:00',
         },
         avatar: {
           type: STRING(255),
