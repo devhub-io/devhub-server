@@ -389,6 +389,31 @@ class AdminController extends Controller {
     ctx.body = await ctx.service.admin.feedbackDelete(data);
   }
 
+  async config() {
+    const ctx = this.ctx;
+    const query = { limit: ctx.helper.toInt(ctx.query.limit) || 10, page: ctx.helper.toInt(ctx.query.page) || 1 };
+    query.key = ctx.query.key || '';
+    ctx.body = await ctx.service.admin.config(query);
+  }
+
+  async configCreate() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.configCreate(data);
+  }
+
+  async configEdit() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.configEdit(data);
+  }
+
+  async configDelete() {
+    const ctx = this.ctx;
+    const data = ctx.request.body;
+    ctx.body = await ctx.service.admin.configDelete(data);
+  }
+
 }
 
 module.exports = AdminController;

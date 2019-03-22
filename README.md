@@ -1,33 +1,26 @@
-# devhub-server
+# Devhub.io API
 
+> Using Egg.js
 
-
-## QuickStart
-
-<!-- add docs here for user -->
-
-see [egg docs][egg] for more detail.
-
-### Development
+## Build Setup
 
 ```bash
-$ npm i
+# install dependencies
+$ npm install
+
+# env config
+$ cp .env.js.example .env.js
+
+# serve with hot reload at localhost:7001
 $ npm run dev
-$ open http://localhost:7001/
+
+# build for production and launch server
+$ npm run start
+
+# Lint & Test
+$ npm run ci
 ```
 
-### Deploy
+### License
 
-```bash
-$ npm start
-$ npm stop
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
+You can find the license for this code in [the LICENSE file](LICENSE).

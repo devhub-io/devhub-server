@@ -408,4 +408,13 @@ module.exports = app => {
     updated_at: new Date(),
   });
 
+  // config
+  factory.define('config', app.model.Config, {
+    key: factory.sequence('Config.key', n => `key_${n}`),
+    value: 'value',
+    remark: 'remark',
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
+
 };

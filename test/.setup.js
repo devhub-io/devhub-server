@@ -40,6 +40,7 @@ afterEach(async () => {
     app.model.Workflow.destroy({ truncate: true, force: true }),
     app.model.WorkflowNode.destroy({ truncate: true, force: true }),
     app.model.WorkflowNodeItem.destroy({ truncate: true, force: true }),
+    app.model.Config.destroy({ truncate: true, force: true }),
   ]);
   // clear redis after each test case
   await app.redis.flushdb();

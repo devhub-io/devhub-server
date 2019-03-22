@@ -131,6 +131,10 @@ module.exports = app => {
   router.get('/admin/feedback', jwt, admin, controller.admin.feedback);
   router.post('/admin/feedback/switch', jwt, admin, controller.admin.feedbackSwitch);
   router.post('/admin/feedback/delete', jwt, admin, controller.admin.feedbackDelete);
+  router.get('/admin/config', jwt, admin, controller.admin.config);
+  router.post('/admin/config/create', jwt, admin, controller.admin.configCreate);
+  router.post('/admin/config/edit', jwt, admin, controller.admin.configEdit);
+  router.post('/admin/config/delete', jwt, admin, controller.admin.configDelete);
 
   // Socket.io
   io.of('/').route('ping', io.controller.default.ping);

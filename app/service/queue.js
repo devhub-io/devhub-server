@@ -83,9 +83,8 @@ class QueueService extends Service {
     const ctx = this.ctx;
     const repeatJobs = await this.ctx.model.QueueJob.findAll({
       attributes: [
-        'id',
+        [ this.app.Sequelize.literal('ANY_VALUE(id)'), 'id' ],
         'payload',
-        [ this.app.Sequelize.literal('count(id)'), 'number' ],
       ],
       group: [ 'payload' ],
       having: this.app.Sequelize.literal('count(id) > 1'),

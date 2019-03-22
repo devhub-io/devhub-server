@@ -1414,4 +1414,96 @@ describe('test/app/controller/admin.test.js', () => {
     assert(resStart.body);
   });
 
+  it('should GET /admin/config', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const config = await app.factory.createMany('config', 3);
+    const res = await app.httpRequest()
+      .get('/admin/config?limit=2&page=2')
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.page === 2);
+    assert(res.body.count === 3);
+    assert(res.body.last_page === 2);
+    assert(res.body.rows.length === 1);
+    assert(res.body.rows[0].key);
+    assert(res.body.rows[0].value);
+
+    const resSearch = await app.httpRequest()
+      .get(`/admin/config?limit=1&sort_type=updated_at&key=${config[0].key}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resSearch.status === 200);
+    assert(resSearch.body.page === 1);
+    assert(resSearch.body.count === 1);
+    assert(resSearch.body.last_page === 1);
+    assert(resSearch.body.rows.length === 1);
+    assert(resSearch.body.rows[0].key === config[0].key);
+    assert(resSearch.body.rows[0].value === config[0].value);
+  });
+
+  it('should POST /admin/config/create', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const res = await app.httpRequest()
+      .post('/admin/cnofig/create')
+      .send({
+        key: 'demo',
+        value: 'demo',
+        remark: 'demo',
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+    assert(res.body.key === 'demo');
+    assert(res.body.value === 'demo');
+    assert(res.body.remark === 'demo');
+  });
+
+  it('should POST /admin/config/edit', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const config = await app.factory.create('config');
+    const res = await app.httpRequest()
+      .post('/admin/config/edit')
+      .send({
+        id: config.id,
+        key: 'edit',
+        value: 2,
+        remark: 0,
+      })
+      .set({ Authorization: `bearer ${token}` });
+
+    assert(res.status === 200);
+    assert(res.body.id === config.id);
+    assert(res.body.key === 'edit');
+    assert(res.body.value === 2);
+    assert(res.body.remark === 0);
+  });
+
+  it('should POST /admin/config/delete', async () => {
+    const user = await app.factory.create('user');
+    const token = jwt.sign({ sub: user.id }, env.JWT_SECRET);
+    const config = await app.factory.create('config', {
+      key: 'demo',
+      value: 'demo',
+    });
+    const resStart = await app.httpRequest()
+      .get(`/admin/config/${config.key}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resStart.status === 200);
+    assert(resStart.body.key === config.key);
+
+    const res = await app.httpRequest()
+      .post('/admin/config/delete')
+      .send({
+        id: config.id,
+      })
+      .set({ Authorization: `bearer ${token}` });
+    assert(res.status === 200);
+
+    const resEnd = await app.httpRequest()
+      .get(`/admin/config/${config.key}`)
+      .set({ Authorization: `bearer ${token}` });
+    assert(resEnd.status === 404);
+  });
+
 });

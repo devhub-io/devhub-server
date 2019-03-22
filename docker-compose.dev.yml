@@ -1,55 +1,5 @@
 version: '3'
 services:
-  server:
-#    image: node:latest
-#    command: npm run dev
-#    working_dir: /home/node/app
-#    volumes:
-#      - ./:/home/node/app
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=development
-    networks:
-      - devhub_network
-    depends_on:
-      - redis
-      - mysql
-      - elasticsearch
-    ports:
-      - 7001:7001
-
-  web:
-    image: node:latest
-    command: npm run dev
-    working_dir: /home/node/app
-    volumes:
-      - ../Devhub-Web/:/home/node/app
-    environment:
-      - NODE_ENV=development
-    networks:
-      - devhub_network
-    depends_on:
-      - server
-    ports:
-      - 7002:7002
-
-  admin:
-    image: node:latest
-    command: npm run dev
-    working_dir: /home/node/app
-    volumes:
-      - ../Devhub-Admin/:/home/node/app
-    environment:
-      - NODE_ENV=development
-    networks:
-      - devhub_network
-    depends_on:
-      - server
-    ports:
-      - 7003:7003
-
   redis:
     image: redis:latest
     command: redis-server --appendonly yes --requirepass egg_devhub
